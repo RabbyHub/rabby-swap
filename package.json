@@ -1,0 +1,38 @@
+{
+  "name": "rabby-swap",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "build": "rimraf dist && tsc",
+    "preversion": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RabbyHub/rabby-swap.git"
+  },
+  "dependencies": {
+    "@debank/common": "^0.2.20",
+    "axios": "^0.27.2"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.19.1",
+    "@types/jest": "^29.0.3",
+    "@types/node": "^18.7.18",
+    "axios-mock-adapter": "^1.21.2",
+    "babel-jest": "^29.0.3",
+    "jest": "^29.0.3",
+    "jest-mock-axios": "^4.7.0-beta",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^29.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.3"
+  },
+  "author": "vvvvvv1vvvvvv",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RabbyHub/rabby-swap/issues"
+  },
+  "homepage": "https://github.com/RabbyHub/rabby-swap#readme"
+}
