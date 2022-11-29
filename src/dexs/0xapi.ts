@@ -2,7 +2,7 @@ import axios from "axios";
 import { CHAINS_ENUM, CHAINS } from "@debank/common";
 import { QuoteParams, Tx, QuoteResult } from "../quote";
 
-const NATIVE_TOKEN = 'ETH';
+const NATIVE_TOKEN = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 
 const API_DOMAINS = {
   [CHAINS_ENUM.ETH]: "https://api.0x.org",
@@ -83,7 +83,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
   };
 
   if (options.feeRate) {
-    params.buyTokenPercentageFee = options.feeRate;
+    params.buyTokenPercentageFee = options.feeRate / 100;
     params.feeRecipient = options.feeAddress;
   }
 

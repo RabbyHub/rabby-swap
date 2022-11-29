@@ -100,18 +100,30 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
 
   const { priceRoute } = await getPriceRoute({
     srcDecimals: options.fromTokenDecimals,
-    srcToken: options.fromToken === CHAINS[options.chain].nativeTokenAddress ? NATIVE_TOKEN : options.fromToken,
-    destToken: options.toToken === CHAINS[options.chain].nativeTokenAddress ? NATIVE_TOKEN : options.toToken,
+    srcToken:
+      options.fromToken === CHAINS[options.chain].nativeTokenAddress
+        ? NATIVE_TOKEN
+        : options.fromToken,
+    destToken:
+      options.toToken === CHAINS[options.chain].nativeTokenAddress
+        ? NATIVE_TOKEN
+        : options.toToken,
     amount: options.amount,
     userAddress: options.userAddress,
     network: chainId,
-    includeContractMethods: 'simpleSwap,multiSwap,megaSwap',
+    includeContractMethods: "simpleSwap,multiSwap,megaSwap",
   });
 
   const params: SwapParams = {
-    srcToken: options.fromToken === CHAINS[options.chain].nativeTokenAddress ? NATIVE_TOKEN : options.fromToken,
+    srcToken:
+      options.fromToken === CHAINS[options.chain].nativeTokenAddress
+        ? NATIVE_TOKEN
+        : options.fromToken,
     srcDecimals: options.fromTokenDecimals,
-    destToken: options.toToken === CHAINS[options.chain].nativeTokenAddress ? NATIVE_TOKEN : options.toToken,
+    destToken:
+      options.toToken === CHAINS[options.chain].nativeTokenAddress
+        ? NATIVE_TOKEN
+        : options.toToken,
     srcAmount: options.amount,
     userAddress: options.userAddress,
     slippage: Math.floor(options.slippage * 100),
@@ -123,20 +135,25 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     params.partnerAddress = options.feeAddress;
   }
 
-  const { data } = await request.get<Tx>(`/transactions/${chainId}`, {
+  const { data } = await request.post<Tx>(`/transactions/${chainId}`, params, {
     params: {
       ignoreChecks: true,
       ignoreGasEstimate: true,
     },
-    data: params,
   });
- 
+
   return {
     tx: data,
-    fromToken: priceRoute.srcToken === NATIVE_TOKEN ? CHAINS[options.chain].nativeTokenAddress : priceRoute.srcToken,
+    fromToken:
+      priceRoute.srcToken === NATIVE_TOKEN
+        ? CHAINS[options.chain].nativeTokenAddress
+        : priceRoute.srcToken,
     fromTokenAmount: priceRoute.srcAmount,
     fromTokenDecimals: priceRoute.srcDecimals,
-    toToken: priceRoute.destToken === NATIVE_TOKEN ? CHAINS[options.chain].nativeTokenAddress : priceRoute.destToken,
+    toToken:
+      priceRoute.destToken === NATIVE_TOKEN
+        ? CHAINS[options.chain].nativeTokenAddress
+        : priceRoute.destToken,
     toTokenAmount: priceRoute.destAmount,
     toTokenDecimals: priceRoute.destDecimals,
     spender: data.to,
