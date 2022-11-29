@@ -1,5 +1,5 @@
 {
-  "name": "rabby-swap",
+  "name": "@rabby-wallet/rabby-swap",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "@debank/common": "^0.2.20",
-    "axios": "^0.27.2"
+    "axios": "^0.27.2",
+    "web3-eth-abi": "^1.8.1"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.19.1",
