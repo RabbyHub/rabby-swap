@@ -1,8 +1,17 @@
 import axios from "axios";
 import { CHAINS_ENUM, CHAINS } from "@debank/common";
-import { QuoteParams, Tx, QuoteResult } from "../quote";
+import { Interface } from "@ethersproject/abi";
+import {
+  QuoteParams,
+  Tx,
+  QuoteResult,
+  TxWithChainId,
+  DecodeCalldataResult,
+} from "../quote";
+import { isSameAddress } from "../utils";
+import { OneInchABI } from "../abi";
 
-const NATIVE_TOKEN = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+const NATIVE_TOKEN = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 
 const request = axios.create({
   baseURL: "https://api.1inch.io/v5.0",
@@ -76,8 +85,14 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
   }
 
   const params: SwapParams = {
-    fromTokenAddress: options.fromToken === CHAINS[options.chain].nativeTokenAddress ? NATIVE_TOKEN : options.fromToken,
-    toTokenAddress: options.toToken === CHAINS[options.chain].nativeTokenAddress ? NATIVE_TOKEN : options.toToken,
+    fromTokenAddress:
+      options.fromToken === CHAINS[options.chain].nativeTokenAddress
+        ? NATIVE_TOKEN
+        : options.fromToken,
+    toTokenAddress:
+      options.toToken === CHAINS[options.chain].nativeTokenAddress
+        ? NATIVE_TOKEN
+        : options.toToken,
     amount: options.amount,
     fromAddress: options.userAddress,
     slippage: options.slippage,
@@ -95,12 +110,56 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
 
   return {
     tx: data.tx,
-    fromToken: data.fromToken.address === NATIVE_TOKEN ? CHAINS[options.chain].nativeTokenAddress : data.fromToken.address,
+    fromToken:
+      data.fromToken.address === NATIVE_TOKEN
+        ? CHAINS[options.chain].nativeTokenAddress
+        : data.fromToken.address,
     fromTokenAmount: data.fromTokenAmount,
     fromTokenDecimals: data.fromToken.decimals,
-    toToken: data.toToken.address === NATIVE_TOKEN ? CHAINS[options.chain].nativeTokenAddress : data.toToken.address,
+    toToken:
+      data.toToken.address === NATIVE_TOKEN
+        ? CHAINS[options.chain].nativeTokenAddress
+        : data.toToken.address,
     toTokenAmount: data.toTokenAmount,
     toTokenDecimals: data.toToken.decimals,
     spender: data.tx.to,
+  };
+};
+
+export const decodeCalldata = (
+  tx: TxWithChainId
+): DecodeCalldataResult | null => {
+  const chain = Object.values(CHAINS).find((item) => item.id === tx.chainId);
+  if (!chain) return null;
+  const contractInterface = new Interface(OneInchABI);
+  const result = contractInterface.parseTransaction({ data: tx.data });
+
+  if (result.name !== "swap") {
+    return null;
+  }
+
+  const [executor, desc] = result.args;
+  const [
+    srcToken,
+    dstToken,
+    srcReceiver,
+    dstReceiver,
+    amount,
+    minReturnAmount,
+  ] = desc;
+
+  if (!srcToken || !dstToken || !dstReceiver || !amount || !minReturnAmount)
+    return null;
+
+  return {
+    fromToken: isSameAddress(srcToken, NATIVE_TOKEN)
+      ? chain.nativeTokenAddress
+      : srcToken,
+    fromTokenAmount: amount.toString(),
+    toToken: isSameAddress(dstToken, NATIVE_TOKEN)
+      ? chain.nativeTokenAddress
+      : dstToken,
+    minReceiveToTokenAmount: minReturnAmount.toString(),
+    toTokenReceiver: dstReceiver,
   };
 };

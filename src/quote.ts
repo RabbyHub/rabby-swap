@@ -1,9 +1,9 @@
 import { CHAINS_ENUM } from '@debank/common';
 import { DEX_ENUM } from './consts';
 import { getQuote as wrapTokenGetQuote } from './dexs/wrapToken';
-import { getQuote as oneInchGetQuote } from './dexs/1inch';
-import { getQuote as zeroXGetQuote } from './dexs/0xapi';
-import { getQuote as paraSwapGetQuote } from './dexs/paraswap';
+import { getQuote as oneInchGetQuote, decodeCalldata as oneInchDecodeCalldata } from './dexs/1inch';
+import { getQuote as zeroXGetQuote, decodeCalldata as zeroXDecodeCalldata } from './dexs/0xapi';
+import { getQuote as paraSwapGetQuote, decodeCalldata as paraSwapDecodeCalldata } from './dexs/paraswap';
 
 export interface QuoteParams {
   fromToken: string;
@@ -25,6 +25,10 @@ export interface Tx {
   chainId?: number;
   gas?: number;
   gasPrice?: string;
+}
+
+export interface TxWithChainId extends Tx {
+  chainId: number;
 }
 
 export interface QuoteResult {
@@ -52,3 +56,24 @@ export const getQuote = async (id: DEX_ENUM, params: QuoteParams) => {
       throw new Error(`${id} is not supported!`);
   }
 }
+
+export interface DecodeCalldataResult {
+  fromToken: string;
+  fromTokenAmount: string;
+  toToken: string;
+  minReceiveToTokenAmount: string;
+  toTokenReceiver: string;
+}
+
+export const decodeCalldata = (id: DEX_ENUM, tx: TxWithChainId): DecodeCalldataResult | null => {
+  switch(id) {
+    case DEX_ENUM.ONEINCH:
+      return oneInchDecodeCalldata(tx);
+    case DEX_ENUM.PARASWAP:
+      return paraSwapDecodeCalldata(tx);
+    case DEX_ENUM.ZEROXAPI:
+      return zeroXDecodeCalldata(tx);
+    default:
+      throw new Error(`${id} is not supported!`);
+  }
+};

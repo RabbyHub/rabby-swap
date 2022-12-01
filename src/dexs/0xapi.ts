@@ -1,8 +1,17 @@
 import axios from "axios";
+import { Interface } from "@ethersproject/abi";
 import { CHAINS_ENUM, CHAINS } from "@debank/common";
-import { QuoteParams, Tx, QuoteResult } from "../quote";
+import {
+  QuoteParams,
+  Tx,
+  QuoteResult,
+  TxWithChainId,
+  DecodeCalldataResult,
+} from "../quote";
+import { isSameAddress } from "../utils";
+import { ZeroXABI } from "../abi";
 
-const NATIVE_TOKEN = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
+const NATIVE_TOKEN = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
 
 const API_DOMAINS = {
   [CHAINS_ENUM.ETH]: "https://api.0x.org",
@@ -74,8 +83,14 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
   });
 
   const params: SwapParams = {
-    sellToken: options.fromToken === CHAINS[options.chain].nativeTokenAddress ? NATIVE_TOKEN : options.fromToken,
-    buyToken: options.toToken === CHAINS[options.chain].nativeTokenAddress ? NATIVE_TOKEN : options.toToken,
+    sellToken:
+      options.fromToken === CHAINS[options.chain].nativeTokenAddress
+        ? NATIVE_TOKEN
+        : options.fromToken,
+    buyToken:
+      options.toToken === CHAINS[options.chain].nativeTokenAddress
+        ? NATIVE_TOKEN
+        : options.toToken,
     sellAmount: options.amount,
     takerAddress: options.userAddress,
     slippagePercentage: options.slippage / 100,
@@ -87,7 +102,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     params.feeRecipient = options.feeAddress;
   }
 
-  const { data } = await request.get<SwapResponse>('/swap/v1/quote', {
+  const { data } = await request.get<SwapResponse>("/swap/v1/quote", {
     params,
   });
 
@@ -98,10 +113,44 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
       value: data.value,
       from: data.from,
     },
-    fromToken: data.sellTokenAddress === NATIVE_TOKEN ? CHAINS[options.chain].nativeTokenAddress : data.sellTokenAddress,
+    fromToken: isSameAddress(data.sellTokenAddress, NATIVE_TOKEN)
+      ? CHAINS[options.chain].nativeTokenAddress
+      : data.sellTokenAddress,
     spender: data.allowanceTarget,
     fromTokenAmount: data.sellAmount,
-    toToken: data.buyTokenAddress === NATIVE_TOKEN ? CHAINS[options.chain].nativeTokenAddress : data.buyTokenAddress,
-    toTokenAmount: data.buyAmount
+    toToken: isSameAddress(data.buyTokenAddress, NATIVE_TOKEN)
+      ? CHAINS[options.chain].nativeTokenAddress
+      : data.buyTokenAddress,
+    toTokenAmount: data.buyAmount,
+  };
+};
+
+export const decodeCalldata = (
+  tx: TxWithChainId
+): DecodeCalldataResult | null => {
+  const chain = Object.values(CHAINS).find((item) => item.id === tx.chainId);
+  if (!chain) return null;
+  const contractInterface = new Interface(ZeroXABI);
+  const result = contractInterface.parseTransaction({ data: tx.data });
+  if (result.name !== "transformERC20") {
+    return null;
   }
+
+  const [inputToken, outputToken, inputTokenAmount, minOutputTokenAmount] =
+    result.args;
+
+  if (!inputToken || !outputToken || !inputTokenAmount || !minOutputTokenAmount)
+    return null;
+
+  return {
+    fromToken: isSameAddress(inputToken, NATIVE_TOKEN)
+      ? chain.nativeTokenAddress
+      : inputToken,
+    fromTokenAmount: inputTokenAmount.toString(),
+    toToken: isSameAddress(outputToken, NATIVE_TOKEN)
+      ? chain.nativeTokenAddress
+      : outputToken,
+    minReceiveToTokenAmount: minOutputTokenAmount.toString(),
+    toTokenReceiver: tx.from,
+  };
 };
