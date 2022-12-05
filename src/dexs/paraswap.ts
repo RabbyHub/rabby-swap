@@ -9,7 +9,8 @@ import {
   DecodeCalldataResult,
 } from "../quote";
 import { isSameAddress } from "../utils";
-import { OneInchABI, ParaSwapABI } from "../abi";
+import { ParaSwapABI } from "../abi";
+import { DEX_ENUM, DEX_SPENDER_WHITELIST } from "../consts";
 
 const NATIVE_TOKEN = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 
@@ -165,7 +166,10 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
         : priceRoute.destToken,
     toTokenAmount: priceRoute.destAmount,
     toTokenDecimals: priceRoute.destDecimals,
-    spender: data.to,
+    spender:
+      DEX_SPENDER_WHITELIST[DEX_ENUM.PARASWAP][
+        options.chain as keyof typeof DEX_SPENDER_WHITELIST[DEX_ENUM.PARASWAP]
+      ],
   };
 };
 
