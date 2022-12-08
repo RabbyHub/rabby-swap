@@ -92,6 +92,7 @@ interface SwapParams {
   userAddress: string;
   srcAmount: string;
   priceRoute: PriceRoute;
+  partner: string;
 }
 
 const getPriceRoute = async (params: PriceParams): Promise<PriceResponse> => {
@@ -138,6 +139,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     userAddress: options.userAddress,
     slippage: Math.floor(options.slippage * 100),
     priceRoute: priceRoute,
+    partner: 'Rabby',
   };
 
   if (options.feeRate) {
