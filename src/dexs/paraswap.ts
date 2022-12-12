@@ -42,6 +42,8 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.POLYGON,
   CHAINS_ENUM.BSC,
   CHAINS_ENUM.AVAX,
+  CHAINS_ENUM.OP,
+  CHAINS_ENUM.ARBITRUM,
 ];
 
 interface PriceParams {
