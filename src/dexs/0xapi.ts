@@ -44,6 +44,7 @@ interface SwapParams {
   skipValidation: boolean;
   buyTokenPercentageFee?: number;
   feeRecipient?: string;
+  affiliateAddress?: string;
 }
 
 interface SwapResponse extends Tx {
@@ -100,6 +101,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
   if (options.feeRate) {
     params.buyTokenPercentageFee = options.feeRate / 100;
     params.feeRecipient = options.feeAddress;
+    params.affiliateAddress = options.feeAddress;
   }
 
   const { data } = await request.get<SwapResponse>("/swap/v1/quote", {
