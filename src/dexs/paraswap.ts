@@ -44,6 +44,7 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.AVAX,
   CHAINS_ENUM.OP,
   CHAINS_ENUM.ARBITRUM,
+  CHAINS_ENUM.FTM,
 ];
 
 interface PriceParams {
