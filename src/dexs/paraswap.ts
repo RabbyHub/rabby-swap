@@ -55,6 +55,7 @@ interface PriceParams {
   userAddress: string;
   network: number;
   includeContractMethods: string;
+  partner: string;
 }
 
 interface PriceResponse {
@@ -126,6 +127,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     userAddress: options.userAddress,
     network: chainId,
     includeContractMethods: "simpleSwap,multiSwap,megaSwap",
+    partner: "Rabby",
   });
 
   const params: SwapParams = {
