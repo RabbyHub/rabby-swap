@@ -99,7 +99,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     disableEstimate: true,
   };
 
-  if (options.feeRate) {
+  if (options.feeRate !== null && options.feeRate !== undefined) {
     params.fee = options.feeRate;
     params.referrerAddress = options.feeAddress;
   }

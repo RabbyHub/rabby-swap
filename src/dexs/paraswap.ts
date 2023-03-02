@@ -147,7 +147,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     partner: 'Rabby',
   };
 
-  if (options.feeRate) {
+  if (options.feeRate !== null && options.feeRate !== undefined) {
     params.partnerFeeBps = (options.feeRate * 100).toString();
     params.partnerAddress = options.feeAddress;
   }

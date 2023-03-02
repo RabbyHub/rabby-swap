@@ -98,7 +98,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     skipValidation: true,
   };
 
-  if (options.feeRate) {
+  if (options.feeRate !== null && options.feeRate !== undefined) {
     params.buyTokenPercentageFee = options.feeRate / 100;
     params.feeRecipient = options.feeAddress;
     params.affiliateAddress = options.feeAddress;
