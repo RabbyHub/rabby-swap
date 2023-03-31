@@ -144,7 +144,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     userAddress: options.userAddress,
     slippage: Math.floor(options.slippage * 100),
     priceRoute: priceRoute,
-    partner: 'Rabby',
+    partner: "Rabby",
   };
 
   if (options.feeRate !== null && options.feeRate !== undefined) {
@@ -161,16 +161,14 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
 
   return {
     tx: data,
-    fromToken:
-      priceRoute.srcToken === NATIVE_TOKEN
-        ? CHAINS[options.chain].nativeTokenAddress
-        : priceRoute.srcToken,
+    fromToken: isSameAddress(priceRoute.srcToken, NATIVE_TOKEN)
+      ? CHAINS[options.chain].nativeTokenAddress
+      : priceRoute.srcToken,
     fromTokenAmount: priceRoute.srcAmount,
     fromTokenDecimals: priceRoute.srcDecimals,
-    toToken:
-      priceRoute.destToken === NATIVE_TOKEN
-        ? CHAINS[options.chain].nativeTokenAddress
-        : priceRoute.destToken,
+    toToken: isSameAddress(priceRoute.destToken, NATIVE_TOKEN)
+      ? CHAINS[options.chain].nativeTokenAddress
+      : priceRoute.destToken,
     toTokenAmount: priceRoute.destAmount,
     toTokenDecimals: priceRoute.destDecimals,
     spender:

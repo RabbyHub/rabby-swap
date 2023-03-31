@@ -110,16 +110,14 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
 
   return {
     tx: data.tx,
-    fromToken:
-      data.fromToken.address === NATIVE_TOKEN
-        ? CHAINS[options.chain].nativeTokenAddress
-        : data.fromToken.address,
+    fromToken: isSameAddress(data.fromToken.address, NATIVE_TOKEN)
+      ? CHAINS[options.chain].nativeTokenAddress
+      : data.fromToken.address,
     fromTokenAmount: data.fromTokenAmount,
     fromTokenDecimals: data.fromToken.decimals,
-    toToken:
-      data.toToken.address === NATIVE_TOKEN
-        ? CHAINS[options.chain].nativeTokenAddress
-        : data.toToken.address,
+    toToken: isSameAddress(data.toToken.address, NATIVE_TOKEN)
+      ? CHAINS[options.chain].nativeTokenAddress
+      : data.toToken.address,
     toTokenAmount: data.toTokenAmount,
     toTokenDecimals: data.toToken.decimals,
     spender: data.tx.to,
