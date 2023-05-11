@@ -4,6 +4,7 @@ import { getQuote as wrapTokenGetQuote } from './dexs/wrapToken';
 import { getQuote as oneInchGetQuote, decodeCalldata as oneInchDecodeCalldata } from './dexs/1inch';
 import { getQuote as zeroXGetQuote, decodeCalldata as zeroXDecodeCalldata } from './dexs/0xapi';
 import { getQuote as paraSwapGetQuote, decodeCalldata as paraSwapDecodeCalldata } from './dexs/paraswap';
+import { getQuote as openOceanGetQuote, decodeCalldata as openOceanDecodeCalldata } from './dexs/openocean';
 
 export interface QuoteParams {
   fromToken: string;
@@ -14,6 +15,7 @@ export interface QuoteParams {
   slippage: number;
   feeRate?: number;
   feeAddress?: string;
+  gasPrice?: number;
   chain: CHAINS_ENUM;
 }
 
@@ -52,6 +54,8 @@ export const getQuote = async (id: DEX_ENUM, params: QuoteParams) => {
       return await paraSwapGetQuote(params);
     case DEX_ENUM.ZEROXAPI:
       return await zeroXGetQuote(params);
+    case DEX_ENUM.OPENOCEAN:
+      return await openOceanGetQuote(params);
     default:
       throw new Error(`${id} is not supported!`);
   }
@@ -73,6 +77,8 @@ export const decodeCalldata = (id: DEX_ENUM, tx: TxWithChainId): DecodeCalldataR
       return paraSwapDecodeCalldata(tx);
     case DEX_ENUM.ZEROXAPI:
       return zeroXDecodeCalldata(tx);
+    case DEX_ENUM.OPENOCEAN:
+      return openOceanDecodeCalldata(tx); 
     default:
       throw new Error(`${id} is not supported!`);
   }
