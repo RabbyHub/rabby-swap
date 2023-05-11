@@ -46,8 +46,8 @@ export const getQuote = async (id: DEX_ENUM, params: QuoteParams) => {
   switch(id) {
     case DEX_ENUM.WRAPTOKEN:
       return await wrapTokenGetQuote(params);
-    case DEX_ENUM.ONEINCH:
-      return await oneInchGetQuote(params);
+    // case DEX_ENUM.ONEINCH:
+    //   return await oneInchGetQuote(params);
     case DEX_ENUM.PARASWAP:
       return await paraSwapGetQuote(params);
     case DEX_ENUM.ZEROXAPI:
@@ -67,8 +67,8 @@ export interface DecodeCalldataResult {
 
 export const decodeCalldata = (id: DEX_ENUM, tx: TxWithChainId): DecodeCalldataResult | null => {
   switch(id) {
-    case DEX_ENUM.ONEINCH:
-      return oneInchDecodeCalldata(tx);
+    // case DEX_ENUM.ONEINCH:
+    //   return oneInchDecodeCalldata(tx);
     case DEX_ENUM.PARASWAP:
       return paraSwapDecodeCalldata(tx);
     case DEX_ENUM.ZEROXAPI:
