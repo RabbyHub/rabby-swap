@@ -940,10 +940,10 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
-"@debank/common@0.2.28":
-  version "0.2.28"
-  resolved "https://registry.yarnpkg.com/@debank/common/-/common-0.2.28.tgz#5a27c77aee4bd620cc861d39129320c4247d6c2c"
-  integrity sha512-fN/bq5gDk+AQay5OS026zRWIWAYiPdP4Xf6Mk9cfUHTNSvRFLSIyNovhNT31dObCCPnyY1vJDC67PjJKAVnvgQ==
+"@debank/common@^0.2.28":
+  version "0.2.36"
+  resolved "https://registry.yarnpkg.com/@debank/common/-/common-0.2.36.tgz#15822790e90a6c173b4f3087418c5b181a9e6f0e"
+  integrity sha512-7Rg19QJ3af6Hp5OFT3Czz1o6K04UwUK7kWPan1WB+gkisUUpFH7h9NMtLaEYrZJI4nWqTH2IGkPNGnk6A+XV9Q==
 
 "@ethersproject/abi@^5.6.3", "@ethersproject/abi@^5.7.0":
   version "5.7.0"
@@ -1709,6 +1709,11 @@ base-x@^3.0.2:
   integrity sha512-H7JU6iBHTal1gp56aKoaa//YUxEaAOUiydvrV/pILqIHXTtqxSkATOnDA2u+jZ/61sD+L/412+7kzXRtWukhpQ==
   dependencies:
     safe-buffer "^5.0.1"
+
+bignumber.js@^9.1.1:
+  version "9.1.1"
+  resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-9.1.1.tgz#c4df7dc496bd849d4c9464344c1aa74228b4dac6"
+  integrity sha512-pHm4LsMJ6lzgNGVfZHjMoO8sdoRhOzOH4MLmY65Jg70bpxCKu5iOHNJyfF6OyvYw7t8Fpf35RuzUyqnQsj8Vig==
 
 blakejs@^1.1.0:
   version "1.2.1"

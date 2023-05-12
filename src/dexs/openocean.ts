@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Interface } from "@ethersproject/abi";
 import { CHAINS_ENUM, CHAINS } from "@debank/common";
+import BigNumber from 'bignumber.js';
 import {
   QuoteParams,
   Tx,
@@ -85,6 +86,8 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     const code = response.data?.code;
     const msg = response.data?.reason;
 
+    if (code === 200) return response.data;
+
     if (code && code !== 200) {
       if (msg) {
         let err;
@@ -101,9 +104,15 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
   });
 
   const params: SwapParams = {
-    inTokenAddress: options.fromToken,
-    outTokenAddress: options.toToken,
-    amount: options.amount,
+    inTokenAddress:
+      options.fromToken === CHAINS[options.chain].nativeTokenAddress
+        ? NATIVE_TOKEN
+        : options.fromToken,
+    outTokenAddress:
+      options.toToken === CHAINS[options.chain].nativeTokenAddress
+        ? NATIVE_TOKEN
+        : options.toToken,
+    amount: new BigNumber(options.amount).div(10 ** options.fromTokenDecimals).toFixed(),
     slippage: options.slippage,
     gasPrice: options.gasPrice || 1,
     account: options.userAddress,
@@ -114,10 +123,10 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     params.referrer = options.feeAddress;
   }
 
-  const { data } = await request.get<SwapResponse>("/swap-quote", {
+  const { data } = await request.get<SwapResponse>("/swap_quote", {
     params,
   });
-
+  console.log(data, data);
   return {
     tx: {
       data: data.data,
@@ -133,7 +142,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     toToken: isSameAddress(data.outToken.address, NATIVE_TOKEN)
       ? CHAINS[options.chain].nativeTokenAddress
       : data.outToken.address,
-    toTokenAmount: data.inAmount,
+    toTokenAmount: data.outAmount,
   };
 };
 
@@ -148,9 +157,15 @@ export const decodeCalldata = (
     return null;
   }
 
-  const [caller, data] =
-    result.args;
-  const [srcToken, dstToken, srcReceiver, dstReceiver, amount, minReturnAmount] = data;
+  const [caller, data] = result.args;
+  const [
+    srcToken,
+    dstToken,
+    srcReceiver,
+    dstReceiver,
+    amount,
+    minReturnAmount,
+  ] = data;
 
   if (!srcToken || !dstToken || !dstReceiver || !amount || !minReturnAmount)
     return null;
