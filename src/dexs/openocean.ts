@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Interface } from "@ethersproject/abi";
 import { CHAINS_ENUM, CHAINS } from "@debank/common";
-import BigNumber from 'bignumber.js';
+import BigNumber from "bignumber.js";
 import {
   QuoteParams,
   Tx,
@@ -12,7 +12,21 @@ import {
 import { isSameAddress } from "../utils";
 import { OpenOceanABI } from "../abi";
 
-const NATIVE_TOKEN = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
+const NATIVE_TOKENS = {
+  [CHAINS_ENUM.ETH]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  [CHAINS_ENUM.POLYGON]: "0x0000000000000000000000000000000000001010",
+  [CHAINS_ENUM.BSC]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  [CHAINS_ENUM.OP]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  [CHAINS_ENUM.FTM]: "0x0000000000000000000000000000000000000000",
+  [CHAINS_ENUM.AVAX]: "0x0000000000000000000000000000000000000000",
+  [CHAINS_ENUM.ARBITRUM]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  [CHAINS_ENUM.CRO]: "0x0000000000000000000000000000000000000000",
+  [CHAINS_ENUM.GNOSIS]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  [CHAINS_ENUM.AURORA]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  [CHAINS_ENUM.BOBA]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  [CHAINS_ENUM.KAVA]: "0x0000000000000000000000000000000000000000",
+  [CHAINS_ENUM.METIS]: "0x0000000000000000000000000000000000000000",
+} as Record<CHAINS_ENUM, string>;
 
 const chainCode = {
   [CHAINS_ENUM.ETH]: "eth",
@@ -37,13 +51,26 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.OP,
   CHAINS_ENUM.FTM,
   CHAINS_ENUM.AVAX,
+  /**
+   * 接口耗时久
+   */
   CHAINS_ENUM.ARBITRUM,
   CHAINS_ENUM.CRO,
-  CHAINS_ENUM.GNOSIS,
+  /**
+   * approve and swap 预执行失败
+   */
   CHAINS_ENUM.AURORA,
-  CHAINS_ENUM.BOBA,
-  CHAINS_ENUM.KAVA,
-  CHAINS_ENUM.METIS,
+
+  /**
+   * 接口返回 swap error
+   */
+  // CHAINS_ENUM.METIS,
+  /**
+   * 未开源
+   */
+  // CHAINS_ENUM.GNOSIS,
+  // CHAINS_ENUM.BOBA,
+  // CHAINS_ENUM.KAVA,
 ];
 
 interface SwapParams {
@@ -74,7 +101,7 @@ interface SwapResponse extends Tx {
 
 export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
   if (!SUPPORT_CHAINS.includes(options.chain)) {
-    throw new Error(`${CHAINS[options.chain]} is not support on 1inch`);
+    throw new Error(`${CHAINS[options.chain]} is not support on OpenOcean`);
   }
   const swapChainCode = chainCode[options.chain as keyof typeof chainCode];
   const baseURL = `https://open-api.openocean.finance/v3/${swapChainCode}`;
@@ -103,6 +130,8 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     return response;
   });
 
+  const NATIVE_TOKEN = NATIVE_TOKENS[options.chain];
+
   const params: SwapParams = {
     inTokenAddress:
       options.fromToken === CHAINS[options.chain].nativeTokenAddress
@@ -112,7 +141,9 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
       options.toToken === CHAINS[options.chain].nativeTokenAddress
         ? NATIVE_TOKEN
         : options.toToken,
-    amount: new BigNumber(options.amount).div(10 ** options.fromTokenDecimals).toFixed(),
+    amount: new BigNumber(options.amount)
+      .div(10 ** options.fromTokenDecimals)
+      .toFixed(),
     slippage: options.slippage,
     gasPrice: options.gasPrice || 1,
     account: options.userAddress,
@@ -137,7 +168,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     fromToken: isSameAddress(data.inToken.address, NATIVE_TOKEN)
       ? CHAINS[options.chain].nativeTokenAddress
       : data.inToken.address,
-    spender: data.from,
+    spender: data.to,
     fromTokenAmount: data.inAmount,
     toToken: isSameAddress(data.outToken.address, NATIVE_TOKEN)
       ? CHAINS[options.chain].nativeTokenAddress
@@ -169,6 +200,8 @@ export const decodeCalldata = (
 
   if (!srcToken || !dstToken || !dstReceiver || !amount || !minReturnAmount)
     return null;
+
+  const NATIVE_TOKEN = NATIVE_TOKENS[chain.enum];
 
   return {
     fromToken: isSameAddress(srcToken, NATIVE_TOKEN)
