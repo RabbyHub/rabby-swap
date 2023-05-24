@@ -146,7 +146,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     userAddress: options.userAddress,
     slippage: Math.floor(options.slippage * 100),
     priceRoute: priceRoute,
-    partner: 'Rabby',
+    partner: "Rabby",
   };
 
   if (options.feeRate !== null && options.feeRate !== undefined) {
@@ -158,6 +158,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     params: {
       ignoreChecks: true,
       ignoreGasEstimate: true,
+      deadline: Math.floor(Date.now() / 1000) + 60 * 30,
     },
   });
 
@@ -177,7 +178,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     toTokenDecimals: priceRoute.destDecimals,
     spender:
       DEX_SPENDER_WHITELIST[DEX_ENUM.PARASWAP][
-        options.chain as keyof typeof DEX_SPENDER_WHITELIST[DEX_ENUM.PARASWAP]
+        options.chain as keyof (typeof DEX_SPENDER_WHITELIST)[DEX_ENUM.PARASWAP]
       ],
   };
 };
