@@ -128,7 +128,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     userAddress: options.userAddress,
     network: chainId,
     includeContractMethods: "simpleSwap,multiSwap,megaSwap",
-    excludeDEXS: 'ParaSwapPool,ParaSwapLimitOrders',
+    excludeDEXS: "ParaSwapPool,ParaSwapLimitOrders",
     partner: "Rabby",
   });
 
@@ -158,7 +158,6 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     params: {
       ignoreChecks: true,
       ignoreGasEstimate: true,
-      deadline: Math.floor(Date.now() / 1000) + 60 * 30,
     },
   });
 
