@@ -1,6 +1,6 @@
 {
   "name": "@rabby-wallet/rabby-swap",
-  "version": "0.0.16-alpha-1",
+  "version": "0.0.16",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
