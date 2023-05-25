@@ -51,26 +51,26 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.OP,
   CHAINS_ENUM.FTM,
   CHAINS_ENUM.AVAX,
-  /**
-   * 接口耗时久
-   */
   CHAINS_ENUM.ARBITRUM,
+
   CHAINS_ENUM.CRO,
-  /**
-   * approve and swap 预执行失败
-   */
-  CHAINS_ENUM.AURORA,
 
   /**
    * 接口返回 swap error
    */
   // CHAINS_ENUM.METIS,
+
+  /**
+   * pre api v1
+   */
+  // CHAINS_ENUM.AURORA,
+
   /**
    * 未开源
    */
   // CHAINS_ENUM.GNOSIS,
   // CHAINS_ENUM.BOBA,
-  // CHAINS_ENUM.KAVA,
+  // CHAINS_ENUM.KAVA, //pre api v1
 ];
 
 interface SwapParams {
