@@ -157,7 +157,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
   const { data } = await request.get<SwapResponse>("/swap_quote", {
     params,
   });
-  console.log(data, data);
+
   return {
     tx: {
       data: data.data,
