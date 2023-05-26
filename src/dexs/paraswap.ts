@@ -128,7 +128,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     userAddress: options.userAddress,
     network: chainId,
     includeContractMethods: "simpleSwap,multiSwap,megaSwap",
-    excludeDEXS: 'ParaSwapPool,ParaSwapLimitOrders',
+    excludeDEXS: "ParaSwapPool,ParaSwapLimitOrders",
     partner: "Rabby",
   });
 
@@ -146,7 +146,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     userAddress: options.userAddress,
     slippage: Math.floor(options.slippage * 100),
     priceRoute: priceRoute,
-    partner: 'Rabby',
+    partner: "Rabby",
   };
 
   if (options.feeRate !== null && options.feeRate !== undefined) {
@@ -177,7 +177,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     toTokenDecimals: priceRoute.destDecimals,
     spender:
       DEX_SPENDER_WHITELIST[DEX_ENUM.PARASWAP][
-        options.chain as keyof typeof DEX_SPENDER_WHITELIST[DEX_ENUM.PARASWAP]
+        options.chain as keyof (typeof DEX_SPENDER_WHITELIST)[DEX_ENUM.PARASWAP]
       ],
   };
 };
