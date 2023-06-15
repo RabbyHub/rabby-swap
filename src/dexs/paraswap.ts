@@ -98,6 +98,7 @@ interface SwapParams {
   srcAmount: string;
   priceRoute: PriceRoute;
   partner: string;
+  deadline: number;
 }
 
 const getPriceRoute = async (params: PriceParams): Promise<PriceResponse> => {
@@ -128,7 +129,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     userAddress: options.userAddress,
     network: chainId,
     includeContractMethods: "simpleSwap,multiSwap,megaSwap",
-    excludeDEXS: "ParaSwapPool,ParaSwapLimitOrders",
+    excludeDEXS: "ParaSwapPool,ParaSwapLimitOrders,Hashflow",
     partner: "Rabby",
   });
 
@@ -147,6 +148,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     slippage: Math.floor(options.slippage * 100),
     priceRoute: priceRoute,
     partner: "Rabby",
+    deadline: Math.floor(Date.now() / 1000) + 21600,
   };
 
   if (options.feeRate !== null && options.feeRate !== undefined) {
