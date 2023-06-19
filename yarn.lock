@@ -940,10 +940,10 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
-"@debank/common@^0.2.28":
-  version "0.2.36"
-  resolved "https://registry.yarnpkg.com/@debank/common/-/common-0.2.36.tgz#15822790e90a6c173b4f3087418c5b181a9e6f0e"
-  integrity sha512-7Rg19QJ3af6Hp5OFT3Czz1o6K04UwUK7kWPan1WB+gkisUUpFH7h9NMtLaEYrZJI4nWqTH2IGkPNGnk6A+XV9Q==
+"@debank/common@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@debank/common/-/common-0.3.0.tgz#9c67288816d62e3548e0c2193ec4cd73758f5b26"
+  integrity sha512-PWdFuKuqDtGdYALFToDQQCyas3Tgz1tXXlir6UVTVHz2MPi4uK6ZK8UUNrWdU6lncHNvcRsNf3Xamk0Ga9jxeg==
 
 "@ethersproject/abi@^5.6.3", "@ethersproject/abi@^5.7.0":
   version "5.7.0"
