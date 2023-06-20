@@ -12,6 +12,9 @@
     "type": "git",
     "url": "git+https://github.com/RabbyHub/rabby-swap.git"
   },
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "@debank/common": "^0.2.28",
     "@ethersproject/abi": "^5.7.0",
