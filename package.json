@@ -6,15 +6,16 @@
   "scripts": {
     "test": "jest",
     "build": "rimraf dist && tsc",
-    "preversion": "npm run build"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/RabbyHub/rabby-swap.git"
+    "preversion": "npm run build",
+    "prepublishOnly": "npm test && npm run build"
   },
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RabbyHub/rabby-swap.git"
+  },
   "dependencies": {
     "@debank/common": "^0.3.0",
     "@ethersproject/abi": "^5.7.0",
