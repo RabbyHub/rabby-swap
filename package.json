@@ -1,6 +1,6 @@
 {
   "name": "@rabby-wallet/rabby-swap",
-  "version": "0.0.20",
+  "version": "0.0.22",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -17,7 +17,6 @@
     "url": "git+https://github.com/RabbyHub/rabby-swap.git"
   },
   "dependencies": {
-    "@debank/common": "^0.3.0",
     "@ethersproject/abi": "^5.7.0",
     "axios": "^0.27.2",
     "bignumber.js": "^9.1.1",
@@ -37,7 +36,7 @@
     "typescript": "^4.8.3"
   },
   "peerDependencies": {
-    "@debank/common": ">= 0.2.x"
+    "@debank/common": "^0.3.5"
   },
   "author": "vvvvvv1vvvvvv",
   "license": "ISC",
