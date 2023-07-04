@@ -1,10 +1,22 @@
-import { CHAINS_ENUM } from '@debank/common';
-import { DEX_ENUM } from './consts';
-import { getQuote as wrapTokenGetQuote } from './dexs/wrapToken';
-import { getQuote as oneInchGetQuote, decodeCalldata as oneInchDecodeCalldata } from './dexs/1inch';
-import { getQuote as zeroXGetQuote, decodeCalldata as zeroXDecodeCalldata } from './dexs/0xapi';
-import { getQuote as paraSwapGetQuote, decodeCalldata as paraSwapDecodeCalldata } from './dexs/paraswap';
-import { getQuote as openOceanGetQuote, decodeCalldata as openOceanDecodeCalldata } from './dexs/openocean';
+import { CHAINS_ENUM } from "@debank/common";
+import { DEX_ENUM } from "./consts";
+import { getQuote as wrapTokenGetQuote } from "./dexs/wrapToken";
+import {
+  getQuote as oneInchGetQuote,
+  decodeCalldata as oneInchDecodeCalldata,
+} from "./dexs/1inch";
+import {
+  getQuote as zeroXGetQuote,
+  decodeCalldata as zeroXDecodeCalldata,
+} from "./dexs/0xapi";
+import {
+  getQuote as paraSwapGetQuote,
+  decodeCalldata as paraSwapDecodeCalldata,
+} from "./dexs/paraswap";
+import {
+  getQuote as openOceanGetQuote,
+  decodeCalldata as openOceanDecodeCalldata,
+} from "./dexs/openocean";
 
 export interface QuoteParams {
   fromToken: string;
@@ -45,11 +57,11 @@ export interface QuoteResult {
 }
 
 export const getQuote = async (id: DEX_ENUM, params: QuoteParams) => {
-  switch(id) {
+  switch (id) {
     case DEX_ENUM.WRAPTOKEN:
       return await wrapTokenGetQuote(params);
-    // case DEX_ENUM.ONEINCH:
-    //   return await oneInchGetQuote(params);
+    case DEX_ENUM.ONEINCH:
+      return await oneInchGetQuote(params);
     case DEX_ENUM.PARASWAP:
       return await paraSwapGetQuote(params);
     case DEX_ENUM.ZEROXAPI:
@@ -59,7 +71,7 @@ export const getQuote = async (id: DEX_ENUM, params: QuoteParams) => {
     default:
       throw new Error(`${id} is not supported!`);
   }
-}
+};
 
 export interface DecodeCalldataResult {
   fromToken: string;
@@ -69,16 +81,19 @@ export interface DecodeCalldataResult {
   toTokenReceiver: string;
 }
 
-export const decodeCalldata = (id: DEX_ENUM, tx: TxWithChainId): DecodeCalldataResult | null => {
-  switch(id) {
-    // case DEX_ENUM.ONEINCH:
-    //   return oneInchDecodeCalldata(tx);
+export const decodeCalldata = (
+  id: DEX_ENUM,
+  tx: TxWithChainId
+): DecodeCalldataResult | null => {
+  switch (id) {
+    case DEX_ENUM.ONEINCH:
+      return oneInchDecodeCalldata(tx);
     case DEX_ENUM.PARASWAP:
       return paraSwapDecodeCalldata(tx);
     case DEX_ENUM.ZEROXAPI:
       return zeroXDecodeCalldata(tx);
     case DEX_ENUM.OPENOCEAN:
-      return openOceanDecodeCalldata(tx); 
+      return openOceanDecodeCalldata(tx);
     default:
       throw new Error(`${id} is not supported!`);
   }

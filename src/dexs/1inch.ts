@@ -14,7 +14,7 @@ import { OneInchABI } from "../abi";
 const NATIVE_TOKEN = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 
 const request = axios.create({
-  baseURL: "https://api.1inch.io/v5.0",
+  baseURL: "https://api-rabby.1inch.io/v5.0",
 });
 
 request.interceptors.response.use((response) => {
