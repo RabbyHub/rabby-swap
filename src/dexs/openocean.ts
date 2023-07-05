@@ -149,9 +149,12 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     account: options.userAddress,
   };
 
+  if (options.feeAddress) {
+    params.referrer = options.feeAddress;
+  }
+
   if (options.feeRate !== null && options.feeRate !== undefined) {
     params.referrerFee = options.feeRate;
-    params.referrer = options.feeAddress;
   }
 
   const { data } = await request.get<SwapResponse>("/swap_quote", {
