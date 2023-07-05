@@ -109,7 +109,10 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
   });
 
   return {
-    tx: data.tx,
+    tx: {
+      ...data.tx,
+      data: `${data.tx.data}5257` // add specific 4 bytes for identify rabby swap
+    },
     fromToken:
       data.fromToken.address === NATIVE_TOKEN
         ? CHAINS[options.chain].nativeTokenAddress
