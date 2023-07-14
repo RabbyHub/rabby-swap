@@ -1,4 +1,5 @@
 import { CHAINS_ENUM } from "@debank/common";
+import { OpenApiService } from "@rabby-wallet/rabby-api";
 import { DEX_ENUM } from "./consts";
 import { getQuote as wrapTokenGetQuote } from "./dexs/wrapToken";
 import {
@@ -17,6 +18,10 @@ import {
   getQuote as openOceanGetQuote,
   decodeCalldata as openOceanDecodeCalldata,
 } from "./dexs/openocean";
+import {
+  getQuote as uniswapGetQuote,
+  decodeCalldata as uniswapDecodeCalldata,
+} from "./dexs/uniswap";
 
 export interface QuoteParams {
   fromToken: string;
@@ -56,7 +61,11 @@ export interface QuoteResult {
   spender: string;
 }
 
-export const getQuote = async (id: DEX_ENUM, params: QuoteParams) => {
+export const getQuote = async (
+  id: DEX_ENUM,
+  params: QuoteParams,
+  api: OpenApiService
+) => {
   switch (id) {
     case DEX_ENUM.WRAPTOKEN:
       return await wrapTokenGetQuote(params);
@@ -65,9 +74,11 @@ export const getQuote = async (id: DEX_ENUM, params: QuoteParams) => {
     case DEX_ENUM.PARASWAP:
       return await paraSwapGetQuote(params);
     case DEX_ENUM.ZEROXAPI:
-      return await zeroXGetQuote(params);
+      return await zeroXGetQuote(params, api);
     case DEX_ENUM.OPENOCEAN:
       return await openOceanGetQuote(params);
+    case DEX_ENUM.UNISWAP:
+      return await uniswapGetQuote(params, api);
     default:
       throw new Error(`${id} is not supported!`);
   }
@@ -94,6 +105,8 @@ export const decodeCalldata = (
       return zeroXDecodeCalldata(tx);
     case DEX_ENUM.OPENOCEAN:
       return openOceanDecodeCalldata(tx);
+    case DEX_ENUM.UNISWAP:
+      return uniswapDecodeCalldata(tx);
     default:
       throw new Error(`${id} is not supported!`);
   }

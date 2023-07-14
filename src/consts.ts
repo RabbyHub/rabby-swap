@@ -4,6 +4,7 @@ import { SUPPORT_CHAINS as zeroXSupportChains } from "./dexs/0xapi";
 import { SUPPORT_CHAINS as oneInchSupportChains } from "./dexs/1inch";
 import { SUPPORT_CHAINS as paraswapSupportChains } from "./dexs/paraswap";
 import { SUPPORT_CHAINS as openOceanSupportChains } from "./dexs/openocean";
+import { SUPPORT_CHAINS as uniswapSupportChains } from "./dexs/uniswap";
 
 export enum DEX_ENUM {
   ONEINCH = "1inch",
@@ -11,6 +12,7 @@ export enum DEX_ENUM {
   ZEROXAPI = "0xAPI",
   WRAPTOKEN = "WrapToken",
   OPENOCEAN = "OpenOcean",
+  UNISWAP = "Uniswap",
 }
 
 export const WrapTokenAddressMap = {
@@ -31,6 +33,7 @@ export const DEX_SUPPORT_CHAINS = {
   [DEX_ENUM.PARASWAP]: paraswapSupportChains,
   [DEX_ENUM.ZEROXAPI]: zeroXSupportChains,
   [DEX_ENUM.OPENOCEAN]: openOceanSupportChains,
+  [DEX_ENUM.UNISWAP]: uniswapSupportChains,
 };
 
 export const DEX_ROUTER_WHITELIST = {
@@ -80,6 +83,13 @@ export const DEX_ROUTER_WHITELIST = {
     [CHAINS_ENUM.KAVA]: "0x6352a56caadC4F1E25CD6c75970Fa768A3304e64",
     [CHAINS_ENUM.METIS]: "0x6352a56caadC4F1E25CD6c75970Fa768A3304e64",
   },
+  [DEX_ENUM.UNISWAP]: {
+    [CHAINS_ENUM.ETH]: "0xe592427a0aece92de3edee1f18e0157c05861564",
+    [CHAINS_ENUM.POLYGON]: "0xe592427a0aece92de3edee1f18e0157c05861564",
+    [CHAINS_ENUM.BSC]: "0xe592427a0aece92de3edee1f18e0157c05861564",
+    [CHAINS_ENUM.OP]: "0xe592427a0aece92de3edee1f18e0157c05861564",
+    [CHAINS_ENUM.ARBITRUM]: "0xe592427a0aece92de3edee1f18e0157c05861564",
+  },
 };
 
 export const DEX_SPENDER_WHITELIST = {
@@ -128,5 +138,13 @@ export const DEX_SPENDER_WHITELIST = {
     [CHAINS_ENUM.BOBA]: "0x6352a56caadC4F1E25CD6c75970Fa768A3304e64",
     [CHAINS_ENUM.KAVA]: "0x6352a56caadC4F1E25CD6c75970Fa768A3304e64",
     [CHAINS_ENUM.METIS]: "0x6352a56caadC4F1E25CD6c75970Fa768A3304e64",
+  },
+
+  [DEX_ENUM.UNISWAP]: {
+    [CHAINS_ENUM.ETH]: "0xe592427a0aece92de3edee1f18e0157c05861564",
+    [CHAINS_ENUM.POLYGON]: "0xe592427a0aece92de3edee1f18e0157c05861564",
+    [CHAINS_ENUM.BSC]: "0xe592427a0aece92de3edee1f18e0157c05861564",
+    [CHAINS_ENUM.OP]: "0xe592427a0aece92de3edee1f18e0157c05861564",
+    [CHAINS_ENUM.ARBITRUM]: "0xe592427a0aece92de3edee1f18e0157c05861564",
   },
 };
