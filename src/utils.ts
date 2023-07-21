@@ -35,10 +35,15 @@ export const generateGetQuote =
       slippage: options.slippage / 100,
     } as any);
 
+    const isNativeToken = isSameAddress(
+      data.pay_token.id,
+      CHAINS[options.chain].nativeTokenAddress
+    );
+
     return {
       tx: {
         data: data.dex_swap_calldata,
-        value: options.amount,
+        value: isNativeToken ? options.amount : "0",
         to: data.dex_swap_to,
         from: options.userAddress,
       },
