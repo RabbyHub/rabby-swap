@@ -1,6 +1,6 @@
 import abiCoder from "web3-eth-abi";
 import { CHAINS_ENUM, CHAINS } from "@debank/common";
-import { WrapTokenAddressMap } from "../consts";
+import { WrapTokenAddressMap } from "../list";
 import { QuoteParams, Tx, QuoteResult } from "../quote";
 import { isSameAddress } from "../utils";
 
