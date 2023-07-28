@@ -4,6 +4,7 @@ import { Interface } from "@ethersproject/abi";
 import { TxWithChainId, DecodeCalldataResult } from "../quote";
 import { generateGetQuote } from "../utils";
 import { UniswapABI } from "../abi";
+import { DEX_ENUM } from "../consts";
 
 export const SUPPORT_CHAINS = [
   CHAINS_ENUM.ETH,
@@ -15,7 +16,7 @@ export const SUPPORT_CHAINS = [
 export const getQuote = generateGetQuote({
   SUPPORT_CHAINS,
   id: "uniswap3",
-  dex: "Uniswap",
+  dex: DEX_ENUM.UNISWAP,
 });
 
 export const decodeCalldata = (

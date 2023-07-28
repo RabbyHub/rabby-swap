@@ -6,7 +6,7 @@ import { SUPPORT_CHAINS as paraswapSupportChains } from "./dexs/paraswap";
 import { SUPPORT_CHAINS as openOceanSupportChains } from "./dexs/openocean";
 import { SUPPORT_CHAINS as uniswapSupportChains } from "./dexs/uniswap";
 
-export enum DEX_ENUM {
+export const enum DEX_ENUM {
   ONEINCH = "1inch",
   PARASWAP = "ParaSwap",
   ZEROXAPI = "0xAPI",

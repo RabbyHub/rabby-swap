@@ -1,40 +1,14 @@
-import axios from "axios";
 import { CHAINS_ENUM, CHAINS } from "@debank/common";
 import { Interface } from "@ethersproject/abi";
 import {
-  QuoteParams,
-  Tx,
-  QuoteResult,
   TxWithChainId,
   DecodeCalldataResult,
 } from "../quote";
-import { isSameAddress } from "../utils";
+import { generateGetQuote, isSameAddress } from "../utils";
 import { OneInchABI } from "../abi";
+import { DEX_ENUM } from "../consts";
 
 const NATIVE_TOKEN = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
-
-const request = axios.create({
-  baseURL: "https://api-rabby.1inch.io/v5.0",
-});
-
-request.interceptors.response.use((response) => {
-  const code = response.data?.statusCode;
-  const msg = response.data?.description || response.data?.error;
-
-  if (code && code !== 200) {
-    if (msg) {
-      let err;
-      try {
-        err = new Error(JSON.parse(msg));
-      } catch (e) {
-        err = new Error(msg);
-      }
-      throw err;
-    }
-    throw new Error(response.data);
-  }
-  return response;
-});
 
 export const SUPPORT_CHAINS = [
   CHAINS_ENUM.ETH,
@@ -48,86 +22,11 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.GNOSIS,
 ];
 
-interface SwapParams {
-  fromTokenAddress: string;
-  toTokenAddress: string;
-  amount: string;
-  fromAddress: string;
-  slippage: number;
-  disableEstimate: boolean;
-  fee?: number;
-  referrerAddress?: string;
-}
-
-type IToken = {
-  symbol: string;
-  name: string;
-  decimals: number;
-  address: string;
-  logoURI: string;
-  tags: string[];
-  eip2612?: boolean;
-};
-
-interface SwapResponse {
-  fromToken: IToken;
-  toToken: IToken;
-  toTokenAmount: string;
-  fromTokenAmount: string;
-  tx: Tx;
-}
-
-export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
-  const chainId = CHAINS[options.chain].id;
-
-  if (!SUPPORT_CHAINS.includes(options.chain)) {
-    throw new Error(`${CHAINS[options.chain]} is not support on 1inch`);
-  }
-
-  const params: SwapParams = {
-    fromTokenAddress:
-      options.fromToken === CHAINS[options.chain].nativeTokenAddress
-        ? NATIVE_TOKEN
-        : options.fromToken,
-    toTokenAddress:
-      options.toToken === CHAINS[options.chain].nativeTokenAddress
-        ? NATIVE_TOKEN
-        : options.toToken,
-    amount: options.amount,
-    fromAddress: options.userAddress,
-    slippage: options.slippage,
-    disableEstimate: true,
-  };
-
-  if (options.feeRate !== null && options.feeRate !== undefined) {
-    params.fee = options.feeRate;
-    params.referrerAddress = options.feeAddress;
-  }
-
-  const { data } = await request.get<SwapResponse>(`/${chainId}/swap`, {
-    params,
-  });
-
-  return {
-    tx: {
-      ...data.tx,
-      data: `${data.tx.data}5257` // add specific 4 bytes for identify rabby swap
-    },
-    fromToken:
-      data.fromToken.address === NATIVE_TOKEN
-        ? CHAINS[options.chain].nativeTokenAddress
-        : data.fromToken.address,
-    fromTokenAmount: data.fromTokenAmount,
-    fromTokenDecimals: data.fromToken.decimals,
-    toToken:
-      data.toToken.address === NATIVE_TOKEN
-        ? CHAINS[options.chain].nativeTokenAddress
-        : data.toToken.address,
-    toTokenAmount: data.toTokenAmount,
-    toTokenDecimals: data.toToken.decimals,
-    spender: data.tx.to,
-  };
-};
+export const getQuote = generateGetQuote({
+  SUPPORT_CHAINS,
+  id: "1inch",
+  dex: DEX_ENUM.ONEINCH,
+});
 
 export const decodeCalldata = (
   tx: TxWithChainId

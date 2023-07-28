@@ -70,13 +70,13 @@ export const getQuote = async (
     case DEX_ENUM.WRAPTOKEN:
       return await wrapTokenGetQuote(params);
     case DEX_ENUM.ONEINCH:
-      return await oneInchGetQuote(params);
+      return await oneInchGetQuote(params,api);
     case DEX_ENUM.PARASWAP:
-      return await paraSwapGetQuote(params);
+      return await paraSwapGetQuote(params,api);
     case DEX_ENUM.ZEROXAPI:
       return await zeroXGetQuote(params, api);
     case DEX_ENUM.OPENOCEAN:
-      return await openOceanGetQuote(params);
+      return await openOceanGetQuote(params,api);
     case DEX_ENUM.UNISWAP:
       return await uniswapGetQuote(params, api);
     default:
