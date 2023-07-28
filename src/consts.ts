@@ -1,4 +1,4 @@
-export const enum DEX_ENUM {
+export enum DEX_ENUM {
     ONEINCH = "1inch",
     PARASWAP = "ParaSwap",
     ZEROXAPI = "0xAPI",
