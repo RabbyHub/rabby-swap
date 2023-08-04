@@ -3,6 +3,7 @@ import { CHAINS_ENUM, CHAINS } from "@debank/common";
 import { TxWithChainId, DecodeCalldataResult } from "../quote";
 import { generateGetQuote, isSameAddress } from "../utils";
 import { ZeroXABI } from "../abi";
+import { DEX_ENUM } from "../consts";
 
 const NATIVE_TOKEN = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
 
@@ -20,7 +21,7 @@ export const SUPPORT_CHAINS = [
 export const getQuote = generateGetQuote({
   SUPPORT_CHAINS,
   id: "matcha",
-  dex: "0x",
+  dex: DEX_ENUM.ZEROXAPI,
 });
 
 export const decodeCalldata = (

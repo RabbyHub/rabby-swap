@@ -1,6 +1,8 @@
 import { OpenApiService } from "@rabby-wallet/rabby-api";
 import { CHAINS, CHAINS_ENUM } from "@debank/common";
 import { QuoteParams, QuoteResult } from "./quote";
+import { DEX_ENUM } from "./consts";
+import { DEX_SPENDER_WHITELIST } from "./list";
 
 export const isSameAddress = (addr1: string, addr2: string) => {
   if (typeof addr1 !== "string" || typeof addr2 !== "string") return false;
@@ -14,8 +16,8 @@ export const generateGetQuote =
     dex,
   }: {
     SUPPORT_CHAINS: CHAINS_ENUM[];
-    id: string;
-    dex: string;
+    id: "uniswap3" | "matcha" | "openocean" | "1inch" | "paraswap";
+    dex: DEX_ENUM;
   }) =>
   async (options: QuoteParams, api: OpenApiService): Promise<QuoteResult> => {
     if (!SUPPORT_CHAINS.includes(options.chain)) {
@@ -53,6 +55,11 @@ export const generateGetQuote =
       toToken: data.receive_token.id,
       toTokenAmount: data.receive_token_raw_amount + "",
       toTokenDecimals: data.receive_token.decimals,
-      spender: data.dex_swap_to,
+      spender:
+        dex === DEX_ENUM.PARASWAP
+          ? DEX_SPENDER_WHITELIST[DEX_ENUM.PARASWAP][
+              options.chain as keyof (typeof DEX_SPENDER_WHITELIST)[DEX_ENUM.PARASWAP]
+            ]
+          : data.dex_swap_to,
     };
   };
