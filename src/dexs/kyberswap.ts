@@ -37,7 +37,6 @@ export const decodeCalldata = (
   if (!chain) return null;
   const contractInterface = new Interface(KyberswapABI);
   const result = contractInterface.parseTransaction({ data: tx.data });
-  console.log("result.name", result.name, result);
 
   let desc;
 
@@ -57,17 +56,6 @@ export const decodeCalldata = (
     return null;
   }
 
-  console.log("result", {
-    fromToken: isSameAddress(srcToken, NATIVE_TOKEN)
-      ? chain.nativeTokenAddress
-      : srcToken,
-    fromTokenAmount: amount.toString(),
-    toToken: isSameAddress(dstToken, NATIVE_TOKEN)
-      ? chain.nativeTokenAddress
-      : dstToken,
-    minReceiveToTokenAmount: minReturnAmount.toString(),
-    toTokenReceiver: tx.from,
-  });
 
   return {
     fromToken: isSameAddress(srcToken, NATIVE_TOKEN)
