@@ -15,6 +15,11 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.KLAY,
   CHAINS_ENUM.GNOSIS,
   CHAINS_ENUM.CELO,
+  CHAINS_ENUM.CRO,
+  CHAINS_ENUM.AURORA,
+  CHAINS_ENUM.LINEA,
+  CHAINS_ENUM.BTT,
+  CHAINS_ENUM.ROSE,
 ];
 
 export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
@@ -23,15 +28,13 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
   if (!SUPPORT_CHAINS.includes(options.chain)) {
     throw new Error(`${CHAINS[options.chain]} is not support on 1inch`);
   }
-  const wrapTokenAddress = WrapTokenAddressMap[options.chain as keyof typeof WrapTokenAddressMap];
+  const wrapTokenAddress =
+    WrapTokenAddressMap[options.chain as keyof typeof WrapTokenAddressMap];
   let calldata = "";
   let value = "0";
   if (
     options.fromToken === chain.nativeTokenAddress &&
-    isSameAddress(
-      options.toToken,
-      wrapTokenAddress
-    )
+    isSameAddress(options.toToken, wrapTokenAddress)
   ) {
     calldata = abiCoder.encodeFunctionCall(
       {
@@ -47,15 +50,18 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     );
     value = options.amount;
   } else {
-    calldata = abiCoder.encodeFunctionCall({
-      constant: false,
-      inputs: [{ name: "wad", type: "uint256" }],
-      name: "withdraw",
-      outputs: [],
-      payable: false,
-      stateMutability: "nonpayable",
-      type: "function",
-    }, [options.amount]);
+    calldata = abiCoder.encodeFunctionCall(
+      {
+        constant: false,
+        inputs: [{ name: "wad", type: "uint256" }],
+        name: "withdraw",
+        outputs: [],
+        payable: false,
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+      [options.amount]
+    );
   }
 
   return {
@@ -70,5 +76,5 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
     toToken: options.toToken,
     toTokenAmount: options.amount,
     spender: wrapTokenAddress,
-  }
+  };
 };
