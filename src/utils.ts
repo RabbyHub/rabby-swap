@@ -16,7 +16,13 @@ export const generateGetQuote =
     dex,
   }: {
     SUPPORT_CHAINS: CHAINS_ENUM[];
-    id: "uniswap3" | "matcha" | "openocean" | "1inch" | "paraswap";
+    id:
+      | "uniswap3"
+      | "matcha"
+      | "openocean"
+      | "1inch"
+      | "paraswap"
+      | "kyberswap";
     dex: DEX_ENUM;
   }) =>
   async (options: QuoteParams, api: OpenApiService): Promise<QuoteResult> => {

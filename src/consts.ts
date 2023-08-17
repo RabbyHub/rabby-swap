@@ -5,4 +5,5 @@ export enum DEX_ENUM {
     WRAPTOKEN = "WrapToken",
     OPENOCEAN = "OpenOcean",
     UNISWAP = "Uniswap",
+    KYBERSWAP="Kyberswap"
   }
