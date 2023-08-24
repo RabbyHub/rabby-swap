@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@babel/preset-env": "^7.19.1",
-    "@rabby-wallet/rabby-api": "^0.6.13",
+    "@rabby-wallet/rabby-api": "workspace:^",
     "@types/jest": "^29.0.3",
     "@types/node": "^18.7.18",
     "axios-mock-adapter": "^1.21.2",
@@ -38,7 +38,7 @@
   },
   "peerDependencies": {
     "@debank/common": "^0.3.21",
-    "@rabby-wallet/rabby-api": "^0.6.13"
+    "@rabby-wallet/rabby-api": "workspace:^"
   },
   "author": "vvvvvv1vvvvvv",
   "license": "ISC",
