@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "jest",
+    "dev": "tsc -w",
     "build": "rimraf dist && tsc",
     "preversion": "npm run build",
     "prepublishOnly": "npm test && npm run build"
