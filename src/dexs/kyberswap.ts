@@ -21,6 +21,7 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.AURORA,
   CHAINS_ENUM.LINEA,
   CHAINS_ENUM.BTT,
+  CHAINS_ENUM.BASE,
   // No prev2 support
   // CHAINS_ENUM.ROSE,
 ];
@@ -56,7 +57,6 @@ export const decodeCalldata = (
   if (!srcToken || !amount || !dstReceiver || !dstToken || !minReturnAmount) {
     return null;
   }
-
 
   return {
     fromToken: isSameAddress(srcToken, NATIVE_TOKEN)
