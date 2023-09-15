@@ -16,6 +16,7 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.AVAX,
   CHAINS_ENUM.ARBITRUM,
   CHAINS_ENUM.CELO,
+  CHAINS_ENUM.BASE,
 ];
 
 export const getQuote = generateGetQuote({
@@ -35,8 +36,12 @@ export const decodeCalldata = (
     return null;
   }
 
-  const [inputToken, outputToken, inputTokenAmount, minOutputTokenAmount] =
-    result.args;
+  const [
+    inputToken,
+    outputToken,
+    inputTokenAmount,
+    minOutputTokenAmount,
+  ] = result.args;
 
   if (!inputToken || !outputToken || !inputTokenAmount || !minOutputTokenAmount)
     return null;

@@ -1,9 +1,6 @@
 import { Interface } from "@ethersproject/abi";
 import { CHAINS_ENUM, CHAINS } from "@debank/common";
-import {
-  TxWithChainId,
-  DecodeCalldataResult,
-} from "../quote";
+import { TxWithChainId, DecodeCalldataResult } from "../quote";
 import { generateGetQuote, isSameAddress } from "../utils";
 import { OpenOceanABI } from "../abi";
 import { DEX_ENUM } from "../consts";
@@ -22,6 +19,7 @@ const NATIVE_TOKENS = {
   [CHAINS_ENUM.BOBA]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
   [CHAINS_ENUM.KAVA]: "0x0000000000000000000000000000000000000000",
   [CHAINS_ENUM.METIS]: "0x0000000000000000000000000000000000000000",
+  [CHAINS_ENUM.BASE]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
 } as Record<CHAINS_ENUM, string>;
 
 export const SUPPORT_CHAINS = [
@@ -34,6 +32,7 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.ARBITRUM,
 
   CHAINS_ENUM.CRO,
+  CHAINS_ENUM.BASE,
 
   /**
    * 接口返回 swap error
