@@ -1,9 +1,6 @@
 import { CHAINS_ENUM, CHAINS } from "@debank/common";
 import { Interface } from "@ethersproject/abi";
-import {
-  TxWithChainId,
-  DecodeCalldataResult,
-} from "../quote";
+import { TxWithChainId, DecodeCalldataResult } from "../quote";
 import { generateGetQuote, isSameAddress } from "../utils";
 import { OneInchABI } from "../abi";
 import { DEX_ENUM } from "../consts";
@@ -20,6 +17,7 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.ARBITRUM,
   CHAINS_ENUM.KLAY,
   CHAINS_ENUM.GNOSIS,
+  CHAINS_ENUM.BASE,
 ];
 
 export const getQuote = generateGetQuote({
