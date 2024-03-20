@@ -18,11 +18,12 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.KLAY,
   CHAINS_ENUM.GNOSIS,
   CHAINS_ENUM.BASE,
+  CHAINS_ENUM.ERA,
 ];
 
 export const getQuote = generateGetQuote({
   SUPPORT_CHAINS,
-  id: "1inch",
+  id: "1inch_v6",
   dex: DEX_ENUM.ONEINCH,
 });
 
