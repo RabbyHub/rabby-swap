@@ -20,7 +20,7 @@ export const generateGetQuote =
       | "uniswap3"
       | "matcha"
       | "openocean"
-      | "1inch"
+      | "1inch_v6"
       | "paraswap"
       | "kyberswap";
     dex: DEX_ENUM;
