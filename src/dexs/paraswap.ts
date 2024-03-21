@@ -18,7 +18,7 @@ export const SUPPORT_CHAINS = [
 
 export const getQuote = generateGetQuote({
   SUPPORT_CHAINS,
-  id: "paraswap_v6",
+  id: "paraswap",
   dex: DEX_ENUM.PARASWAP,
 });
 

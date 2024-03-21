@@ -21,7 +21,7 @@ export const generateGetQuote =
       | "matcha"
       | "openocean"
       | "1inch_v6"
-      | "paraswap_v6"
+      | "paraswap"
       | "kyberswap";
     dex: DEX_ENUM;
   }) =>
