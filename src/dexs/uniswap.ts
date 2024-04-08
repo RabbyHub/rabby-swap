@@ -6,11 +6,14 @@ import { generateGetQuote } from "../utils";
 import { UniswapABI } from "../abi";
 import { DEX_ENUM } from "../consts";
 
+/**
+ * @deprecated
+ */
 export const SUPPORT_CHAINS = [
-  CHAINS_ENUM.ETH,
-  CHAINS_ENUM.POLYGON,
-  CHAINS_ENUM.OP,
-  CHAINS_ENUM.ARBITRUM,
+  // CHAINS_ENUM.ETH,
+  // CHAINS_ENUM.POLYGON,
+  // CHAINS_ENUM.OP,
+  // CHAINS_ENUM.ARBITRUM,
 ];
 
 export const getQuote = generateGetQuote({

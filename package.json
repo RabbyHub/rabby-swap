@@ -1,6 +1,6 @@
 {
   "name": "@rabby-wallet/rabby-swap",
-  "version": "0.0.32",
+  "version": "0.0.33-beta-2",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -23,6 +23,7 @@
     "web3-eth-abi": "^1.8.1"
   },
   "devDependencies": {
+    "@debank/common": "^0.3.21",
     "@babel/preset-env": "^7.19.1",
     "@rabby-wallet/rabby-api": "^0.6.13",
     "@types/jest": "^29.0.3",

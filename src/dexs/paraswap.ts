@@ -14,6 +14,8 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.OP,
   CHAINS_ENUM.ARBITRUM,
   CHAINS_ENUM.FTM,
+  CHAINS_ENUM.BASE,
+  // CHAINS_ENUM.PZE,
 ];
 
 export const getQuote = generateGetQuote({
