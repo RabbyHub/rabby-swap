@@ -19,6 +19,7 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.GNOSIS,
   CHAINS_ENUM.BASE,
   CHAINS_ENUM.ERA,
+  CHAINS_ENUM.AURORA,
 ];
 
 export const getQuote = generateGetQuote({
