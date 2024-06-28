@@ -30,7 +30,7 @@ export const generateGetQuote =
       throw new Error(`${CHAINS[options.chain]} is not support on ${dex}`);
     }
 
-    const data = await api.getSwapQuote({
+    const params: Record<string, any> = {
       id: options.userAddress,
       chain_id: CHAINS[options.chain].serverId,
       dex_id:
@@ -41,7 +41,12 @@ export const generateGetQuote =
       pay_token_raw_amount: options.amount,
       receive_token_id: options.toToken,
       slippage: options.slippage / 100,
-    } as any);
+    };
+    if (options.fee) {
+      params.fee = true;
+    }
+
+    const data = await api.getSwapQuote(params as any);
 
     const isNativeToken = isSameAddress(
       data.pay_token.id,
