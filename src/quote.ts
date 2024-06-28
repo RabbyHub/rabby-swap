@@ -39,6 +39,7 @@ export interface QuoteParams {
   feeAddress?: string;
   gasPrice?: number;
   chain: CHAINS_ENUM;
+  fee?: boolean;
 }
 
 export interface Tx {
