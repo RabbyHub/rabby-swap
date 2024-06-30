@@ -1,3 +1,4 @@
+// Importing constants and functions from related modules
 import {
   WrapTokenAddressMap,
   DEX_SUPPORT_CHAINS,
@@ -7,6 +8,7 @@ import {
 import { getQuote } from "./quote";
 import { DEX_ENUM } from "./consts";
 
+// Exporting constants and functions for use in other modules
 export {
   WrapTokenAddressMap,
   DEX_ENUM,
