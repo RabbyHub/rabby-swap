@@ -3,6 +3,8 @@ import { SUPPORT_CHAINS as wrapTokenSupportChains } from "./dexs/wrapToken";
 import { SUPPORT_CHAINS as zeroXSupportChains } from "./dexs/0xapi";
 import { SUPPORT_CHAINS as oneInchSupportChains } from "./dexs/1inch";
 import { SUPPORT_CHAINS as paraswapSupportChains } from "./dexs/paraswap";
+import { SUPPORT_CHAINS as kyberswapSupportChains } from "./dexs/kyberswap";
+import { SUPPORT_CHAINS as openOceanSupportChains } from "./dexs/openocean";
 
 import { DEX_ENUM } from "./consts";
 
@@ -31,9 +33,8 @@ export const DEX_SUPPORT_CHAINS = {
   [DEX_ENUM.ONEINCH]: oneInchSupportChains,
   [DEX_ENUM.PARASWAP]: paraswapSupportChains,
   [DEX_ENUM.ZEROXAPI]: zeroXSupportChains,
-  // [DEX_ENUM.OPENOCEAN]: openOceanSupportChains,
-  // [DEX_ENUM.UNISWAP]: uniswapSupportChains,
-  // [DEX_ENUM.KYBERSWAP]: kyberswapSupportChains,
+  [DEX_ENUM.OPENOCEAN]: openOceanSupportChains,
+  [DEX_ENUM.KYBERSWAP]: kyberswapSupportChains,
 };
 
 export const DEX_ROUTER_WHITELIST = {

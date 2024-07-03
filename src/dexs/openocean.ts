@@ -22,19 +22,16 @@ const NATIVE_TOKENS = {
   [CHAINS_ENUM.BASE]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
 } as Record<CHAINS_ENUM, string>;
 
-/**
- * @deprecated
- */
 export const SUPPORT_CHAINS = [
   // CHAINS_ENUM.ETH,
-  // CHAINS_ENUM.POLYGON,
-  // CHAINS_ENUM.BSC,
-  // CHAINS_ENUM.OP,
-  // CHAINS_ENUM.FTM,
-  // CHAINS_ENUM.AVAX,
-  // CHAINS_ENUM.ARBITRUM,
-  // CHAINS_ENUM.CRO,
-  // CHAINS_ENUM.BASE,
+  CHAINS_ENUM.POLYGON,
+  CHAINS_ENUM.BSC,
+  CHAINS_ENUM.OP,
+  CHAINS_ENUM.FTM,
+  CHAINS_ENUM.AVAX,
+  CHAINS_ENUM.ARBITRUM,
+  CHAINS_ENUM.CRO,
+  CHAINS_ENUM.BASE,
   /**
    * 接口返回 swap error
    */

@@ -46,5 +46,6 @@
   "bugs": {
     "url": "https://github.com/RabbyHub/rabby-swap/issues"
   },
-  "homepage": "https://github.com/RabbyHub/rabby-swap#readme"
+  "homepage": "https://github.com/RabbyHub/rabby-swap#readme",
+  "packageManager": "yarn@1.22.22"
 }
