@@ -11,7 +11,7 @@ const NATIVE_TOKEN = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 // eth op arb bsc avax ftm cro matic aurora linea btt oas
 
 export const SUPPORT_CHAINS = [
-  // CHAINS_ENUM.ETH,
+  CHAINS_ENUM.ETH,
   CHAINS_ENUM.OP,
   CHAINS_ENUM.ARBITRUM,
   CHAINS_ENUM.BSC,
