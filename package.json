@@ -1,6 +1,6 @@
 {
   "name": "@rabby-wallet/rabby-swap",
-  "version": "0.0.37",
+  "version": "0.0.38",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -46,5 +46,6 @@
   "bugs": {
     "url": "https://github.com/RabbyHub/rabby-swap/issues"
   },
-  "homepage": "https://github.com/RabbyHub/rabby-swap#readme"
+  "homepage": "https://github.com/RabbyHub/rabby-swap#readme",
+  "packageManager": "yarn@1.22.22"
 }

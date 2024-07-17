@@ -9,22 +9,20 @@ import { DEX_ENUM } from "../consts";
 const NATIVE_TOKEN = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 
 // eth op arb bsc avax ftm cro matic aurora linea btt oas
-/**
- * @deprecated
- */
+
 export const SUPPORT_CHAINS = [
-  // CHAINS_ENUM.ETH,
-  // CHAINS_ENUM.OP,
-  // CHAINS_ENUM.ARBITRUM,
-  // CHAINS_ENUM.BSC,
-  // CHAINS_ENUM.AVAX,
-  // CHAINS_ENUM.FTM,
-  // CHAINS_ENUM.CRO,
-  // CHAINS_ENUM.POLYGON,
-  // CHAINS_ENUM.AURORA,
-  // CHAINS_ENUM.LINEA,
+  CHAINS_ENUM.ETH,
+  CHAINS_ENUM.OP,
+  CHAINS_ENUM.ARBITRUM,
+  CHAINS_ENUM.BSC,
+  CHAINS_ENUM.AVAX,
+  CHAINS_ENUM.FTM,
+  CHAINS_ENUM.CRO,
+  CHAINS_ENUM.POLYGON,
+  CHAINS_ENUM.AURORA,
+  CHAINS_ENUM.LINEA,
   // CHAINS_ENUM.BTT,
-  // CHAINS_ENUM.BASE,
+  CHAINS_ENUM.BASE,
   // No prev2 support
   // CHAINS_ENUM.ROSE,
 ];
