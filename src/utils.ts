@@ -54,6 +54,7 @@ export const generateGetQuote =
     );
 
     return {
+      dexFeeDesc: data.dex_fee_desc,
       tx: {
         data: data.dex_swap_calldata,
         value: isNativeToken ? options.amount : "0",

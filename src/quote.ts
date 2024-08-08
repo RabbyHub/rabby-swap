@@ -65,6 +65,7 @@ export interface QuoteResult {
   toTokenDecimals?: number;
   toTokenAmount: string;
   spender: string;
+  dexFeeDesc?: string | null;
 }
 
 export const getQuote = async (
