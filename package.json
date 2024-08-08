@@ -1,6 +1,6 @@
 {
   "name": "@rabby-wallet/rabby-swap",
-  "version": "0.0.38",
+  "version": "0.0.39",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -25,7 +25,7 @@
   "devDependencies": {
     "@debank/common": "^0.3.21",
     "@babel/preset-env": "^7.19.1",
-    "@rabby-wallet/rabby-api": "^0.6.13",
+    "@rabby-wallet/rabby-api": "^0.7.25",
     "@types/jest": "^29.0.3",
     "@types/node": "^18.7.18",
     "axios-mock-adapter": "^1.21.2",
@@ -39,7 +39,7 @@
   },
   "peerDependencies": {
     "@debank/common": ">=0.3.21",
-    "@rabby-wallet/rabby-api": ">=0.6.13"
+    "@rabby-wallet/rabby-api": ">=0.7.25"
   },
   "author": "vvvvvv1vvvvvv",
   "license": "ISC",
