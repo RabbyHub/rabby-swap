@@ -28,6 +28,11 @@ import {
   decodeCalldata as kyberswapDecodeCalldata,
 } from "./dexs/kyberswap";
 
+import {
+  getQuote as paraSwapV6GetQuote,
+  decodeCalldata as paraSwapV6DecodeCalldata,
+} from "./dexs/paraswap_v6";
+
 export interface QuoteParams {
   fromToken: string;
   fromTokenDecimals: number;
@@ -88,6 +93,8 @@ export const getQuote = async (
       return await uniswapGetQuote(params, api);
     case DEX_ENUM.KYBERSWAP:
       return await kyberswapGetQuote(params, api);
+    case DEX_ENUM.PARASWAPV6:
+      return await paraSwapV6GetQuote(params, api);
     default:
       throw new Error(`${id} is not supported!`);
   }
@@ -118,6 +125,8 @@ export const decodeCalldata = (
       return uniswapDecodeCalldata(tx);
     case DEX_ENUM.KYBERSWAP:
       return kyberswapDecodeCalldata(tx);
+    case DEX_ENUM.PARASWAPV6:
+      return paraSwapV6DecodeCalldata(tx);
     default:
       throw new Error(`${id} is not supported!`);
   }

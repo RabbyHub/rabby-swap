@@ -21,8 +21,11 @@ export const SUPPORT_CHAINS = [
   // CHAINS_ENUM.BTT,
   CHAINS_ENUM.BASE,
   CHAINS_ENUM.ERA,
-  // CHAINS_ENUM.PZE,
+  CHAINS_ENUM.PZE,
   // CHAINS_ENUM.ROSE,
+  CHAINS.SCRL,
+  CHAINS.MODE,
+  CHAINS.MANTLE,
 ];
 
 export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
