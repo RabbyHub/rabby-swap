@@ -33,6 +33,11 @@ import {
   decodeCalldata as paraSwapV6DecodeCalldata,
 } from "./dexs/paraswap_v6";
 
+import {
+  getQuote as odosGetQuote,
+  decodeCalldata as odosDecodeCalldata,
+} from "./dexs/odos";
+
 export interface QuoteParams {
   fromToken: string;
   fromTokenDecimals: number;
@@ -95,6 +100,8 @@ export const getQuote = async (
       return await kyberswapGetQuote(params, api);
     case DEX_ENUM.PARASWAPV6:
       return await paraSwapV6GetQuote(params, api);
+    case DEX_ENUM.ODOS:
+      return await odosGetQuote(params, api);
     default:
       throw new Error(`${id} is not supported!`);
   }
@@ -127,6 +134,8 @@ export const decodeCalldata = (
       return kyberswapDecodeCalldata(tx);
     case DEX_ENUM.PARASWAPV6:
       return paraSwapV6DecodeCalldata(tx);
+    case DEX_ENUM.ODOS:
+      return odosDecodeCalldata(tx);
     default:
       throw new Error(`${id} is not supported!`);
   }
