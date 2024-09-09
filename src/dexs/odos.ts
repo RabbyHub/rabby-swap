@@ -16,7 +16,7 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.AVAX,
   CHAINS_ENUM.LINEA,
   CHAINS_ENUM.SCRL,
-  // CHAINS_ENUM.MODE,
+  CHAINS_ENUM.MODE,
 ];
 
 export const getQuote = generateGetQuote({
