@@ -23,6 +23,9 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.ERA,
   // CHAINS_ENUM.PZE,
   // CHAINS_ENUM.ROSE,
+  CHAINS_ENUM.SCRL,
+  CHAINS_ENUM.MODE,
+  CHAINS_ENUM.MANTLE,
 ];
 
 export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {

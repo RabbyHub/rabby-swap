@@ -22,7 +22,9 @@ export const generateGetQuote =
       | "openocean"
       | "1inch_v6"
       | "paraswap"
-      | "kyberswap";
+      | "kyberswap"
+      | "odos"
+      | "paraswap_v6";
     dex: DEX_ENUM;
   }) =>
   async (options: QuoteParams, api: OpenApiService): Promise<QuoteResult> => {
