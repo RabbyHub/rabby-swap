@@ -6,6 +6,7 @@ import { SUPPORT_CHAINS as paraswapSupportChains } from "./dexs/paraswap";
 import { SUPPORT_CHAINS as paraswapV6SupportChains } from "./dexs/paraswap_v6";
 import { SUPPORT_CHAINS as kyberswapSupportChains } from "./dexs/kyberswap";
 import { SUPPORT_CHAINS as openOceanSupportChains } from "./dexs/openocean";
+import { SUPPORT_CHAINS as odosSupportChains } from "./dexs/odos";
 
 import { DEX_ENUM } from "./consts";
 
@@ -40,6 +41,7 @@ export const DEX_SUPPORT_CHAINS = {
   [DEX_ENUM.OPENOCEAN]: openOceanSupportChains,
   [DEX_ENUM.KYBERSWAP]: kyberswapSupportChains,
   [DEX_ENUM.PARASWAPV6]: paraswapV6SupportChains,
+  [DEX_ENUM.ODOS]: odosSupportChains,
 };
 
 export const DEX_ROUTER_WHITELIST = {
