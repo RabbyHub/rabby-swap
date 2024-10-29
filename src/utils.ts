@@ -19,6 +19,7 @@ export const generateGetQuote =
     id:
       | "uniswap3"
       | "matcha"
+      | "matcha_v2"
       | "openocean"
       | "1inch_v6"
       | "paraswap"

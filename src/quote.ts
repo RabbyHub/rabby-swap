@@ -38,6 +38,11 @@ import {
   decodeCalldata as odosDecodeCalldata,
 } from "./dexs/odos";
 
+import {
+  getQuote as zeroXV2GetQuote,
+  decodeCalldata as zeroXV2DecodeCalldata,
+} from "./dexs/0xapi_v2";
+
 export interface QuoteParams {
   fromToken: string;
   fromTokenDecimals: number;
@@ -102,6 +107,8 @@ export const getQuote = async (
       return await paraSwapV6GetQuote(params, api);
     case DEX_ENUM.ODOS:
       return await odosGetQuote(params, api);
+    case DEX_ENUM.ZEROXAPIV2:
+      return await zeroXV2GetQuote(params, api);
     default:
       throw new Error(`${id} is not supported!`);
   }
@@ -136,6 +143,9 @@ export const decodeCalldata = (
       return paraSwapV6DecodeCalldata(tx);
     case DEX_ENUM.ODOS:
       return odosDecodeCalldata(tx);
+    case DEX_ENUM.ZEROXAPIV2:
+      return zeroXV2DecodeCalldata(tx);
+
     default:
       throw new Error(`${id} is not supported!`);
   }
