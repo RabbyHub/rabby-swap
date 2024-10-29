@@ -8,5 +8,5 @@ export enum DEX_ENUM {
   KYBERSWAP = "Kyberswap",
   PARASWAPV6 = "ParaSwapV6",
   ODOS = "ODOS",
-  ZEROXAPIV2 = "0xAPI_V2",
+  ZEROXAPIV2 = "0xAPIV2",
 }
