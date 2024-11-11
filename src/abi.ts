@@ -1737,3 +1737,9 @@ export const ParaSwapV6ABI = [
   },
   { stateMutability: "payable", type: "receive" },
 ];
+
+export const ZeroXABIV2 = [
+  { inputs: [], stateMutability: "nonpayable", type: "constructor" },
+  { inputs: [], name: "ConfusedDeputy", type: "error" },
+  { stateMutability: "payable", type: "fallback" },
+];
