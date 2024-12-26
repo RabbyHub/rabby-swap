@@ -53,8 +53,11 @@ export interface QuoteParams {
   feeRate?: number;
   feeAddress?: string;
   gasPrice?: number;
-  chain: CHAINS_ENUM;
+  // @deprecated
+  chain?: CHAINS_ENUM;
   fee?: boolean;
+  chainServerId: string;
+  nativeTokenAddress: string;
 }
 
 export interface Tx {
