@@ -26,6 +26,7 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.SCRL,
   CHAINS_ENUM.MODE,
   CHAINS_ENUM.MANTLE,
+  "SONIC" as CHAINS_ENUM,
 ];
 
 export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
