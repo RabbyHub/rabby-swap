@@ -26,20 +26,19 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.SCRL,
   CHAINS_ENUM.MODE,
   CHAINS_ENUM.MANTLE,
+  "SONIC" as CHAINS_ENUM,
 ];
 
 export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
-  const chain = CHAINS[options.chain];
-
-  if (!SUPPORT_CHAINS.includes(options.chain)) {
-    throw new Error(`${CHAINS[options.chain]} is not support on 1inch`);
+  if (!options.chainServerId || !options.nativeTokenAddress) {
+    throw new Error(`lack chainServerId or nativeTokenAddress is not support`);
   }
   const wrapTokenAddress =
     WrapTokenAddressMap[options.chain as keyof typeof WrapTokenAddressMap];
   let calldata = "";
   let value = "0";
   if (
-    options.fromToken === chain.nativeTokenAddress &&
+    options.fromToken === options.nativeTokenAddress &&
     isSameAddress(options.toToken, wrapTokenAddress)
   ) {
     calldata = abiCoder.encodeFunctionCall(

@@ -29,17 +29,19 @@ export const generateGetQuote =
     dex: DEX_ENUM;
   }) =>
   async (options: QuoteParams, api: OpenApiService): Promise<QuoteResult> => {
-    if (!SUPPORT_CHAINS.includes(options.chain)) {
-      throw new Error(`${CHAINS[options.chain]} is not support on ${dex}`);
+    if (!options.chainServerId || !options.nativeTokenAddress) {
+      throw new Error(
+        `lack chainServerId or nativeTokenAddress is not support}`
+      );
     }
 
     const params: Record<string, any> = {
       id: options.userAddress,
-      chain_id: CHAINS[options.chain].serverId,
+      chain_id: options.chainServerId,
       dex_id:
         options.chain === CHAINS_ENUM.ETH
           ? id
-          : `${CHAINS[options.chain].serverId}_${id}`,
+          : `${options.chainServerId}_${id}`,
       pay_token_id: options.fromToken,
       pay_token_raw_amount: options.amount,
       receive_token_id: options.toToken,
@@ -53,7 +55,7 @@ export const generateGetQuote =
 
     const isNativeToken = isSameAddress(
       data.pay_token.id,
-      CHAINS[options.chain].nativeTokenAddress
+      options.nativeTokenAddress
     );
 
     return {

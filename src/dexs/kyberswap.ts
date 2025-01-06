@@ -23,6 +23,7 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.LINEA,
   // CHAINS_ENUM.BTT,
   CHAINS_ENUM.BASE,
+  "SONIC" as CHAINS_ENUM,
   // No prev2 support
   // CHAINS_ENUM.ROSE,
 ];
