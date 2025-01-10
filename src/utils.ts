@@ -25,7 +25,8 @@ export const generateGetQuote =
       | "paraswap"
       | "kyberswap"
       | "odos"
-      | "paraswap_v6";
+      | "paraswap_v6"
+      | "magpie";
     dex: DEX_ENUM;
   }) =>
   async (options: QuoteParams, api: OpenApiService): Promise<QuoteResult> => {
