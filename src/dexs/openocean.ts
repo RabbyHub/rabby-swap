@@ -33,6 +33,7 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.ARBITRUM,
   CHAINS_ENUM.CRO,
   CHAINS_ENUM.BASE,
+  CHAINS_ENUM.GNOSIS,
   "SONIC" as CHAINS_ENUM,
   /**
    * 接口返回 swap error
