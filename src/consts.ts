@@ -9,4 +9,5 @@ export enum DEX_ENUM {
   PARASWAPV6 = "ParaSwapV6",
   ODOS = "ODOS",
   ZEROXAPIV2 = "0xAPIV2",
+  MAGPIE = "Magpie",
 }
