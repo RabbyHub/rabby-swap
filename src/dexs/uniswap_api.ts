@@ -13,7 +13,6 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.BASE,
   CHAINS_ENUM.BLAST,
   CHAINS_ENUM.ERA,
-  CHAINS_ENUM.CELO,
 ];
 
 export const getQuote = generateGetQuote({
