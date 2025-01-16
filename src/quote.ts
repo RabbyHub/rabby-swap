@@ -48,6 +48,11 @@ import {
   decodeCalldata as magpieDecodeCalldata,
 } from "./dexs/magpie";
 
+import {
+  getQuote as uniswapApiGetQuote,
+  decodeCalldata as uniswapApiDecodeCalldata,
+} from "./dexs/magpie";
+
 export interface QuoteParams {
   fromToken: string;
   fromTokenDecimals: number;
@@ -119,6 +124,8 @@ export const getQuote = async (
       return await zeroXV2GetQuote(params, api);
     case DEX_ENUM.MAGPIE:
       return await magpieGetQuote(params, api);
+    case DEX_ENUM.UNISWAP_API:
+      return await uniswapApiGetQuote(params, api);
     default:
       throw new Error(`${id} is not supported!`);
   }
@@ -157,6 +164,8 @@ export const decodeCalldata = (
       return zeroXV2DecodeCalldata(tx);
     case DEX_ENUM.MAGPIE:
       return magpieDecodeCalldata(tx);
+    case DEX_ENUM.UNISWAP_API:
+      return uniswapApiDecodeCalldata(tx);
     default:
       throw new Error(`${id} is not supported!`);
   }
