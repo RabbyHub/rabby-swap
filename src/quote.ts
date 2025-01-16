@@ -51,7 +51,7 @@ import {
 import {
   getQuote as uniswapApiGetQuote,
   decodeCalldata as uniswapApiDecodeCalldata,
-} from "./dexs/magpie";
+} from "./dexs/uniswap_api";
 
 export interface QuoteParams {
   fromToken: string;
