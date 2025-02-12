@@ -30,6 +30,9 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.BLAST,
   CHAINS_ENUM.METIS,
   CHAINS_ENUM.MANTA,
+  "TAIKO" as CHAINS_ENUM,
+  "INK" as CHAINS_ENUM,
+  "BERA" as CHAINS_ENUM,
 ];
 
 export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
