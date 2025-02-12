@@ -19,6 +19,10 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.METIS,
   CHAINS_ENUM.SCRL,
   CHAINS_ENUM.ERA,
+  CHAINS_ENUM.LINEA,
+  "INK" as CHAINS_ENUM,
+  "BERA" as CHAINS_ENUM,
+  "TAIKO" as CHAINS_ENUM,
 ];
 
 export const getQuote = generateGetQuote({
