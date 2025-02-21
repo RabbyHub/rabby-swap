@@ -9,6 +9,7 @@ import { SUPPORT_CHAINS as openOceanSupportChains } from "./dexs/openocean";
 import { SUPPORT_CHAINS as odosSupportChains } from "./dexs/odos";
 import { SUPPORT_CHAINS as zeroXV2SupportChains } from "./dexs/0xapi_v2";
 import { SUPPORT_CHAINS as magpieSupportChains } from "./dexs/magpie";
+import { SUPPORT_CHAINS as rabbySupportChains } from "./dexs/rabby";
 
 import { DEX_ENUM } from "./consts";
 
@@ -53,6 +54,7 @@ export const DEX_SUPPORT_CHAINS = {
   [DEX_ENUM.ODOS]: odosSupportChains,
   [DEX_ENUM.ZEROXAPIV2]: zeroXV2SupportChains,
   [DEX_ENUM.MAGPIE]: magpieSupportChains,
+  [DEX_ENUM.RABBY]: rabbySupportChains,
 };
 
 export const DEX_ROUTER_WHITELIST = {
@@ -179,6 +181,9 @@ export const DEX_ROUTER_WHITELIST = {
     ["INK" as CHAINS_ENUM]: "0xba7bAC71a8Ee550d89B827FE6d67bc3dCA07b104",
     ["BERA" as CHAINS_ENUM]: "0xba7bAC71a8Ee550d89B827FE6d67bc3dCA07b104",
     [CHAINS_ENUM.LINEA]: "0xba7bAC71a8Ee550d89B827FE6d67bc3dCA07b104",
+  },
+  [DEX_ENUM.RABBY]: {
+    [CHAINS_ENUM.LINEA]: "0x7fd9cfeef127451918c688c49e9905e47da3e985",
   },
 };
 
@@ -307,5 +312,8 @@ export const DEX_SPENDER_WHITELIST = {
     ["INK" as CHAINS_ENUM]: "0xba7bAC71a8Ee550d89B827FE6d67bc3dCA07b104",
     ["BERA" as CHAINS_ENUM]: "0xba7bAC71a8Ee550d89B827FE6d67bc3dCA07b104",
     [CHAINS_ENUM.LINEA]: "0xba7bAC71a8Ee550d89B827FE6d67bc3dCA07b104",
+  },
+  [DEX_ENUM.RABBY]: {
+    [CHAINS_ENUM.LINEA]: "0x7fd9cfeef127451918c688c49e9905e47da3e985",
   },
 };

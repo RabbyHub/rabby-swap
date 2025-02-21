@@ -48,6 +48,11 @@ import {
   decodeCalldata as magpieDecodeCalldata,
 } from "./dexs/magpie";
 
+import {
+  getQuote as rabbyGetQuote,
+  decodeCalldata as rabbyDecodeCalldata,
+} from "./dexs/rabby";
+
 export interface QuoteParams {
   fromToken: string;
   fromTokenDecimals: number;
@@ -119,6 +124,8 @@ export const getQuote = async (
       return await zeroXV2GetQuote(params, api);
     case DEX_ENUM.MAGPIE:
       return await magpieGetQuote(params, api);
+    case DEX_ENUM.RABBY:
+      return await rabbyGetQuote(params, api);
     default:
       throw new Error(`${id} is not supported!`);
   }
@@ -157,6 +164,8 @@ export const decodeCalldata = (
       return zeroXV2DecodeCalldata(tx);
     case DEX_ENUM.MAGPIE:
       return magpieDecodeCalldata(tx);
+    case DEX_ENUM.RABBY:
+      return rabbyDecodeCalldata(tx);
     default:
       throw new Error(`${id} is not supported!`);
   }

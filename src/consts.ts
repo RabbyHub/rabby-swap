@@ -10,4 +10,5 @@ export enum DEX_ENUM {
   ODOS = "ODOS",
   ZEROXAPIV2 = "0xAPIV2",
   MAGPIE = "Magpie",
+  RABBY = "Rabby",
 }
