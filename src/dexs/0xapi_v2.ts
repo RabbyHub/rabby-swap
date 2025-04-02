@@ -16,6 +16,8 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.BSC,
   CHAINS_ENUM.AVAX,
   "BERA" as CHAINS_ENUM,
+  "UNI" as CHAINS_ENUM,
+  CHAINS_ENUM.SCRL,
 ];
 
 export const getQuote = generateGetQuote({
