@@ -95,8 +95,8 @@ export interface QuoteResult {
   toTokenAmount: string;
   spender: string;
   dexFeeDesc?: string | null;
-  gasUsed: number;
-  origin: Awaited<ReturnType<OpenApiService["getSwapQuote"]>>;
+  gasUsed?: number;
+  origin?: Awaited<ReturnType<OpenApiService["getSwapQuote"]>>;
 }
 
 export const getQuote = async (
