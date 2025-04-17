@@ -63,6 +63,7 @@ export interface QuoteParams {
   feeRate?: number;
   feeAddress?: string;
   gasPrice?: number;
+  insufficient: boolean;
   // @deprecated
   chain?: CHAINS_ENUM;
   fee?: boolean;
@@ -94,6 +95,8 @@ export interface QuoteResult {
   toTokenAmount: string;
   spender: string;
   dexFeeDesc?: string | null;
+  gasUsed: number;
+  origin: Awaited<ReturnType<OpenApiService["getSwapQuote"]>>;
 }
 
 export const getQuote = async (
