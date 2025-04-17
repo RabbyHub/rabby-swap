@@ -52,6 +52,9 @@ export const generateGetQuote =
     if (options.fee) {
       params.fee = true;
     }
+    if (options.insufficient) {
+      params.no_pre_exec = true;
+    }
 
     const data = await api.getSwapQuote(params as any);
 
@@ -80,5 +83,8 @@ export const generateGetQuote =
               options.chain as keyof (typeof DEX_SPENDER_WHITELIST)[DEX_ENUM.PARASWAP]
             ]
           : data.dex_swap_to,
+
+      gasUsed: (data as any).gas_used,
+      origin: data,
     };
   };
