@@ -1,5 +1,6 @@
 export enum DEX_ENUM {
   ONEINCH = "1inch",
+  AKKA = "AKKA",
   PARASWAP = "ParaSwap",
   ZEROXAPI = "0xAPI",
   WRAPTOKEN = "WrapToken",

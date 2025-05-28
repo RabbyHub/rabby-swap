@@ -7,6 +7,10 @@ import {
   decodeCalldata as oneInchDecodeCalldata,
 } from "./dexs/1inch";
 import {
+  getQuote as akkaGetQuote,
+  decodeCalldata as akkaDecodeCalldata,
+} from "./dexs/akka";
+import {
   getQuote as zeroXGetQuote,
   decodeCalldata as zeroXDecodeCalldata,
 } from "./dexs/0xapi";
@@ -109,6 +113,8 @@ export const getQuote = async (
       return await wrapTokenGetQuote(params);
     case DEX_ENUM.ONEINCH:
       return await oneInchGetQuote(params, api);
+    case DEX_ENUM.AKKA:
+      return await akkaGetQuote(params, api);
     case DEX_ENUM.PARASWAP:
       return await paraSwapGetQuote(params, api);
     case DEX_ENUM.ZEROXAPI:
@@ -149,6 +155,8 @@ export const decodeCalldata = (
   switch (id) {
     case DEX_ENUM.ONEINCH:
       return oneInchDecodeCalldata(tx);
+    case DEX_ENUM.AKKA:
+      return akkaDecodeCalldata(tx);
     case DEX_ENUM.PARASWAP:
       return paraSwapDecodeCalldata(tx);
     case DEX_ENUM.ZEROXAPI:

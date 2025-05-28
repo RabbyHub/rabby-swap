@@ -2,6 +2,7 @@ import { CHAINS_ENUM } from "@debank/common";
 import { SUPPORT_CHAINS as wrapTokenSupportChains } from "./dexs/wrapToken";
 import { SUPPORT_CHAINS as zeroXSupportChains } from "./dexs/0xapi";
 import { SUPPORT_CHAINS as oneInchSupportChains } from "./dexs/1inch";
+import { SUPPORT_CHAINS as akkaSupportChains } from "./dexs/akka";
 import { SUPPORT_CHAINS as paraswapSupportChains } from "./dexs/paraswap";
 import { SUPPORT_CHAINS as paraswapV6SupportChains } from "./dexs/paraswap_v6";
 import { SUPPORT_CHAINS as kyberswapSupportChains } from "./dexs/kyberswap";
@@ -48,6 +49,7 @@ export const WrapTokenAddressMap = {
 export const DEX_SUPPORT_CHAINS = {
   [DEX_ENUM.WRAPTOKEN]: wrapTokenSupportChains,
   [DEX_ENUM.ONEINCH]: oneInchSupportChains,
+  [DEX_ENUM.AKKA]: akkaSupportChains,
   [DEX_ENUM.PARASWAP]: paraswapSupportChains,
   [DEX_ENUM.ZEROXAPI]: zeroXSupportChains,
   [DEX_ENUM.OPENOCEAN]: openOceanSupportChains,
@@ -74,6 +76,9 @@ export const DEX_ROUTER_WHITELIST = {
     [CHAINS_ENUM.ERA]: "0x6fd4383cb451173d5f9304f041c7bcbf27d561ff",
     [CHAINS_ENUM.AURORA]: "0x111111125421ca6dc452d289314280a0f8842a65",
     [CHAINS_ENUM.LINEA]: "0x111111125421ca6dc452d289314280a0f8842a65",
+  },
+  [DEX_ENUM.AKKA]: {
+    [CHAINS_ENUM.CORE]: "0x7C5Af181D9e9e91B15660830B52f7B7076Be0d64",
   },
   [DEX_ENUM.PARASWAP]: {
     [CHAINS_ENUM.ETH]: "0xdef171fe48cf0115b1d80b88dc8eab59176fee57",

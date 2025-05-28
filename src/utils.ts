@@ -22,6 +22,7 @@ export const generateGetQuote =
       | "matcha_v2"
       | "openocean"
       | "1inch_v6"
+      | "akka_v2"
       | "paraswap"
       | "kyberswap"
       | "odos"
