@@ -33,6 +33,7 @@ export const SUPPORT_CHAINS = [
   "TAIKO" as CHAINS_ENUM,
   "INK" as CHAINS_ENUM,
   "BERA" as CHAINS_ENUM,
+  "ABS" as CHAINS_ENUM,
 ];
 
 export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
