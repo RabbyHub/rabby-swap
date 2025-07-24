@@ -25,6 +25,8 @@ const NATIVE_TOKENS = {
   ["BERA" as CHAINS_ENUM]: "0x0000000000000000000000000000000000000000",
   [CHAINS_ENUM.SCRL]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
   ["UNi" as CHAINS_ENUM]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  [CHAINS_ENUM.MODE]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  [CHAINS_ENUM.BLAST]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
 } as Record<CHAINS_ENUM, string>;
 
 export const SUPPORT_CHAINS = [
@@ -43,6 +45,10 @@ export const SUPPORT_CHAINS = [
   "BERA" as CHAINS_ENUM,
   CHAINS_ENUM.SCRL,
   "UNI" as CHAINS_ENUM,
+  CHAINS_ENUM.MODE,
+  CHAINS_ENUM.BLAST,
+  "GRAVITY" as CHAINS_ENUM,
+  "SEI" as CHAINS_ENUM,
   /**
    * 接口返回 swap error
    */
@@ -57,7 +63,7 @@ export const SUPPORT_CHAINS = [
   // CHAINS_ENUM.GNOSIS,
   // CHAINS_ENUM.BOBA,
   // CHAINS_ENUM.KAVA, //pre api v1
-];
+] as CHAINS_ENUM[];
 
 export const getQuote = generateGetQuote({
   SUPPORT_CHAINS,
