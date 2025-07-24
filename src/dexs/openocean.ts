@@ -25,6 +25,8 @@ const NATIVE_TOKENS = {
   ["BERA" as CHAINS_ENUM]: "0x0000000000000000000000000000000000000000",
   [CHAINS_ENUM.SCRL]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
   ["UNi" as CHAINS_ENUM]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  [CHAINS_ENUM.MODE]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  [CHAINS_ENUM.BLAST]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
 } as Record<CHAINS_ENUM, string>;
 
 export const SUPPORT_CHAINS = [
