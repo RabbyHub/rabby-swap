@@ -43,6 +43,10 @@ export const SUPPORT_CHAINS = [
   "BERA" as CHAINS_ENUM,
   CHAINS_ENUM.SCRL,
   "UNI" as CHAINS_ENUM,
+  CHAINS_ENUM.MODE,
+  CHAINS_ENUM.BLAST,
+  "GRAVITY" as CHAINS_ENUM,
+  "SEI" as CHAINS_ENUM,
   /**
    * 接口返回 swap error
    */
@@ -57,7 +61,7 @@ export const SUPPORT_CHAINS = [
   // CHAINS_ENUM.GNOSIS,
   // CHAINS_ENUM.BOBA,
   // CHAINS_ENUM.KAVA, //pre api v1
-];
+] as CHAINS_ENUM[];
 
 export const getQuote = generateGetQuote({
   SUPPORT_CHAINS,
