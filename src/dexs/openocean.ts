@@ -27,6 +27,10 @@ const NATIVE_TOKENS = {
   ["UNi" as CHAINS_ENUM]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
   [CHAINS_ENUM.MODE]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
   [CHAINS_ENUM.BLAST]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  [CHAINS_ENUM.ERA]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  [CHAINS_ENUM.LINEA]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  [CHAINS_ENUM.PZE]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  [CHAINS_ENUM.MANTA]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
 } as Record<CHAINS_ENUM, string>;
 
 export const SUPPORT_CHAINS = [
@@ -49,6 +53,10 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.BLAST,
   "GRAVITY" as CHAINS_ENUM,
   "SEI" as CHAINS_ENUM,
+  CHAINS_ENUM.ERA,
+  CHAINS_ENUM.LINEA,
+  CHAINS_ENUM.PZE,
+  CHAINS_ENUM.MANTA,
   /**
    * 接口返回 swap error
    */
