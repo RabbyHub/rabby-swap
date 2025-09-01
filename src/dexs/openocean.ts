@@ -31,6 +31,7 @@ const NATIVE_TOKENS = {
   [CHAINS_ENUM.LINEA]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
   [CHAINS_ENUM.PZE]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
   [CHAINS_ENUM.MANTA]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  ["HYPER" as CHAINS_ENUM]: "0x0000000000000000000000000000000000000000",
 } as Record<CHAINS_ENUM, string>;
 
 export const SUPPORT_CHAINS = [
@@ -57,6 +58,7 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.LINEA,
   CHAINS_ENUM.PZE,
   CHAINS_ENUM.MANTA,
+  "HYPER" as CHAINS_ENUM,
   /**
    * 接口返回 swap error
    */
