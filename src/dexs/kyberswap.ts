@@ -30,6 +30,7 @@ export const SUPPORT_CHAINS = [
   "RONIN" as CHAINS_ENUM,
   "HYPER" as CHAINS_ENUM,
   "UNI" as CHAINS_ENUM,
+  "Plasma" as CHAINS_ENUM,
   // No prev2 support
   // CHAINS_ENUM.ROSE,
 ];
