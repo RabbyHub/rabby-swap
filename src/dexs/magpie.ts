@@ -25,6 +25,8 @@ export const SUPPORT_CHAINS = [
   "TAIKO" as CHAINS_ENUM,
   "UNI" as CHAINS_ENUM,
   "ABS" as CHAINS_ENUM,
+  "PLASMA" as CHAINS_ENUM,
+  "HYPER" as CHAINS_ENUM,
 ];
 
 export const getQuote = generateGetQuote({
