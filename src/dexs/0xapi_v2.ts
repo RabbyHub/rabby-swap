@@ -19,6 +19,7 @@ export const SUPPORT_CHAINS = [
   "UNI" as CHAINS_ENUM,
   CHAINS_ENUM.SCRL,
   "PLASMA" as CHAINS_ENUM,
+  "MONAD" as CHAINS_ENUM,
 ];
 
 export const getQuote = generateGetQuote({
