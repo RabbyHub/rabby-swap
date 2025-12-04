@@ -27,6 +27,7 @@ export const SUPPORT_CHAINS = [
   "ABS" as CHAINS_ENUM,
   "PLASMA" as CHAINS_ENUM,
   "HYPER" as CHAINS_ENUM,
+  "MONAD" as CHAINS_ENUM,
 ];
 
 export const getQuote = generateGetQuote({
