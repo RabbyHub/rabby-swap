@@ -27,6 +27,7 @@ export const generateGetQuote =
       | "odos"
       | "paraswap_v6"
       | "magpie"
+      | "sushi"
       | "rabby";
     dex: DEX_ENUM;
   }) =>

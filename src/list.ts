@@ -10,6 +10,7 @@ import { SUPPORT_CHAINS as odosSupportChains } from "./dexs/odos";
 import { SUPPORT_CHAINS as zeroXV2SupportChains } from "./dexs/0xapi_v2";
 import { SUPPORT_CHAINS as magpieSupportChains } from "./dexs/magpie";
 import { SUPPORT_CHAINS as rabbySupportChains } from "./dexs/rabby";
+import { SUPPORT_CHAINS as sushiSupportChains } from "./dexs/sushi";
 
 import { DEX_ENUM } from "./consts";
 
@@ -52,10 +53,12 @@ export const WrapTokenAddressMap = {
   ["MONAD" as CHAINS_ENUM]: "0x3bd359c1119da7da1d913d1c4d2b7c461115433a",
   [CHAINS_ENUM.RSK]: "0x967f8799aF07DF1534d48A95a5C9FEBE92c53ae0",
   [CHAINS_ENUM.KAVA]: "0xc86c7C0eFbd6A49B35E8714C5f59D99De09A225b",
+  [CHAINS_ENUM.ZETA]: "0x5f0b1a82749cb4e2278ec87f8bf6b618dc71a8bf",
 };
 
 export const DEX_SUPPORT_CHAINS = {
   [DEX_ENUM.WRAPTOKEN]: wrapTokenSupportChains,
+  [DEX_ENUM.SUSHI]: sushiSupportChains,
   [DEX_ENUM.ONEINCH]: oneInchSupportChains,
   [DEX_ENUM.PARASWAP]: paraswapSupportChains,
   [DEX_ENUM.ZEROXAPI]: zeroXSupportChains,
@@ -69,6 +72,14 @@ export const DEX_SUPPORT_CHAINS = {
 };
 
 export const DEX_ROUTER_WHITELIST = {
+  [DEX_ENUM.SUSHI]: {
+    [CHAINS_ENUM.KAVA]: "0xac4c6e212a361c968f1725b4d055b47e63f80b75",
+    [CHAINS_ENUM.CELO]: "0xac4c6e212a361c968f1725b4d055b47e63f80b75",
+    [CHAINS_ENUM.NOVA]: "0xac4c6e212a361c968f1725b4d055b47e63f80b75",
+    [CHAINS_ENUM.ZETA]: "0xac4c6e212a361c968f1725b4d055b47e63f80b75",
+    ["KATANA" as CHAINS_ENUM]: "0xac4c6e212a361c968f1725b4d055b47e63f80b75",
+    ["HEMI" as CHAINS_ENUM]: "0xac4c6e212a361c968f1725b4d055b47e63f80b75",
+  },
   [DEX_ENUM.ONEINCH]: {
     [CHAINS_ENUM.ETH]: "0x111111125421ca6dc452d289314280a0f8842a65",
     [CHAINS_ENUM.POLYGON]: "0x111111125421ca6dc452d289314280a0f8842a65",
@@ -236,6 +247,14 @@ export const DEX_ROUTER_WHITELIST = {
 };
 
 export const DEX_SPENDER_WHITELIST = {
+  [DEX_ENUM.SUSHI]: {
+    [CHAINS_ENUM.KAVA]: "0xac4c6e212a361c968f1725b4d055b47e63f80b75",
+    [CHAINS_ENUM.CELO]: "0xac4c6e212a361c968f1725b4d055b47e63f80b75",
+    [CHAINS_ENUM.NOVA]: "0xac4c6e212a361c968f1725b4d055b47e63f80b75",
+    [CHAINS_ENUM.ZETA]: "0xac4c6e212a361c968f1725b4d055b47e63f80b75",
+    ["KATANA" as CHAINS_ENUM]: "0xac4c6e212a361c968f1725b4d055b47e63f80b75",
+    ["HEMI" as CHAINS_ENUM]: "0xac4c6e212a361c968f1725b4d055b47e63f80b75",
+  },
   [DEX_ENUM.ONEINCH]: {
     [CHAINS_ENUM.ETH]: "0x111111125421ca6dc452d289314280a0f8842a65",
     [CHAINS_ENUM.POLYGON]: "0x111111125421ca6dc452d289314280a0f8842a65",
