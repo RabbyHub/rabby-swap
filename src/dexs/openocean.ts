@@ -67,6 +67,7 @@ export const SUPPORT_CHAINS = [
   "PLASMA" as CHAINS_ENUM,
   "MONAD" as CHAINS_ENUM,
   CHAINS_ENUM.RSK,
+  CHAINS_ENUM.KAVA,
   /**
    * 接口返回 swap error
    */
