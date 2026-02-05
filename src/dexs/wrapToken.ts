@@ -36,6 +36,7 @@ export const SUPPORT_CHAINS = [
   "ABS" as CHAINS_ENUM,
   "HYPER" as CHAINS_ENUM,
   "MEGAETH" as CHAINS_ENUM,
+  CHAINS_ENUM.KAVA,
 ];
 
 export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
