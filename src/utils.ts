@@ -17,7 +17,6 @@ export const generateGetQuote =
   }: {
     SUPPORT_CHAINS: CHAINS_ENUM[];
     id:
-      | "uniswap3"
       | "matcha"
       | "matcha_v2"
       | "openocean"

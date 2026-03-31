@@ -18,10 +18,6 @@ import {
   getQuote as openOceanGetQuote,
   decodeCalldata as openOceanDecodeCalldata,
 } from "./dexs/openocean";
-import {
-  getQuote as uniswapGetQuote,
-  decodeCalldata as uniswapDecodeCalldata,
-} from "./dexs/uniswap";
 
 import {
   getQuote as kyberswapGetQuote,
@@ -115,8 +111,6 @@ export const getQuote = async (
       return await zeroXGetQuote(params, api);
     case DEX_ENUM.OPENOCEAN:
       return await openOceanGetQuote(params, api);
-    case DEX_ENUM.UNISWAP:
-      return await uniswapGetQuote(params, api);
     case DEX_ENUM.KYBERSWAP:
       return await kyberswapGetQuote(params, api);
     case DEX_ENUM.PARASWAPV6:
@@ -155,8 +149,6 @@ export const decodeCalldata = (
       return zeroXDecodeCalldata(tx);
     case DEX_ENUM.OPENOCEAN:
       return openOceanDecodeCalldata(tx);
-    case DEX_ENUM.UNISWAP:
-      return uniswapDecodeCalldata(tx);
     case DEX_ENUM.KYBERSWAP:
       return kyberswapDecodeCalldata(tx);
     case DEX_ENUM.PARASWAPV6:
