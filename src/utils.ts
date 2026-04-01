@@ -26,7 +26,8 @@ export const generateGetQuote =
       | "odos"
       | "paraswap_v6"
       | "magpie"
-      | "rabby";
+      | "rabby"
+      | "uni";
     dex: DEX_ENUM;
   }) =>
   async (options: QuoteParams, api: OpenApiService): Promise<QuoteResult> => {

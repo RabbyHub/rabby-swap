@@ -48,6 +48,10 @@ import {
   getQuote as rabbyGetQuote,
   decodeCalldata as rabbyDecodeCalldata,
 } from "./dexs/rabby";
+import {
+  getQuote as uniGetQuote,
+  decodeCalldata as uniDecodeCalldata,
+} from "./dexs/uni";
 
 export interface QuoteParams {
   fromToken: string;
@@ -123,6 +127,8 @@ export const getQuote = async (
       return await magpieGetQuote(params, api);
     case DEX_ENUM.RABBY:
       return await rabbyGetQuote(params, api);
+    case DEX_ENUM.UNI:
+      return await uniGetQuote(params, api);
     default:
       throw new Error(`${id} is not supported!`);
   }
@@ -161,6 +167,8 @@ export const decodeCalldata = (
       return magpieDecodeCalldata(tx);
     case DEX_ENUM.RABBY:
       return rabbyDecodeCalldata(tx);
+    case DEX_ENUM.UNI:
+      return uniDecodeCalldata(tx);
     default:
       throw new Error(`${id} is not supported!`);
   }
