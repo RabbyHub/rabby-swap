@@ -18,10 +18,6 @@ import {
   getQuote as openOceanGetQuote,
   decodeCalldata as openOceanDecodeCalldata,
 } from "./dexs/openocean";
-import {
-  getQuote as uniswapGetQuote,
-  decodeCalldata as uniswapDecodeCalldata,
-} from "./dexs/uniswap";
 
 import {
   getQuote as kyberswapGetQuote,
@@ -52,6 +48,10 @@ import {
   getQuote as rabbyGetQuote,
   decodeCalldata as rabbyDecodeCalldata,
 } from "./dexs/rabby";
+import {
+  getQuote as uniGetQuote,
+  decodeCalldata as uniDecodeCalldata,
+} from "./dexs/uni";
 
 export interface QuoteParams {
   fromToken: string;
@@ -115,8 +115,6 @@ export const getQuote = async (
       return await zeroXGetQuote(params, api);
     case DEX_ENUM.OPENOCEAN:
       return await openOceanGetQuote(params, api);
-    case DEX_ENUM.UNISWAP:
-      return await uniswapGetQuote(params, api);
     case DEX_ENUM.KYBERSWAP:
       return await kyberswapGetQuote(params, api);
     case DEX_ENUM.PARASWAPV6:
@@ -129,6 +127,8 @@ export const getQuote = async (
       return await magpieGetQuote(params, api);
     case DEX_ENUM.RABBY:
       return await rabbyGetQuote(params, api);
+    case DEX_ENUM.UNI:
+      return await uniGetQuote(params, api);
     default:
       throw new Error(`${id} is not supported!`);
   }
@@ -155,8 +155,6 @@ export const decodeCalldata = (
       return zeroXDecodeCalldata(tx);
     case DEX_ENUM.OPENOCEAN:
       return openOceanDecodeCalldata(tx);
-    case DEX_ENUM.UNISWAP:
-      return uniswapDecodeCalldata(tx);
     case DEX_ENUM.KYBERSWAP:
       return kyberswapDecodeCalldata(tx);
     case DEX_ENUM.PARASWAPV6:
@@ -169,6 +167,8 @@ export const decodeCalldata = (
       return magpieDecodeCalldata(tx);
     case DEX_ENUM.RABBY:
       return rabbyDecodeCalldata(tx);
+    case DEX_ENUM.UNI:
+      return uniDecodeCalldata(tx);
     default:
       throw new Error(`${id} is not supported!`);
   }

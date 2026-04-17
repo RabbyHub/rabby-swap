@@ -6,6 +6,7 @@ import {
 } from "./list";
 import { getQuote } from "./quote";
 import { DEX_ENUM } from "./consts";
+import { UNI_NATIVE_TO_ADDRESSES } from "./dexs/uni";
 
 export {
   WrapTokenAddressMap,
@@ -14,4 +15,5 @@ export {
   getQuote,
   DEX_ROUTER_WHITELIST,
   DEX_SPENDER_WHITELIST,
+  UNI_NATIVE_TO_ADDRESSES ,
 };

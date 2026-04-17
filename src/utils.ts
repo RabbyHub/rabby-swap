@@ -17,7 +17,6 @@ export const generateGetQuote =
   }: {
     SUPPORT_CHAINS: CHAINS_ENUM[];
     id:
-      | "uniswap3"
       | "matcha"
       | "matcha_v2"
       | "openocean"
@@ -27,7 +26,8 @@ export const generateGetQuote =
       | "odos"
       | "paraswap_v6"
       | "magpie"
-      | "rabby";
+      | "rabby"
+      | "uni";
     dex: DEX_ENUM;
   }) =>
   async (options: QuoteParams, api: OpenApiService): Promise<QuoteResult> => {

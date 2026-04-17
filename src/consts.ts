@@ -4,11 +4,11 @@ export enum DEX_ENUM {
   ZEROXAPI = "0xAPI",
   WRAPTOKEN = "WrapToken",
   OPENOCEAN = "OpenOcean",
-  UNISWAP = "Uniswap",
   KYBERSWAP = "Kyberswap",
   PARASWAPV6 = "ParaSwapV6",
   ODOS = "ODOS",
   ZEROXAPIV2 = "0xAPIV2",
   MAGPIE = "Magpie",
   RABBY = "Rabby",
+  UNI = "Uniswap",
 }
