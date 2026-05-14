@@ -53,6 +53,11 @@ import {
   decodeCalldata as uniDecodeCalldata,
 } from "./dexs/uni";
 
+import {
+  getQuote as sushiGetQuote,
+  decodeCalldata as sushiDecodeCalldata,
+} from "./dexs/sushi";
+
 export interface QuoteParams {
   fromToken: string;
   fromTokenDecimals: number;
@@ -127,6 +132,8 @@ export const getQuote = async (
       return await magpieGetQuote(params, api);
     case DEX_ENUM.RABBY:
       return await rabbyGetQuote(params, api);
+    case DEX_ENUM.SUSHI:
+      return await sushiGetQuote(params, api);
     case DEX_ENUM.UNI:
       return await uniGetQuote(params, api);
     default:
@@ -167,6 +174,8 @@ export const decodeCalldata = (
       return magpieDecodeCalldata(tx);
     case DEX_ENUM.RABBY:
       return rabbyDecodeCalldata(tx);
+    case DEX_ENUM.SUSHI:
+      return sushiDecodeCalldata(tx);
     case DEX_ENUM.UNI:
       return uniDecodeCalldata(tx);
     default:

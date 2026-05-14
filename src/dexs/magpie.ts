@@ -30,6 +30,8 @@ export const SUPPORT_CHAINS = [
   "MONAD" as CHAINS_ENUM,
   "STABLE" as CHAINS_ENUM,
   "MEGAETH" as CHAINS_ENUM,
+  "KATANA" as CHAINS_ENUM,
+  "TEMPO" as CHAINS_ENUM,
 ];
 
 export const getQuote = generateGetQuote({
