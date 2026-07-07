@@ -32,6 +32,7 @@ export const SUPPORT_CHAINS = [
   "MEGAETH" as CHAINS_ENUM,
   "KATANA" as CHAINS_ENUM,
   "TEMPO" as CHAINS_ENUM,
+  "HOOD" as CHAINS_ENUM,
 ];
 
 export const getQuote = generateGetQuote({
