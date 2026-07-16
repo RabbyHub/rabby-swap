@@ -16,6 +16,7 @@ export const STABLE_TOKEN_POOL: readonly TokenPoolToken[] = [
   { chain: "abs", id: "0x0709F39376dEEe2A2dfC94A58EdEb2Eb9DF012bD" }, // USDT
   { chain: "arb", id: "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1" }, // DAI
   { chain: "arb", id: "0x46850aD61C2B7d64d08c9C754F45254596696984" }, // PYUSD
+  { chain: "arb", id: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8" }, // USDC.e
   { chain: "arb", id: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831" }, // USDC
   { chain: "arb", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
   { chain: "arb", id: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9" }, // USDT0
@@ -38,6 +39,7 @@ export const STABLE_TOKEN_POOL: readonly TokenPoolToken[] = [
   { chain: "blast", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
   { chain: "bsc", id: "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3" }, // DAI
   { chain: "bsc", id: "0xc5f0f7b66764F6ec8C8Dff7BA683102295E16409" }, // FDUSD
+  { chain: "bsc", id: "0x8d0D000Ee44948FC98c9B98A4FA4921476f08B0d" }, // USD1
   { chain: "bsc", id: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d" }, // USDC
   { chain: "bsc", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
   { chain: "bsc", id: "0x55d398326f99059fF775485246999027B3197955" }, // USDT
@@ -51,6 +53,7 @@ export const STABLE_TOKEN_POOL: readonly TokenPoolToken[] = [
   { chain: "era", id: "0x1d17CBcF0D6D143135aE902365D2E5e2A16538D4" }, // USDC
   { chain: "era", id: "0x39Fe7a0DACcE31Bd90418e3e659fb0b5f0B3Db0d" }, // USDe
   { chain: "era", id: "0x493257fD37EDB34451f62EDf8D2a0C418852bA4C" }, // USDT
+  { chain: "eth", id: "0xf939E0A03FB07F59A73314E73794Be0E57ac1b4E" }, // crvUSD
   { chain: "eth", id: "0x6B175474E89094C44Da98b954EedeAC495271d0F" }, // DAI
   { chain: "eth", id: "0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c" }, // EURC
   { chain: "eth", id: "0xc5f0f7b66764F6ec8C8Dff7BA683102295E16409" }, // FDUSD
@@ -59,11 +62,13 @@ export const STABLE_TOKEN_POOL: readonly TokenPoolToken[] = [
   { chain: "eth", id: "0x4c9EDD5852cd905f086C759E8383e09bff1E68B3" }, // USDe
   { chain: "eth", id: "0xdC035D45d973E3EC169d2276DDab16f1e407384F" }, // USDS
   { chain: "eth", id: "0xdAC17F958D2ee523a2206206994597C13D831ec7" }, // USDT
+  { chain: "eth", id: "0x8d0D000Ee44948FC98c9B98A4FA4921476f08B0d" }, // USD1
   { chain: "gravity", id: "0xFbDa5F676cB37624f28265A144A48B0d6e87d3b6" }, // USDC.e
   { chain: "gravity", id: "0x816E810f9F787d669FB71932DeabF6c83781Cd48" }, // USDT
   { chain: "hood", id: "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168" }, // USDG
   { chain: "hyper", id: "0xb88339CB7199b77E23DB6E890353E22632Ba630f" }, // USDC
   { chain: "hyper", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
+  { chain: "hyper", id: "0xB8CE59FC3717ada4C02eaDF9682A9e934F625ebb" }, // USDT0
   { chain: "ink", id: "0x2D270e6886d130D724215A266106e6832161EAEd" }, // USDC
   { chain: "ink", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
   { chain: "ink", id: "0x0200C29006150606B650577BBE7B6248F58470c1" }, // USDT0
@@ -78,6 +83,7 @@ export const STABLE_TOKEN_POOL: readonly TokenPoolToken[] = [
   { chain: "manta", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
   { chain: "manta", id: "0xf417F5A458eC102B90352F697D6e2Ac3A3d2851f" }, // USDT
   { chain: "matic", id: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063" }, // DAI
+  { chain: "matic", id: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174" }, // USDC.e
   { chain: "matic", id: "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359" }, // USDC
   { chain: "matic", id: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F" }, // USDT
   { chain: "megaeth", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
@@ -87,9 +93,11 @@ export const STABLE_TOKEN_POOL: readonly TokenPoolToken[] = [
   { chain: "mnt", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
   { chain: "mnt", id: "0x201EBa5CC46D216Ce6DC03F6a759e8E766e956aE" }, // USDT
   { chain: "mnt", id: "0x779Ded0c9e1022225f8E0630b35a9b54bE713736" }, // USDT0
+  { chain: "mnt", id: "0x111111d2bf19e43c34263401e0cad979ed1cdb61" }, // USD1
   { chain: "mode", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
   { chain: "monad", id: "0x754704Bc059F8C67012fEd69BC8A327a5aafb603" }, // USDC
   { chain: "monad", id: "0xe7cd86e13AC4309349F30B3435a9d337750fC82D" }, // USDT0
+  { chain: "monad", id: "0x111111d2bf19e43c34263401e0cad979ed1cdb61" }, // USD1
   { chain: "op", id: "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1" }, // DAI
   { chain: "op", id: "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85" }, // USDC
   { chain: "op", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
@@ -116,17 +124,18 @@ export const STABLE_TOKEN_POOL: readonly TokenPoolToken[] = [
   { chain: "tempo", id: "0x20c000000000000000000000b9537d11c60e8b50" }, // USDC.e
   { chain: "tempo", id: "0x20c00000000000000000000014f22ca97301eb73" }, // USDT0
   { chain: "uni", id: "0x078D782b760474a361dDA0AF3839290b0EF57AD6" }, // USDC
+  { chain: "uni", id: "0x9151434b16b9763660705744891fA906F660EcC5" }, // USDT0
   { chain: "xdai", id: "0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83" }, // USDC
   { chain: "xdai", id: "0x4ECaBa5870353805a9F068101A40E0f32ed605C6" }, // USDT
   { chain: "xlayer", id: "0x74b7F16337b8972027F6196A17a631aC6dE26d22" }, // USDC
   { chain: "xlayer", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
+  { chain: "xlayer", id: "0x111111d2bf19e43c34263401e0cad979ed1cdb61" }, // USD1
 ];
 
 /**
- * Native-equivalent and derivative token groups.
+ * Native-equivalent and derivative tokens.
  *
- * A valid pair contains at least one native-equivalent token. This preserves
- * ETH <-> stETH and WETH <-> stETH while rejecting stETH <-> cbETH.
+ * Any two tokens in this pool form a same-type pair on the same chain.
  */
 const ETH_NATIVE_TOKEN: TokenPoolToken = { chain: "eth", id: "eth" }; // ETH
 const ETH_WRAPPED_NATIVE_TOKEN: TokenPoolToken = {
@@ -169,17 +178,12 @@ const nativeAndDerivativeTokenKeySet = new Set(
   NATIVE_AND_DERIVATIVE_TOKEN_POOL.map(getTokenKey)
 );
 
-const nativeEquivalentTokenKeySet = new Set(
-  [ETH_NATIVE_TOKEN, ETH_WRAPPED_NATIVE_TOKEN].map(getTokenKey)
-);
-
 /**
  * Returns true when both tokens form a same-type pair in the same pool:
- * either two stablecoins, or a native-equivalent/native-equivalent or
- * native-equivalent/derivative pair.
+ * either two stablecoins, or two native/derivative tokens.
  *
- * Lookup is O(1) after module initialization. Tokens from different pools and
- * two derivatives do not match.
+ * Lookup is O(1) after module initialization. Tokens from different pools do
+ * not match.
  */
 export const isSameTypeTokenPair = (
   tokenA: TokenPoolLookupToken | null | undefined,
@@ -203,14 +207,8 @@ export const isSameTypeTokenPair = (
     return true;
   }
 
-  if (tokenAKey === tokenBKey) {
-    return false;
-  }
-
   return (
     nativeAndDerivativeTokenKeySet.has(tokenAKey) &&
-    nativeAndDerivativeTokenKeySet.has(tokenBKey) &&
-    (nativeEquivalentTokenKeySet.has(tokenAKey) ||
-      nativeEquivalentTokenKeySet.has(tokenBKey))
+    nativeAndDerivativeTokenKeySet.has(tokenBKey)
   );
 };
