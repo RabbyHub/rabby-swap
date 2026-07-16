@@ -70,6 +70,7 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.RSK,
   CHAINS_ENUM.KAVA,
   CHAINS_ENUM.CELO,
+  "HOOD" as CHAINS_ENUM,
   /**
    * 接口返回 swap error
    */
