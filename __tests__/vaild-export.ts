@@ -6,6 +6,7 @@ import {
   WrapTokenAddressMap,
   getQuote,
 } from "../src/index";
+import { CHAINS_ENUM } from "@debank/common";
 import { decodeCalldata } from "../src/quote";
 
 describe("correctly export dex", () => {
@@ -23,25 +24,38 @@ describe("correctly export dex", () => {
     expect(supportedDEX).toEqual(expectResult);
   });
 
-  // it("WrapTokenAddressMap should supported all chains", () => {
-  //   const allChains = Array.from(
-  //     new Set(
-  //       Object.keys(DEX_ROUTER_WHITELIST)
-  //         .map(
-  //           (e) =>
-  //             DEX_SUPPORT_CHAINS[
-  //               e as unknown as keyof typeof DEX_SUPPORT_CHAINS
-  //             ]
-  //         )
-  //         .flat()
-  //     )
-  //   );
-  //   for (const chain of allChains) {
-  //     expect(
-  //       WrapTokenAddressMap[chain as keyof typeof WrapTokenAddressMap]
-  //     ).toBeTruthy();
-  //   }
-  // });
+  it("supports every swap chain that has a wrappable native token", () => {
+    const allSwapChains = Array.from(
+      new Set(
+        Object.entries(DEX_SUPPORT_CHAINS)
+          .filter(([dex]) => dex !== DEX_ENUM.WRAPTOKEN)
+          .flatMap(([, chains]) => chains)
+      )
+    );
+
+    const chainsWithoutNativeWrapping = [
+      // CELO is already exposed as an ERC-20 at its native-token address.
+      CHAINS_ENUM.CELO,
+      // USDT0 is both native and ERC-20 on Stable, so no wrapping is needed.
+      "STABLE" as CHAINS_ENUM,
+      // Tempo has no native token.
+      "TEMPO" as CHAINS_ENUM,
+    ];
+    const unsupportedChains = allSwapChains.filter(
+      (chain) =>
+        !WrapTokenAddressMap[chain as keyof typeof WrapTokenAddressMap]
+    );
+
+    expect(unsupportedChains.sort()).toEqual(
+      chainsWithoutNativeWrapping.sort()
+    );
+  });
+
+  it("derives WrapToken support chains from the address map", () => {
+    expect([...DEX_SUPPORT_CHAINS[DEX_ENUM.WRAPTOKEN]].sort()).toEqual(
+      Object.keys(WrapTokenAddressMap).sort()
+    );
+  });
 
   it("Export getQuote correctly", async () => {
     const supportedDEX = Object.keys(DEX_SUPPORT_CHAINS);

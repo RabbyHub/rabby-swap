@@ -1,5 +1,4 @@
 import { CHAINS_ENUM } from "@debank/common";
-import { SUPPORT_CHAINS as wrapTokenSupportChains } from "./dexs/wrapToken";
 import { SUPPORT_CHAINS as zeroXSupportChains } from "./dexs/0xapi";
 import { SUPPORT_CHAINS as oneInchSupportChains } from "./dexs/1inch";
 import { SUPPORT_CHAINS as paraswapSupportChains } from "./dexs/paraswap";
@@ -55,12 +54,23 @@ export const WrapTokenAddressMap = {
   [CHAINS_ENUM.RSK]: "0x967f8799aF07DF1534d48A95a5C9FEBE92c53ae0",
   [CHAINS_ENUM.KAVA]: "0xc86c7C0eFbd6A49B35E8714C5f59D99De09A225b",
   [CHAINS_ENUM.ZETA]: "0x5f0b1a82749cb4e2278ec87f8bf6b618dc71a8bf",
+  [CHAINS_ENUM.FUSE]: "0x0be9e53fd7edac9f859882afdda116645287c629",
+  [CHAINS_ENUM.CORE]: "0x40375c92d9faf44d2f9db9bd9ba41a3317a2404f",
+  ["XLAYER" as CHAINS_ENUM]: "0xe538905cf8410324e03a5a23c1c177a474d59b2b",
+  ["APE" as CHAINS_ENUM]: "0x48b62137edfa95a428d35c09e44256a739f6b557",
+  ["HEMI" as CHAINS_ENUM]: "0x4200000000000000000000000000000000000006",
+  // Katana uses Vault Bridge ETH instead of the default OP Stack WETH predeploy.
+  ["KATANA" as CHAINS_ENUM]: "0xEE7D8BCFb72bC1880D0Cf19822eB0A2e6577aB62",
   ["MEGAETH" as CHAINS_ENUM]: "0x4200000000000000000000000000000000000006",
   ["HOOD" as CHAINS_ENUM]: "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
 };
 
+export const WRAP_TOKEN_SUPPORT_CHAINS = Object.keys(
+  WrapTokenAddressMap
+) as CHAINS_ENUM[];
+
 export const DEX_SUPPORT_CHAINS = {
-  [DEX_ENUM.WRAPTOKEN]: wrapTokenSupportChains,
+  [DEX_ENUM.WRAPTOKEN]: WRAP_TOKEN_SUPPORT_CHAINS,
   [DEX_ENUM.SUSHI]: sushiSupportChains,
   [DEX_ENUM.ONEINCH]: oneInchSupportChains,
   [DEX_ENUM.PARASWAP]: paraswapSupportChains,
