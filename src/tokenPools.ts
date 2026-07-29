@@ -14,37 +14,65 @@ export type TokenPoolToken = TokenPoolLookupToken;
 export const STABLE_TOKEN_POOL: readonly TokenPoolToken[] = [
   { chain: "abs", id: "0x84A71ccD554Cc1b02749b35d22F684CC8ec987e1" }, // USDC.e
   { chain: "abs", id: "0x0709F39376dEEe2A2dfC94A58EdEb2Eb9DF012bD" }, // USDT
+  { chain: "abs", id: "0xEa77c590Bb36c43ef7139cE649cFBCFD6163170d" }, // frxUSD
+  { chain: "arb", id: "0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a" }, // AUSD
   { chain: "arb", id: "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1" }, // DAI
+  { chain: "arb", id: "0x0c06cCF38114ddfc35e07427B9424adcca9F44F8" }, // EURe
+  { chain: "arb", id: "0x80Eede496655FB9047dd39d9f418d5483ED600df" }, // frxUSD
+  { chain: "arb", id: "0x7dfF72693f6A4149b17e7C6314655f6A9F7c8B33" }, // GHO
   { chain: "arb", id: "0x46850aD61C2B7d64d08c9C754F45254596696984" }, // PYUSD
   { chain: "arb", id: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8" }, // USDC.e
   { chain: "arb", id: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831" }, // USDC
   { chain: "arb", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
   { chain: "arb", id: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9" }, // USDT0
+  { chain: "arb", id: "0x35f1C5cB7Fb977E669fD244C567Da99d8a3a6850" }, // USD0
+  { chain: "arb", id: "0x004B506865409877C9fA29bfb1ebA929984B9bbC" }, // USDG
+  { chain: "arb", id: "0xE333e7754a2DC1E020a162Ecab019254b9DaB653" }, // XSGD
   { chain: "aurora", id: "0xB12BFcA5A55806AaF64E99521918A4bf0fC40802" }, // USDC
   { chain: "aurora", id: "0x4988a896b1227218e4A686fdE5EabdcAbd91571f" }, // USDT
+  { chain: "avax", id: "0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a" }, // AUSD
   { chain: "avax", id: "0xd586E7F844cEa2F87f50152665BCbc2C279D8d70" }, // DAI.e
   { chain: "avax", id: "0xC891EB4cbdEFf6e073e859e987815Ed1505c2ACD" }, // EURC
+  { chain: "avax", id: "0x80Eede496655FB9047dd39d9f418d5483ED600df" }, // frxUSD
+  { chain: "avax", id: "0xfc421aD3C883Bf9E7C4f42dE845C4e4405799e73" }, // GHO
   { chain: "avax", id: "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E" }, // USDC
   { chain: "avax", id: "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7" }, // USDt
+  { chain: "avax", id: "0xb2F85b7AB3c2b6f62DF06dE6aE7D09c010a5096E" }, // XSGD
+  { chain: "base", id: "0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a" }, // AUSD
   { chain: "base", id: "0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb" }, // DAI
+  { chain: "base", id: "0xbf6e2966A9C3D99C9E4D069E04f7Bdb9C8aa762C" }, // EURe
   { chain: "base", id: "0x60a3E35Cc302bFA44Cb288Bc5a4F316Fdb1adb42" }, // EURC
+  { chain: "base", id: "0xe5020A6d073a794B6E7f05678707dE47986Fb0b6" }, // frxUSD
+  { chain: "base", id: "0x6Bb7a212910682DCFdbd5BCBb3e28FB4E8da10Ee" }, // GHO
+  { chain: "base", id: "0x8d58c0c60b8d6b88fa98b291a646db34d0f98258" }, // RLUSD
   { chain: "base", id: "0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA" }, // USDbC
   { chain: "base", id: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913" }, // USDC
   { chain: "base", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
   { chain: "base", id: "0x820C137fa70C8691f0e44Dc420a5e53c168921Dc" }, // USDS
   { chain: "base", id: "0xfde4C96c8593536E31F229EA8f37b2ADa2699bb2" }, // USDT
+  { chain: "base", id: "0x758a3e0b1F842C9306B783f8A4078C6C8C03a270" }, // USD0
+  { chain: "base", id: "0x0A4C9cb2778aB3302996A34BeFCF9a8Bc288C33b" }, // XSGD
   { chain: "bera", id: "0x549943e04f40284185054145c6E4e9568C1D3241" }, // USDC.e
   { chain: "bera", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
   { chain: "blast", id: "0x4300000000000000000000000000000000000003" }, // USDB
   { chain: "blast", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
+  { chain: "bsc", id: "0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a" }, // AUSD
+  { chain: "bsc", id: "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56" }, // BUSD (legacy; minting ceased)
   { chain: "bsc", id: "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3" }, // DAI
   { chain: "bsc", id: "0xc5f0f7b66764F6ec8C8Dff7BA683102295E16409" }, // FDUSD
+  { chain: "bsc", id: "0x80Eede496655FB9047dd39d9f418d5483ED600df" }, // frxUSD
+  { chain: "bsc", id: "0xb3b02e4a9fb2bd28cc2ff97b0ab3f6b3ec1ee9d2" }, // USDf
   { chain: "bsc", id: "0x8d0D000Ee44948FC98c9B98A4FA4921476f08B0d" }, // USD1
   { chain: "bsc", id: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d" }, // USDC
   { chain: "bsc", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
   { chain: "bsc", id: "0x55d398326f99059fF775485246999027B3197955" }, // USDT
+  { chain: "bsc", id: "0x758a3e0b1F842C9306B783f8A4078C6C8C03a270" }, // USD0
+  { chain: "celo", id: "0xd8763cba276a3738e6de85b4b3bf5fded6d6ca73" }, // cEUR
+  { chain: "celo", id: "0xe8537a3d056da446677b9e9d6c5db704eaab4787" }, // cREAL
+  { chain: "celo", id: "0x765DE816845861e75A25fCA122bb6898B8B1282a" }, // cUSD
   { chain: "celo", id: "0xcebA9300f2b948710d2653dD7B07f33A8B32118C" }, // USDC
   { chain: "celo", id: "0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e" }, // USDT
+  { chain: "core", id: "0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a" }, // AUSD
   { chain: "core", id: "0xa4151B2B3e269645181dCcF2D426cE75fcbDeca9" }, // USDC
   { chain: "core", id: "0x900101d06a7426441ae63e9ab3b9b0f63be145f1" }, // USDT
   { chain: "cro", id: "0x3D7F2C478aAfdB65542BCB44bCeeC05849999d2D" }, // USDC
@@ -53,28 +81,50 @@ export const STABLE_TOKEN_POOL: readonly TokenPoolToken[] = [
   { chain: "era", id: "0x1d17CBcF0D6D143135aE902365D2E5e2A16538D4" }, // USDC
   { chain: "era", id: "0x39Fe7a0DACcE31Bd90418e3e659fb0b5f0B3Db0d" }, // USDe
   { chain: "era", id: "0x493257fD37EDB34451f62EDf8D2a0C418852bA4C" }, // USDT
+  { chain: "eth", id: "0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a" }, // AUSD
   { chain: "eth", id: "0xf939E0A03FB07F59A73314E73794Be0E57ac1b4E" }, // crvUSD
   { chain: "eth", id: "0x6B175474E89094C44Da98b954EedeAC495271d0F" }, // DAI
+  { chain: "eth", id: "0x39b8B6385416f4cA36a20319F70D28621895279D" }, // EURe
   { chain: "eth", id: "0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c" }, // EURC
+  { chain: "eth", id: "0x5F7827FDeb7c20b443265Fc2F40845B715385Ff2" }, // EURCV
+  { chain: "eth", id: "0x8dF723295214Ea6f21026eeEb4382d475f146F9f" }, // EURQ
   { chain: "eth", id: "0xc5f0f7b66764F6ec8C8Dff7BA683102295E16409" }, // FDUSD
+  { chain: "eth", id: "0xCAcd6fd266aF91b8AeD52aCCc382b4e165586E29" }, // frxUSD
+  { chain: "eth", id: "0x40D16FC0246aD3160Ccc09B8D0D3A2cD28aE6C2f" }, // GHO
+  { chain: "eth", id: "0x056Fd409E1d7A124BD7017459dFEa2F387b6d5Cd" }, // GUSD
   { chain: "eth", id: "0x6c3ea9036406852006290770BEdFcAbA0e23A0e8" }, // PYUSD
+  { chain: "eth", id: "0x8292Bb45bf1Ee4d140127049757C2E0fF06317eD" }, // RLUSD
   { chain: "eth", id: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" }, // USDC
+  { chain: "eth", id: "0x5422374B27757da72d5265cC745ea906E0446634" }, // USDCV
   { chain: "eth", id: "0x4c9EDD5852cd905f086C759E8383e09bff1E68B3" }, // USDe
+  { chain: "eth", id: "0x8E870D67F660D95d5be530380D0eC0bd388289E1" }, // USDP
   { chain: "eth", id: "0xdC035D45d973E3EC169d2276DDab16f1e407384F" }, // USDS
   { chain: "eth", id: "0xdAC17F958D2ee523a2206206994597C13D831ec7" }, // USDT
+  { chain: "eth", id: "0x73A15FeD60Bf67631dC6cd7Bc5B6e8da8190aCF5" }, // USD0
   { chain: "eth", id: "0x8d0D000Ee44948FC98c9B98A4FA4921476f08B0d" }, // USD1
+  { chain: "eth", id: "0xFa2B947eEc368f42195f24F36d2aF29f7c24CeC2" }, // USDf
+  { chain: "eth", id: "0xe343167631d89B6Ffc58B88d6b7fB0228795491D" }, // USDG
+  { chain: "eth", id: "0xc83e27f270cce0A3A3A29521173a83F402c1768b" }, // USDQ
+  { chain: "eth", id: "0x70e8de73ce538da2beed35d14187f6959a8eca96" }, // XSGD
   { chain: "gravity", id: "0xFbDa5F676cB37624f28265A144A48B0d6e87d3b6" }, // USDC.e
   { chain: "gravity", id: "0x816E810f9F787d669FB71932DeabF6c83781Cd48" }, // USDT
   { chain: "hood", id: "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168" }, // USDG
   { chain: "hyper", id: "0xb88339CB7199b77E23DB6E890353E22632Ba630f" }, // USDC
+  { chain: "hyper", id: "0x80Eede496655FB9047dd39d9f418d5483ED600df" }, // frxUSD
   { chain: "hyper", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
   { chain: "hyper", id: "0xB8CE59FC3717ada4C02eaDF9682A9e934F625ebb" }, // USDT0
+  { chain: "ink", id: "0xfc421aD3C883Bf9E7C4f42dE845C4e4405799e73" }, // GHO
+  { chain: "ink", id: "0x8d58c0c60b8d6b88fa98b291a646db34d0f98258" }, // RLUSD
   { chain: "ink", id: "0x2D270e6886d130D724215A266106e6832161EAEd" }, // USDC
   { chain: "ink", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
   { chain: "ink", id: "0x0200C29006150606B650577BBE7B6248F58470c1" }, // USDT0
+  { chain: "ink", id: "0xe343167631d89B6Ffc58B88d6b7fB0228795491D" }, // USDG
+  { chain: "katana", id: "0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a" }, // AUSD
   { chain: "kava", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
   { chain: "kava", id: "0x919C1c267BC06a7039e03fcc2eF738525769109c" }, // USDT
   { chain: "klay", id: "0xd077A400968890Eacc75cdc901F0356c943e4fDb" }, // USDT
+  { chain: "linea", id: "0x3ff47c5Bf409C86533FE1f4907524d304062428D" }, // EURe
+  { chain: "linea", id: "0xC7346783f5e645aa998B106Ef9E7f499528673D8" }, // frxUSD
   { chain: "linea", id: "0x4AF15ec2A0BD43Db75dd04E62FAA3B8EF36b00d5" }, // DAI
   { chain: "linea", id: "0x176211869cA2b568f2A7D4EE941E073a821EE1ff" }, // USDC
   { chain: "linea", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
@@ -82,27 +132,42 @@ export const STABLE_TOKEN_POOL: readonly TokenPoolToken[] = [
   { chain: "manta", id: "0xb73603C5d87fA094B7314C74ACE2e64D165016fb" }, // USDC
   { chain: "manta", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
   { chain: "manta", id: "0xf417F5A458eC102B90352F697D6e2Ac3A3d2851f" }, // USDT
+  { chain: "matic", id: "0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a" }, // AUSD
   { chain: "matic", id: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063" }, // DAI
+  { chain: "matic", id: "0xE0aEa583266584DafBB3f9C3211d5588c73fEa8d" }, // EURe
+  { chain: "matic", id: "0xd571edb2ef29df10fcd6200fd6d0ed2389983db3" }, // EURQ
+  { chain: "matic", id: "0x80Eede496655FB9047dd39d9f418d5483ED600df" }, // frxUSD
+  { chain: "matic", id: "0x99aF3EeA856556646C98c8B9b2548Fe815240750" }, // PYUSD
   { chain: "matic", id: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174" }, // USDC.e
   { chain: "matic", id: "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359" }, // USDC
   { chain: "matic", id: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F" }, // USDT
+  { chain: "matic", id: "0xb291996477504506bf5f583102b5b5ea5d1e40e0" }, // USDQ
+  { chain: "matic", id: "0xDC3326e71D45186F113a2F448984CA0e8D201995" }, // XSGD
   { chain: "megaeth", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
   { chain: "megaeth", id: "0xB8CE59FC3717ada4C02eaDF9682A9e934F625ebb" }, // USDT0
   { chain: "metis", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
+  { chain: "mnt", id: "0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a" }, // AUSD
+  { chain: "mnt", id: "0xfc421aD3C883Bf9E7C4f42dE845C4e4405799e73" }, // GHO
   { chain: "mnt", id: "0x09Bc4E0D864854c6aFB6eB9A9cdF58aC190D0dF9" }, // USDC
   { chain: "mnt", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
   { chain: "mnt", id: "0x201EBa5CC46D216Ce6DC03F6a759e8E766e956aE" }, // USDT
   { chain: "mnt", id: "0x779Ded0c9e1022225f8E0630b35a9b54bE713736" }, // USDT0
   { chain: "mnt", id: "0x111111d2bf19e43c34263401e0cad979ed1cdb61" }, // USD1
   { chain: "mode", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
+  { chain: "monad", id: "0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a" }, // AUSD
+  { chain: "monad", id: "0x58e3ee6accd124642ddb5d3f91928816be8d8ed3" }, // frxUSD
+  { chain: "monad", id: "0xfc421aD3C883Bf9E7C4f42dE845C4e4405799e73" }, // GHO
   { chain: "monad", id: "0x754704Bc059F8C67012fEd69BC8A327a5aafb603" }, // USDC
   { chain: "monad", id: "0xe7cd86e13AC4309349F30B3435a9d337750fC82D" }, // USDT0
   { chain: "monad", id: "0x111111d2bf19e43c34263401e0cad979ed1cdb61" }, // USD1
   { chain: "op", id: "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1" }, // DAI
+  { chain: "op", id: "0x80Eede496655FB9047dd39d9f418d5483ED600df" }, // frxUSD
+  { chain: "op", id: "0x8d58c0c60b8d6b88fa98b291a646db34d0f98258" }, // RLUSD
   { chain: "op", id: "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85" }, // USDC
   { chain: "op", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
   { chain: "op", id: "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58" }, // USDT
   { chain: "op", id: "0x01bFF41798a0BcF287b996046Ca68b395DbC1071" }, // USDT0
+  { chain: "plasma", id: "0xb77E872A68C62CfC0dFb02C067Ecc3DA23B4bbf3" }, // GHO
   { chain: "plasma", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
   { chain: "plasma", id: "0xB8CE59FC3717ada4C02eaDF9682A9e934F625ebb" }, // USDT0
   { chain: "pze", id: "0xC5015b9d9161Dca7e18e32f6f25C4aD850731Fd4" }, // DAI
@@ -112,10 +177,12 @@ export const STABLE_TOKEN_POOL: readonly TokenPoolToken[] = [
   { chain: "rsk", id: "0x74c9f2b00581F1B11AA7ff05aa9F608B7389De67" }, // USDC.e
   { chain: "rsk", id: "0xAf368c91793CB22739386DFCbBb2F1A9e4bCBeBf" }, // USDT
   { chain: "scrl", id: "0xcA77eB3fEFe3725Dc33bccB54eDEFc3D9f764f97" }, // DAI
+  { chain: "scrl", id: "0x397F939C3b91A74C321ea7129396492bA9Cdce82" }, // frxUSD
   { chain: "scrl", id: "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4" }, // USDC
   { chain: "scrl", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
   { chain: "scrl", id: "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df" }, // USDT
   { chain: "sei", id: "0xe15fC38F6D8c56aF07bbCBe3BAf5708A2Bf42392" }, // USDC
+  { chain: "sonic", id: "0x80Eede496655FB9047dd39d9f418d5483ED600df" }, // frxUSD
   { chain: "sonic", id: "0x29219dd400f2Bf60E5a23d13Be72B486D4038894" }, // USDC
   { chain: "sonic", id: "0x6047828dc181963ba44974801FF68e538dA5eaF9" }, // USDT
   { chain: "stable", id: "0x779Ded0c9e1022225f8E0630b35a9b54bE713736" }, // USDT0
@@ -123,13 +190,21 @@ export const STABLE_TOKEN_POOL: readonly TokenPoolToken[] = [
   { chain: "tempo", id: "0x20c0000000000000000000000000000000000000" }, // USD
   { chain: "tempo", id: "0x20c000000000000000000000b9537d11c60e8b50" }, // USDC.e
   { chain: "tempo", id: "0x20c00000000000000000000014f22ca97301eb73" }, // USDT0
+  { chain: "uni", id: "0x80Eede496655FB9047dd39d9f418d5483ED600df" }, // frxUSD
+  { chain: "uni", id: "0x8d58c0c60b8d6b88fa98b291a646db34d0f98258" }, // RLUSD
   { chain: "uni", id: "0x078D782b760474a361dDA0AF3839290b0EF57AD6" }, // USDC
   { chain: "uni", id: "0x9151434b16b9763660705744891fA906F660EcC5" }, // USDT0
+  { chain: "xdai", id: "0x420CA0f9B9b604cE0fd9C18EF134C705e5Fa3430" }, // EURe
+  { chain: "xdai", id: "0xfc421aD3C883Bf9E7C4f42dE845C4e4405799e73" }, // GHO
   { chain: "xdai", id: "0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83" }, // USDC
   { chain: "xdai", id: "0x4ECaBa5870353805a9F068101A40E0f32ed605C6" }, // USDT
+  { chain: "xlayer", id: "0x80Eede496655FB9047dd39d9f418d5483ED600df" }, // frxUSD
+  { chain: "xlayer", id: "0xDe6539018B095353A40753Dc54C91C68c9487D4E" }, // GHO
+  { chain: "xlayer", id: "0x87b4a8176B3Df6b71e26CC095edcAf4Db07506B4" }, // PYUSD
   { chain: "xlayer", id: "0x74b7F16337b8972027F6196A17a631aC6dE26d22" }, // USDC
   { chain: "xlayer", id: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34" }, // USDe
   { chain: "xlayer", id: "0x111111d2bf19e43c34263401e0cad979ed1cdb61" }, // USD1
+  { chain: "xlayer", id: "0x4ae46a509F6b1D9056937BA4500cb143933D2dc8" }, // USDG
 ];
 
 /**
