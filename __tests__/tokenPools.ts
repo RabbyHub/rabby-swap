@@ -182,6 +182,58 @@ describe("token pools", () => {
       }
     });
 
+    it("includes the newly curated stablecoin families", () => {
+      const curatedStablecoins = [
+        // Explicitly requested additions
+        ["bsc", "0xe9e7cea3dedca5984780bafc599bd69add087d56"], // BUSD
+        ["monad", "0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a"], // AUSD
+        // Widely used or medium-sized USD stablecoins
+        ["eth", "0x8292bb45bf1ee4d140127049757c2e0ff06317ed"], // RLUSD
+        ["eth", "0x40D16FC0246aD3160Ccc09B8D0D3A2cD28aE6C2f"], // GHO
+        ["eth", "0xCAcd6fd266aF91b8AeD52aCCc382b4e165586E29"], // frxUSD
+        ["eth", "0x73A15FeD60Bf67631dC6cd7Bc5B6e8da8190aCF5"], // USD0
+        ["eth", "0xe343167631d89B6Ffc58B88d6b7fB0228795491D"], // USDG
+        ["eth", "0xFa2B947eEc368f42195f24F36d2aF29f7c24CeC2"], // USDf
+        ["eth", "0x8E870D67F660D95d5be530380D0eC0bd388289E1"], // USDP
+        ["eth", "0x056Fd409E1d7A124BD7017459dFEa2F387b6d5Cd"], // GUSD
+        // Non-USD fiat and regulated stablecoins
+        ["eth", "0x70e8de73ce538da2beed35d14187f6959a8eca96"], // XSGD
+        ["eth", "0x39b8B6385416f4cA36a20319F70D28621895279D"], // EURe
+        ["eth", "0x5F7827FDeb7c20b443265Fc2F40845B715385Ff2"], // EURCV
+        ["eth", "0x8dF723295214Ea6f21026eeEb4382d475f146F9f"], // EURQ
+        ["celo", "0xd8763cba276a3738e6de85b4b3bf5fded6d6ca73"], // cEUR
+        ["celo", "0xe8537a3d056da446677b9e9d6c5db704eaab4787"], // cREAL
+      ];
+
+      for (const [chain, id] of curatedStablecoins) {
+        expect(
+          STABLE_TOKEN_POOL.some(
+            (token) =>
+              token.chain === chain &&
+              token.id.toLowerCase() === id.toLowerCase()
+          )
+        ).toBe(true);
+      }
+    });
+
+    it("matches newly added stablecoins only on the same chain", () => {
+      const bscBusd = {
+        chain: "bsc",
+        id: "0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      };
+      const bscAusd = {
+        chain: "bsc",
+        id: "0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a",
+      };
+      const monadAusd = {
+        chain: "monad",
+        id: "0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a",
+      };
+
+      expect(isSameTypeTokenPair(bscBusd, bscAusd)).toBe(true);
+      expect(isSameTypeTokenPair(monadAusd, bscAusd)).toBe(false);
+    });
+
     it("matches ETH and WETH in either direction", () => {
       expect(isSameTypeTokenPair(ETH, WETH)).toBe(true);
       expect(isSameTypeTokenPair(WETH, ETH)).toBe(true);
@@ -241,6 +293,19 @@ describe("token pools", () => {
         ...NATIVE_AND_DERIVATIVE_TOKEN_POOL,
       ]) {
         expect(Object.keys(token).sort()).toEqual(["chain", "id"]);
+      }
+    });
+
+    it("keeps chain and token address entries unique in each pool", () => {
+      for (const pool of [
+        STABLE_TOKEN_POOL,
+        NATIVE_AND_DERIVATIVE_TOKEN_POOL,
+      ]) {
+        const keys = pool.map(
+          (token) => `${token.chain.toLowerCase()}:${token.id.toLowerCase()}`
+        );
+
+        expect(new Set(keys).size).toBe(keys.length);
       }
     });
   });
