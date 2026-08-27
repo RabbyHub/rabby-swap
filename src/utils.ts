@@ -49,6 +49,7 @@ export const generateGetQuote =
       pay_token_raw_amount: options.amount,
       receive_token_id: options.toToken,
       slippage: options.slippage / 100,
+      fee_rate: options.feeRate,
     };
     if (options.fee) {
       params.fee = true;
