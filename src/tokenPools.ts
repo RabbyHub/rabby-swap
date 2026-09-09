@@ -253,6 +253,56 @@ const nativeAndDerivativeTokenKeySet = new Set(
   NATIVE_AND_DERIVATIVE_TOKEN_POOL.map(getTokenKey)
 );
 
+const getComparableTokenPairKeys = (
+  tokenA: TokenPoolLookupToken | null | undefined,
+  tokenB: TokenPoolLookupToken | null | undefined
+): [string, string] | null => {
+  if (!isTokenPoolLookupToken(tokenA) || !isTokenPoolLookupToken(tokenB)) {
+    return null;
+  }
+
+  if (tokenA.chain.toLowerCase() !== tokenB.chain.toLowerCase()) {
+    return null;
+  }
+
+  return [getTokenKey(tokenA), getTokenKey(tokenB)];
+};
+
+/**
+ * Returns true when both tokens are stablecoins on the same chain.
+ *
+ * Lookup is O(1) after module initialization.
+ */
+export const isStableTokenPair = (
+  tokenA: TokenPoolLookupToken | null | undefined,
+  tokenB: TokenPoolLookupToken | null | undefined
+): boolean => {
+  const keys = getComparableTokenPairKeys(tokenA, tokenB);
+  return (
+    !!keys &&
+    stableTokenKeySet.has(keys[0]) &&
+    stableTokenKeySet.has(keys[1])
+  );
+};
+
+/**
+ * Returns true when both tokens are native or derivative (LST/LRT) tokens on
+ * the same chain.
+ *
+ * Lookup is O(1) after module initialization.
+ */
+export const isNativeAndDerivativeTokenPair = (
+  tokenA: TokenPoolLookupToken | null | undefined,
+  tokenB: TokenPoolLookupToken | null | undefined
+): boolean => {
+  const keys = getComparableTokenPairKeys(tokenA, tokenB);
+  return (
+    !!keys &&
+    nativeAndDerivativeTokenKeySet.has(keys[0]) &&
+    nativeAndDerivativeTokenKeySet.has(keys[1])
+  );
+};
+
 /**
  * Returns true when both tokens form a same-type pair in the same pool:
  * either two stablecoins, or two native/derivative tokens.
@@ -263,27 +313,6 @@ const nativeAndDerivativeTokenKeySet = new Set(
 export const isSameTypeTokenPair = (
   tokenA: TokenPoolLookupToken | null | undefined,
   tokenB: TokenPoolLookupToken | null | undefined
-): boolean => {
-  if (!isTokenPoolLookupToken(tokenA) || !isTokenPoolLookupToken(tokenB)) {
-    return false;
-  }
-
-  if (tokenA.chain.toLowerCase() !== tokenB.chain.toLowerCase()) {
-    return false;
-  }
-
-  const tokenAKey = getTokenKey(tokenA);
-  const tokenBKey = getTokenKey(tokenB);
-
-  if (
-    stableTokenKeySet.has(tokenAKey) &&
-    stableTokenKeySet.has(tokenBKey)
-  ) {
-    return true;
-  }
-
-  return (
-    nativeAndDerivativeTokenKeySet.has(tokenAKey) &&
-    nativeAndDerivativeTokenKeySet.has(tokenBKey)
-  );
-};
+): boolean =>
+  isStableTokenPair(tokenA, tokenB) ||
+  isNativeAndDerivativeTokenPair(tokenA, tokenB);

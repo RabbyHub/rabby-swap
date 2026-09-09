@@ -1,7 +1,9 @@
 import {
   NATIVE_AND_DERIVATIVE_TOKEN_POOL,
   STABLE_TOKEN_POOL,
+  isNativeAndDerivativeTokenPair,
   isSameTypeTokenPair,
+  isStableTokenPair,
 } from "../src";
 
 const ETH = { chain: "eth", id: "eth" };
@@ -22,7 +24,48 @@ const CBETH = {
   id: "0xBe9895146f7AF43049ca1c1AE358B0541Ea49704",
 };
 
+const USDC = {
+  chain: "eth",
+  id: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+};
+const USDT = {
+  chain: "eth",
+  id: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+};
+
 describe("token pools", () => {
+  describe("isStableTokenPair", () => {
+    it("matches two stablecoins on the same chain", () => {
+      expect(isStableTokenPair(USDC, USDT)).toBe(true);
+    });
+
+    it("rejects native or derivative tokens", () => {
+      expect(isStableTokenPair(ETH, STETH)).toBe(false);
+      expect(isStableTokenPair(USDC, STETH)).toBe(false);
+    });
+
+    it("rejects stablecoins on different chains", () => {
+      expect(
+        isStableTokenPair(USDC, {
+          chain: "base",
+          id: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        })
+      ).toBe(false);
+    });
+  });
+
+  describe("isNativeAndDerivativeTokenPair", () => {
+    it("matches native and derivative tokens on the same chain", () => {
+      expect(isNativeAndDerivativeTokenPair(ETH, WETH)).toBe(true);
+      expect(isNativeAndDerivativeTokenPair(STETH, WSTETH)).toBe(true);
+    });
+
+    it("rejects stablecoins", () => {
+      expect(isNativeAndDerivativeTokenPair(USDC, USDT)).toBe(false);
+      expect(isNativeAndDerivativeTokenPair(ETH, USDC)).toBe(false);
+    });
+  });
+
   describe("isSameTypeTokenPair", () => {
     it("matches two stablecoins on the same chain", () => {
       expect(
