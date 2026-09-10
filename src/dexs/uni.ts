@@ -19,6 +19,7 @@ export const SUPPORT_CHAINS = [
   "TEMPO" as CHAINS_ENUM,
   "MONAD" as CHAINS_ENUM,
   "HOOD" as CHAINS_ENUM,
+  "ARC" as CHAINS_ENUM,
 ] as CHAINS_ENUM[];
 
 export const UNI_NATIVE_TO_ADDRESSES = {
@@ -36,6 +37,7 @@ export const UNI_NATIVE_TO_ADDRESSES = {
   ["TEMPO" as CHAINS_ENUM]: "0x1FEbB76Be10aAf3A1402F04e8E835f2c382F7914",
   ["MONAD" as CHAINS_ENUM]: "0x0d97dc33264bfc1c226207428a79b26757fb9dc3",
   ["HOOD" as CHAINS_ENUM]: "0x8876789976decbfcbbbe364623c63652db8c0904",
+  ["ARC" as CHAINS_ENUM]: "0x4fca4a51ab4f23a7447b3284fbd7d73289a89fb1",
 } as Record<CHAINS_ENUM, string>;
 
 export const getQuote = generateGetQuote({

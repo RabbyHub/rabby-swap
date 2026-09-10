@@ -80,9 +80,10 @@ export const generateGetQuote =
       toTokenAmount: data.receive_token_raw_amount + "",
       toTokenDecimals: data.receive_token.decimals,
       spender:
-        dex === DEX_ENUM.PARASWAP
-          ? DEX_SPENDER_WHITELIST[DEX_ENUM.PARASWAP][
-              options.chain as keyof (typeof DEX_SPENDER_WHITELIST)[DEX_ENUM.PARASWAP]
+        dex === DEX_ENUM.PARASWAP ||
+        (dex === DEX_ENUM.UNI && options.chain === ("ARC" as CHAINS_ENUM))
+          ? DEX_SPENDER_WHITELIST[dex][
+              options.chain as keyof (typeof DEX_SPENDER_WHITELIST)[typeof dex]
             ]
           : data.dex_swap_to,
 
