@@ -40,6 +40,8 @@ describe("correctly export dex", () => {
       "STABLE" as CHAINS_ENUM,
       // Tempo has no native token.
       "TEMPO" as CHAINS_ENUM,
+      // Arc USDC shares its native balance with an ERC-20 interface; no wrapping is needed.
+      "ARC" as CHAINS_ENUM,
     ];
     const unsupportedChains = allSwapChains.filter(
       (chain) =>
