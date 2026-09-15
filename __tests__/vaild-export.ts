@@ -5,6 +5,7 @@ import {
   DEX_ENUM,
   WrapTokenAddressMap,
   getQuote,
+  verifySdk,
 } from "../src/index";
 import { CHAINS_ENUM } from "@debank/common";
 import { decodeCalldata } from "../src/quote";
@@ -66,6 +67,10 @@ describe("correctly export dex", () => {
         getQuote(dex as any, {} as any, {} as any)
       ).rejects.not.toThrowError(`${dex} is not supported!`);
     }
+  });
+
+  it("Export verifySdk correctly", () => {
+    expect(typeof verifySdk).toBe("function");
   });
 
   it("Export decodeCalldata correctly", async () => {

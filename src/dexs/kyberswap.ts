@@ -2,7 +2,7 @@ import { CHAINS_ENUM, CHAINS } from "@debank/common";
 import { Interface } from "@ethersproject/abi";
 
 import { TxWithChainId, DecodeCalldataResult } from "../quote";
-import { generateGetQuote, isSameAddress } from "../utils";
+import { generateGetQuote, isSameAddress, resolveToTokenReceiver } from "../utils";
 import { KyberswapABI } from "../abi";
 import { DEX_ENUM } from "../consts";
 
@@ -53,11 +53,9 @@ export const decodeCalldata = (
   let desc;
 
   if (result.name === "swapSimpleMode") {
-    const [execution] = result.args;
-
-    desc = execution.desc;
-  }
-  if (result.name === "swap") {
+    const [, swapDesc] = result.args;
+    desc = swapDesc;
+  } else if (result.name === "swap") {
     const [execution] = result.args;
     desc = execution.desc;
   }
@@ -77,6 +75,6 @@ export const decodeCalldata = (
       ? chain.nativeTokenAddress
       : dstToken,
     minReceiveToTokenAmount: minReturnAmount.toString(),
-    toTokenReceiver: tx.from,
+    toTokenReceiver: resolveToTokenReceiver(dstReceiver, tx.from),
   };
 };
