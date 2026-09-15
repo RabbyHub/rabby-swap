@@ -2,7 +2,7 @@ import { CHAINS_ENUM, CHAINS } from "@debank/common";
 import { Interface } from "@ethersproject/abi";
 
 import { TxWithChainId, DecodeCalldataResult } from "../quote";
-import { generateGetQuote, isSameAddress } from "../utils";
+import { generateGetQuote, isSameAddress, resolveToTokenReceiver } from "../utils";
 import { KyberswapABI } from "../abi";
 import { DEX_ENUM } from "../consts";
 
@@ -77,6 +77,6 @@ export const decodeCalldata = (
       ? chain.nativeTokenAddress
       : dstToken,
     minReceiveToTokenAmount: minReturnAmount.toString(),
-    toTokenReceiver: tx.from,
+    toTokenReceiver: resolveToTokenReceiver(dstReceiver, tx.from),
   };
 };

@@ -293,7 +293,7 @@ describe("openOcean calldata decode", () => {
       fromTokenAmount: "1000000000000000000000000000000000",
       minReceiveToTokenAmount: "28287149584156770763857",
       toToken: "0x60D01EC2D5E98Ac51C8B4cF84DfCCE98D527c747",
-      toTokenReceiver: "0xf08c90c7f470b640a21dd9b3744eca3d1d16a044",
+      toTokenReceiver: "0xF08C90C7f470B640a21DD9B3744eca3d1d16a044",
     };
     expect(res).toEqual(expectResult);
   });
@@ -312,7 +312,7 @@ describe("openOcean calldata decode", () => {
       fromTokenAmount: "1000000000000000000000000000000000",
       minReceiveToTokenAmount: "16956499961440014995495",
       toToken: "0x60D01EC2D5E98Ac51C8B4cF84DfCCE98D527c747",
-      toTokenReceiver: "0xf08c90c7f470b640a21dd9b3744eca3d1d16a044",
+      toTokenReceiver: "0xF08C90C7f470B640a21DD9B3744eca3d1d16a044",
     };
     expect(res).toEqual(expectResult);
   });
@@ -331,7 +331,7 @@ describe("openOcean calldata decode", () => {
       fromTokenAmount: "1000000000000000000000000000000000",
       minReceiveToTokenAmount: "107383355878218254",
       toToken: CHAINS[CHAINS_ENUM.BSC].nativeTokenAddress,
-      toTokenReceiver: "0xf08c90c7f470b640a21dd9b3744eca3d1d16a044",
+      toTokenReceiver: "0xF08C90C7f470B640a21DD9B3744eca3d1d16a044",
     };
     expect(res).toEqual(expectResult);
   });

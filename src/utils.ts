@@ -9,6 +9,13 @@ export const isSameAddress = (addr1: string, addr2: string) => {
   return addr1.toLowerCase() === addr2.toLowerCase();
 };
 
+export const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
+
+export const resolveToTokenReceiver = (
+  encodedReceiver: string,
+  txFrom: string
+) => (isSameAddress(encodedReceiver, NULL_ADDRESS) ? txFrom : encodedReceiver);
+
 export const generateGetQuote =
   ({
     SUPPORT_CHAINS,
