@@ -53,11 +53,9 @@ export const decodeCalldata = (
   let desc;
 
   if (result.name === "swapSimpleMode") {
-    const [execution] = result.args;
-
-    desc = execution.desc;
-  }
-  if (result.name === "swap") {
+    const [, swapDesc] = result.args;
+    desc = swapDesc;
+  } else if (result.name === "swap") {
     const [execution] = result.args;
     desc = execution.desc;
   }
