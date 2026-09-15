@@ -9,6 +9,7 @@ import { DEX_ENUM } from "./consts";
 import { UNI_NATIVE_TO_ADDRESSES } from "./dexs/uni";
 
 export * from "./tokenPools";
+export * from "./verify";
 
 export {
   WrapTokenAddressMap,
