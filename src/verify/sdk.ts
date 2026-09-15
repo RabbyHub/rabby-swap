@@ -8,6 +8,7 @@ import {
 } from "../quote";
 import { decodeSwapCalldata, verifyCalldata } from "./calldata";
 import { verifyRouterAndSpender } from "./contracts";
+import { isSwapCalldataReceiverAllowed } from "./receiver";
 import { isSwapWrapToken } from "./wrap";
 
 export type VerifySdkParams = {
@@ -22,14 +23,15 @@ export type VerifySdkParams = {
   nativeTokenAddress: string;
   /** 解码 calldata 用；应用侧用自己的链目录解析。 */
   chainId: number;
+  userAddress: string;
 };
 
 export type VerifySdkResult = {
   routerPass: boolean;
   spenderPass: boolean;
   callDataPass: boolean;
+  receiverPass: boolean;
   isSdkDataPass: boolean;
-  /** 解码结果，供应用做收款人等额外校验。解不出则为 null。 */
   decoded: DecodeCalldataResult | null;
 };
 
@@ -40,9 +42,9 @@ const toTxWithChainId = (
   data?.tx ? { ...data.tx, chainId } : undefined;
 
 /**
- * 组合 router / spender / calldata 三项。
+ * 组合 router / spender / calldata。
  * native↔WETH 视为 wrap，走 WRAPTOKEN（不解码、不查 DEX 白名单）。
- * 收款人、预执行、gas 不在此处理。
+ * 预执行、gas 不在此处理。
  */
 export const verifySdk = (p: VerifySdkParams): VerifySdkResult => {
   const actualDexId = isSwapWrapToken(
@@ -74,12 +76,17 @@ export const verifySdk = (p: VerifySdkParams): VerifySdkResult => {
     tx,
     decoded,
   });
+  const receiverPass = isSwapCalldataReceiverAllowed(
+    decoded?.toTokenReceiver,
+    p.userAddress
+  );
 
   return {
     routerPass,
     spenderPass,
     callDataPass,
-    isSdkDataPass: routerPass && spenderPass && callDataPass,
+    receiverPass,
+    isSdkDataPass: routerPass && spenderPass && callDataPass && receiverPass,
     decoded,
   };
 };

@@ -3,6 +3,7 @@ import { DEX_ENUM } from "../src/consts";
 import { KyberswapABI, OpenOceanABI } from "../src/abi";
 import { decodeCalldata } from "../src/quote";
 import { NULL_ADDRESS, isSameAddress } from "../src/utils";
+import { isSwapCalldataReceiverAllowed } from "../src";
 
 const USER = "0x1111111111111111111111111111111111111111";
 const ATTACKER = "0x2222222222222222222222222222222222222222";
@@ -106,12 +107,18 @@ describe("KyberSwap calldata receiver", () => {
 
     expect(isSameAddress(res!.toTokenReceiver, ATTACKER)).toBe(true);
     expect(isSameAddress(res!.toTokenReceiver, USER)).toBe(false);
+    expect(isSwapCalldataReceiverAllowed(res!.toTokenReceiver, USER)).toBe(
+      false
+    );
   });
 
   it("returns the current account when it is the encoded dstReceiver", () => {
     const res = decodeCalldata(DEX_ENUM.KYBERSWAP, encodeKyberSwap(USER));
 
     expect(isSameAddress(res!.toTokenReceiver, USER)).toBe(true);
+    expect(isSwapCalldataReceiverAllowed(res!.toTokenReceiver, USER)).toBe(
+      true
+    );
   });
 
   it("normalizes address(0) dstReceiver to tx.from", () => {
@@ -121,6 +128,9 @@ describe("KyberSwap calldata receiver", () => {
     );
 
     expect(isSameAddress(res!.toTokenReceiver, USER)).toBe(true);
+    expect(isSwapCalldataReceiverAllowed(res!.toTokenReceiver, USER)).toBe(
+      true
+    );
   });
 
   it("returns the encoded dstReceiver for swapSimpleMode", () => {
@@ -130,6 +140,9 @@ describe("KyberSwap calldata receiver", () => {
     );
 
     expect(isSameAddress(res!.toTokenReceiver, ATTACKER)).toBe(true);
+    expect(isSwapCalldataReceiverAllowed(res!.toTokenReceiver, USER)).toBe(
+      false
+    );
   });
 });
 
@@ -142,12 +155,18 @@ describe("OpenOcean calldata receiver", () => {
 
     expect(isSameAddress(res!.toTokenReceiver, ATTACKER)).toBe(true);
     expect(isSameAddress(res!.toTokenReceiver, USER)).toBe(false);
+    expect(isSwapCalldataReceiverAllowed(res!.toTokenReceiver, USER)).toBe(
+      false
+    );
   });
 
   it("returns the current account when it is the encoded dstReceiver", () => {
     const res = decodeCalldata(DEX_ENUM.OPENOCEAN, encodeOpenOceanSwap(USER));
 
     expect(isSameAddress(res!.toTokenReceiver, USER)).toBe(true);
+    expect(isSwapCalldataReceiverAllowed(res!.toTokenReceiver, USER)).toBe(
+      true
+    );
   });
 
   it("normalizes address(0) dstReceiver to tx.from", () => {
@@ -157,5 +176,8 @@ describe("OpenOcean calldata receiver", () => {
     );
 
     expect(isSameAddress(res!.toTokenReceiver, USER)).toBe(true);
+    expect(isSwapCalldataReceiverAllowed(res!.toTokenReceiver, USER)).toBe(
+      true
+    );
   });
 });

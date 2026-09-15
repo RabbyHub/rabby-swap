@@ -13,7 +13,6 @@ export const CALLDATA_MIN_RECEIVE_TOLERANCE = 0.05;
 
 /**
  * 尝试解码。wrap、无 dex、无 tx、解码抛错或解不出时返回 null。
- * 不解收款人是否属于当前用户——那项由应用侧处理。
  */
 export const decodeSwapCalldata = (
   dexId: DEX_ENUM | null,
@@ -69,7 +68,7 @@ export const shouldSkipCalldataMatch = (
 ) => !slippage || !decoded || !data || !tx;
 
 /**
- * 解码并与报价比对。解码成功后不再依赖应用链目录。不含收款人校验。
+ * 解码并与报价比对。解码成功后不再依赖应用链目录。
  */
 export const verifyCalldata = (p: VerifyCalldataParams) => {
   const decoded =

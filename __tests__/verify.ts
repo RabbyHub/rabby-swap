@@ -11,6 +11,7 @@ import {
   verifyCalldata,
   verifyRouterAndSpender,
   verifySdk,
+  isSwapCalldataReceiverAllowed,
 } from "../src";
 import { DecodeCalldataResult, QuoteResult } from "../src/quote";
 
@@ -19,7 +20,9 @@ const WETH = WrapTokenAddressMap[CHAINS_ENUM.ETH];
 const USDC = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
 const ONEINCH_ETH =
   DEX_ROUTER_WHITELIST[DEX_ENUM.ONEINCH][CHAINS_ENUM.ETH];
+const USER = "0x1111111111111111111111111111111111111111";
 const ATTACKER = "0x2222222222222222222222222222222222222222";
+const ZERO = "0x0000000000000000000000000000000000000000";
 
 const decoded: DecodeCalldataResult = {
   fromToken: USDC,
@@ -130,6 +133,32 @@ describe("verifyRouterAndSpender", () => {
   });
 });
 
+describe("isSwapCalldataReceiverAllowed", () => {
+  it("allows the current account", () => {
+    expect(isSwapCalldataReceiverAllowed(USER, USER)).toBe(true);
+    expect(
+      isSwapCalldataReceiverAllowed(USER.toUpperCase(), USER.toLowerCase())
+    ).toBe(true);
+  });
+
+  it("rejects a third-party receiver", () => {
+    expect(isSwapCalldataReceiverAllowed(ATTACKER, USER)).toBe(false);
+  });
+
+  it("treats the zero address as msg.sender", () => {
+    expect(isSwapCalldataReceiverAllowed(ZERO, USER)).toBe(true);
+  });
+
+  it("skips when the decoder did not extract a receiver", () => {
+    expect(isSwapCalldataReceiverAllowed(undefined, USER)).toBe(true);
+    expect(isSwapCalldataReceiverAllowed("", USER)).toBe(true);
+  });
+
+  it("fails closed when a receiver is present but userAddress is missing", () => {
+    expect(isSwapCalldataReceiverAllowed(ATTACKER, undefined)).toBe(false);
+  });
+});
+
 describe("matchDecodedCalldata", () => {
   it("passes when decoded matches quote within 5%", () => {
     expect(matchDecodedCalldata(decoded, quote(), 0.01)).toBe(true);
@@ -214,10 +243,12 @@ describe("verifySdk", () => {
       receiveTokenId: WETH,
       nativeTokenAddress: ETH_NATIVE,
       chainId: 1,
+      userAddress: USER,
     });
     expect(res.routerPass).toBe(true);
     expect(res.spenderPass).toBe(true);
     expect(res.callDataPass).toBe(true);
+    expect(res.receiverPass).toBe(true);
     expect(res.isSdkDataPass).toBe(true);
     expect(res.decoded).toBeNull();
   });
@@ -237,6 +268,7 @@ describe("verifySdk", () => {
       receiveTokenId: WETH,
       nativeTokenAddress: ETH_NATIVE,
       chainId: 1,
+      userAddress: USER,
     });
     expect(res.isSdkDataPass).toBe(true);
     expect(res.decoded).toBeNull();
@@ -252,6 +284,7 @@ describe("verifySdk", () => {
       receiveTokenId: WETH,
       nativeTokenAddress: ETH_NATIVE,
       chainId: 1,
+      userAddress: USER,
     });
     expect(res.routerPass).toBe(false);
     expect(res.isSdkDataPass).toBe(false);
