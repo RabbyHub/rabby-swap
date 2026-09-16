@@ -48,7 +48,7 @@ export type VerifyRouterAndSpenderParams = {
 
 /**
  * 校验 tx.to / approve spender 是否在白名单。
- * wrap、native 支付无需 spender；缺字段时与现网一致，不判失败。
+ * wrap、native 支付或缺少 spender 时跳过 spender 校验。
  */
 export const verifyRouterAndSpender = (
   p: VerifyRouterAndSpenderParams
@@ -66,7 +66,7 @@ export const verifyRouterAndSpender = (
   if (dexId === DEX_ENUM.WRAPTOKEN) {
     return [true, true];
   }
-  if (!dexId || !router || !spender || !payTokenId || !receiveTokenId) {
+  if (!dexId || !router || !payTokenId || !receiveTokenId) {
     return [true, true];
   }
 
@@ -78,11 +78,12 @@ export const verifyRouterAndSpender = (
   );
   const spenderWhitelist = getSpender(dexId, chain);
   const skipSpender =
+    !spender ||
     isNativeToken(payTokenId, nativeTokenAddress) ||
     isSwapWrapToken(payTokenId, receiveTokenId, chain, nativeTokenAddress);
 
   return [
     isSameAddress(routerWhitelist || "", router),
-    skipSpender ? true : isSameAddress(spenderWhitelist || "", spender),
+    skipSpender ? true : isSameAddress(spenderWhitelist || "", spender!),
   ];
 };

@@ -104,6 +104,33 @@ describe("verifyRouterAndSpender", () => {
     expect(verifyRouterAndSpender(base)).toEqual([true, true]);
   });
 
+  describe.each(["", undefined])("spender = %p", (spender) => {
+    it("skips only spender verification for a valid router", () => {
+      expect(verifyRouterAndSpender({ ...base, spender })).toEqual([true, true]);
+    });
+
+    it.each([USDC, ETH_NATIVE])(
+      "rejects a foreign router when paying %s",
+      (payTokenId) => {
+        expect(
+          verifyRouterAndSpender({
+            ...base,
+            payTokenId,
+            receiveTokenId: payTokenId === ETH_NATIVE ? USDC : WETH,
+            router: ATTACKER,
+            spender,
+          })
+        ).toEqual([false, true]);
+      }
+    );
+  });
+
+  it("rejects a nonempty foreign spender for ERC20 payment", () => {
+    expect(
+      verifyRouterAndSpender({ ...base, spender: ATTACKER })
+    ).toEqual([true, false]);
+  });
+
   it("fails a foreign router", () => {
     expect(verifyRouterAndSpender({ ...base, router: ATTACKER })).toEqual([
       false,
@@ -253,7 +280,10 @@ describe("verifySdk", () => {
     expect(res.decoded).toBeNull();
   });
 
-  it("treats native wrap as WRAPTOKEN", () => {
+  it.each([
+    ["wrap", ETH_NATIVE, WETH],
+    ["unwrap", WETH, ETH_NATIVE],
+  ])("treats %s as WRAPTOKEN", (_, payTokenId, receiveTokenId) => {
     const res = verifySdk({
       chain: CHAINS_ENUM.ETH,
       dexId: DEX_ENUM.ONEINCH,
@@ -261,17 +291,34 @@ describe("verifySdk", () => {
       data: quote({
         tx: { ...quote().tx, to: ATTACKER },
         spender: ATTACKER,
-        fromToken: ETH_NATIVE,
-        toToken: WETH,
+        fromToken: payTokenId,
+        toToken: receiveTokenId,
       }),
-      payTokenId: ETH_NATIVE,
-      receiveTokenId: WETH,
+      payTokenId,
+      receiveTokenId,
       nativeTokenAddress: ETH_NATIVE,
       chainId: 1,
       userAddress: USER,
     });
     expect(res.isSdkDataPass).toBe(true);
     expect(res.decoded).toBeNull();
+  });
+
+  it("rejects a foreign router even when spender is empty", () => {
+    const res = verifySdk({
+      chain: CHAINS_ENUM.ETH,
+      dexId: DEX_ENUM.ONEINCH,
+      slippage: 1,
+      data: quote({ tx: { ...quote().tx, to: ATTACKER }, spender: "" }),
+      payTokenId: USDC,
+      receiveTokenId: WETH,
+      nativeTokenAddress: ETH_NATIVE,
+      chainId: 1,
+      userAddress: USER,
+    });
+    expect(res.routerPass).toBe(false);
+    expect(res.spenderPass).toBe(true);
+    expect(res.isSdkDataPass).toBe(false);
   });
 
   it("fails a foreign router", () => {
