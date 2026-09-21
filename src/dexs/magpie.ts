@@ -33,6 +33,7 @@ export const SUPPORT_CHAINS = [
   "KATANA" as CHAINS_ENUM,
   "TEMPO" as CHAINS_ENUM,
   "HOOD" as CHAINS_ENUM,
+  "ARC" as CHAINS_ENUM,
 ];
 
 export const getQuote = generateGetQuote({
