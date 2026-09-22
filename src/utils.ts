@@ -30,7 +30,7 @@ export const resolveSwapTxValue = ({
   amount,
 }: {
   dex: DEX_ENUM;
-  chain?: CHAINS_ENUM;
+  chain: CHAINS_ENUM;
   fromToken: string;
   payTokenId: string;
   nativeTokenAddress: string;
