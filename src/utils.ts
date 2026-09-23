@@ -1,7 +1,8 @@
 import { OpenApiService } from "@rabby-wallet/rabby-api";
 import { CHAINS, CHAINS_ENUM } from "@debank/common";
+import BigNumber from "bignumber.js";
 import { QuoteParams, QuoteResult } from "./quote";
-import { DEX_ENUM } from "./consts";
+import { ARC_ERC20_USDC, DEX_ENUM } from "./consts";
 import { DEX_SPENDER_WHITELIST } from "./list";
 
 export const isSameAddress = (addr1: string, addr2: string) => {
@@ -15,6 +16,36 @@ export const resolveToTokenReceiver = (
   encodedReceiver: string,
   txFrom: string
 ) => (isSameAddress(encodedReceiver, NULL_ADDRESS) ? txFrom : encodedReceiver);
+
+const ARC = "ARC" as CHAINS_ENUM;
+const ARC_USDC_TO_NATIVE_SCALE = 1e12;
+
+/** Uni quotes 0x3600 USDC as a native path on Arc; attach scaled native value. */
+export const resolveSwapTxValue = ({
+  dex,
+  chain,
+  fromToken,
+  payTokenId,
+  nativeTokenAddress,
+  amount,
+}: {
+  dex: DEX_ENUM;
+  chain: CHAINS_ENUM;
+  fromToken: string;
+  payTokenId: string;
+  nativeTokenAddress: string;
+  amount: string;
+}) => {
+  if (
+    dex === DEX_ENUM.UNI &&
+    chain === ARC &&
+    isSameAddress(fromToken, ARC_ERC20_USDC)
+  ) {
+    return new BigNumber(amount).times(ARC_USDC_TO_NATIVE_SCALE).toFixed(0);
+  }
+
+  return isSameAddress(payTokenId, nativeTokenAddress) ? amount : "0";
+};
 
 export const generateGetQuote =
   ({
@@ -67,16 +98,18 @@ export const generateGetQuote =
 
     const data = await api.getSwapQuote(params as any);
 
-    const isNativeToken = isSameAddress(
-      data.pay_token.id,
-      options.nativeTokenAddress
-    );
-
     return {
       dexFeeDesc: data.dex_fee_desc,
       tx: {
         data: data.dex_swap_calldata,
-        value: isNativeToken ? options.amount : "0",
+        value: resolveSwapTxValue({
+          dex,
+          chain: options.chain,
+          fromToken: options.fromToken,
+          payTokenId: data.pay_token.id,
+          nativeTokenAddress: options.nativeTokenAddress,
+          amount: options.amount,
+        }),
         to: data.dex_swap_to,
         from: options.userAddress,
       },
@@ -88,7 +121,7 @@ export const generateGetQuote =
       toTokenDecimals: data.receive_token.decimals,
       spender:
         dex === DEX_ENUM.PARASWAP ||
-        (dex === DEX_ENUM.UNI && options.chain === ("ARC" as CHAINS_ENUM))
+        (dex === DEX_ENUM.UNI && options.chain === ARC)
           ? DEX_SPENDER_WHITELIST[dex][
               options.chain as keyof (typeof DEX_SPENDER_WHITELIST)[typeof dex]
             ]

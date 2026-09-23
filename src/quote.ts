@@ -69,8 +69,7 @@ export interface QuoteParams {
   feeAddress?: string;
   gasPrice?: number;
   insufficient: boolean;
-  // @deprecated
-  chain?: CHAINS_ENUM;
+  chain: CHAINS_ENUM;
   fee?: boolean;
   chainServerId: string;
   nativeTokenAddress: string;
