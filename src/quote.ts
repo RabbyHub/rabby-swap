@@ -58,6 +58,11 @@ import {
   decodeCalldata as sushiDecodeCalldata,
 } from "./dexs/sushi";
 
+import {
+  getQuote as vurtoGetQuote,
+  decodeCalldata as vurtoDecodeCalldata,
+} from "./dexs/vurto";
+
 export interface QuoteParams {
   fromToken: string;
   fromTokenDecimals: number;
@@ -135,6 +140,8 @@ export const getQuote = async (
       return await sushiGetQuote(params, api);
     case DEX_ENUM.UNI:
       return await uniGetQuote(params, api);
+    case DEX_ENUM.VURTO:
+      return await vurtoGetQuote(params, api);
     default:
       throw new Error(`${id} is not supported!`);
   }
@@ -177,6 +184,8 @@ export const decodeCalldata = (
       return sushiDecodeCalldata(tx);
     case DEX_ENUM.UNI:
       return uniDecodeCalldata(tx);
+    case DEX_ENUM.VURTO:
+      return vurtoDecodeCalldata(tx);
     default:
       throw new Error(`${id} is not supported!`);
   }

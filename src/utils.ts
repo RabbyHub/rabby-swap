@@ -66,7 +66,8 @@ export const generateGetQuote =
       | "magpie"
       | "sushi"
       | "rabby"
-      | "uni";
+      | "uni"
+      | "vurto";
     dex: DEX_ENUM;
   }) =>
   async (options: QuoteParams, api: OpenApiService): Promise<QuoteResult> => {

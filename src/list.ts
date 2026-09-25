@@ -11,6 +11,7 @@ import { SUPPORT_CHAINS as magpieSupportChains } from "./dexs/magpie";
 import { SUPPORT_CHAINS as rabbySupportChains } from "./dexs/rabby";
 import { SUPPORT_CHAINS as sushiSupportChains } from "./dexs/sushi";
 import { SUPPORT_CHAINS as uniSupportChains } from "./dexs/uni";
+import { SUPPORT_CHAINS as vurtoSupportChains } from "./dexs/vurto";
 
 import { DEX_ENUM } from "./consts";
 
@@ -83,6 +84,7 @@ export const DEX_SUPPORT_CHAINS = {
   [DEX_ENUM.MAGPIE]: magpieSupportChains,
   [DEX_ENUM.RABBY]: rabbySupportChains,
   [DEX_ENUM.UNI]: uniSupportChains,
+  [DEX_ENUM.VURTO]: vurtoSupportChains,
 };
 
 export const DEX_ROUTER_WHITELIST = {
@@ -316,6 +318,17 @@ export const DEX_ROUTER_WHITELIST = {
     ["MONAD" as CHAINS_ENUM]: "0x02E5be68D46DAc0B524905bfF209cf47EE6dB2a9",
     ["HOOD" as CHAINS_ENUM]: "0x02E5be68D46DAc0B524905bfF209cf47EE6dB2a9",
     ["ARC" as CHAINS_ENUM]: "0x02E5be68D46DAc0B524905bfF209cf47EE6dB2a9",
+  },
+  [DEX_ENUM.VURTO]: {
+    [CHAINS_ENUM.ETH]: "0x0104c775ea4dc75175a0b6d3768d12b2f0a36990",
+    [CHAINS_ENUM.OP]: "0xa8a3ec11c51d1caa010c38404f04ccde377b6255",
+    [CHAINS_ENUM.BSC]: "0xb789702e8d71999825334a998fca47fc79b4618a",
+    [CHAINS_ENUM.GNOSIS]: "0xa34a196e342c8f48a29ff907e9eeafec66f84c20",
+    [CHAINS_ENUM.POLYGON]: "0xe109f0a8ca9db014885e39ec025fee6cf14a7060",
+    [CHAINS_ENUM.BASE]: "0x15cb65b1c6026334a079e48241d6c8fa79df7784",
+    [CHAINS_ENUM.ARBITRUM]: "0xd5d4b7efbbcd1bc15411a59b998c9e6f6aa67044",
+    [CHAINS_ENUM.AVAX]: "0x75afa1b2058d9398eb9e6d65622747f43a1af38c",
+    ["UNI" as CHAINS_ENUM]: "0xd22e08dce358e134c08638852634edf395232085",
   },
 };
 
@@ -551,5 +564,16 @@ export const DEX_SPENDER_WHITELIST = {
     ["MONAD" as CHAINS_ENUM]: "0x02E5be68D46DAc0B524905bfF209cf47EE6dB2a9",
     ["HOOD" as CHAINS_ENUM]: "0x02E5be68D46DAc0B524905bfF209cf47EE6dB2a9",
     ["ARC" as CHAINS_ENUM]: "0x02E5be68D46DAc0B524905bfF209cf47EE6dB2a9",
+  },
+  [DEX_ENUM.VURTO]: {
+    [CHAINS_ENUM.ETH]: "0x0104c775ea4dc75175a0b6d3768d12b2f0a36990",
+    [CHAINS_ENUM.OP]: "0xa8a3ec11c51d1caa010c38404f04ccde377b6255",
+    [CHAINS_ENUM.BSC]: "0xb789702e8d71999825334a998fca47fc79b4618a",
+    [CHAINS_ENUM.GNOSIS]: "0xa34a196e342c8f48a29ff907e9eeafec66f84c20",
+    [CHAINS_ENUM.POLYGON]: "0xe109f0a8ca9db014885e39ec025fee6cf14a7060",
+    [CHAINS_ENUM.BASE]: "0x15cb65b1c6026334a079e48241d6c8fa79df7784",
+    [CHAINS_ENUM.ARBITRUM]: "0xd5d4b7efbbcd1bc15411a59b998c9e6f6aa67044",
+    [CHAINS_ENUM.AVAX]: "0x75afa1b2058d9398eb9e6d65622747f43a1af38c",
+    ["UNI" as CHAINS_ENUM]: "0xd22e08dce358e134c08638852634edf395232085",
   },
 };
