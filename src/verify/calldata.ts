@@ -73,6 +73,12 @@ export const shouldSkipCalldataMatch = (
 export const verifyCalldata = (p: VerifyCalldataParams) => {
   const decoded =
     p.decoded !== undefined ? p.decoded : decodeSwapCalldata(p.dexId, p.tx);
+  // FlowRouter is supported explicitly. Missing chain metadata, malformed data,
+  // unknown selectors, missing quotes and absent transactions must fail closed.
+  if (p.dexId === DEX_ENUM.FLOWROUTER) {
+    return !!decoded && !!p.data && !!p.tx &&
+      matchDecodedCalldata(decoded, p.data, p.slippage);
+  }
   if (shouldSkipCalldataMatch(p.slippage, decoded, p.data, p.tx)) {
     return true;
   }

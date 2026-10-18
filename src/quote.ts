@@ -58,6 +58,11 @@ import {
   decodeCalldata as sushiDecodeCalldata,
 } from "./dexs/sushi";
 
+import {
+  getQuote as flowRouterGetQuote,
+  decodeCalldata as flowRouterDecodeCalldata,
+} from "./dexs/flowrouter";
+
 export interface QuoteParams {
   fromToken: string;
   fromTokenDecimals: number;
@@ -133,6 +138,8 @@ export const getQuote = async (
       return await rabbyGetQuote(params, api);
     case DEX_ENUM.SUSHI:
       return await sushiGetQuote(params, api);
+    case DEX_ENUM.FLOWROUTER:
+      return await flowRouterGetQuote(params, api);
     case DEX_ENUM.UNI:
       return await uniGetQuote(params, api);
     default:
@@ -175,6 +182,8 @@ export const decodeCalldata = (
       return rabbyDecodeCalldata(tx);
     case DEX_ENUM.SUSHI:
       return sushiDecodeCalldata(tx);
+    case DEX_ENUM.FLOWROUTER:
+      return flowRouterDecodeCalldata(tx);
     case DEX_ENUM.UNI:
       return uniDecodeCalldata(tx);
     default:

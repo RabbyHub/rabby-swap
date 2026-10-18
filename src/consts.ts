@@ -15,5 +15,6 @@ export enum DEX_ENUM {
   MAGPIE = "Magpie",
   RABBY = "Rabby",
   SUSHI = "Sushi",
+  FLOWROUTER = "FlowRouter",
   UNI = "Uniswap",
 }

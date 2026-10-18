@@ -1,6 +1,8 @@
 import BigNumber from "bignumber.js";
 import { CHAINS_ENUM } from "@debank/common";
 import { DEX_ENUM } from "../consts";
+import { DEX_ROUTER_WHITELIST } from "../list";
+import { isSameAddress } from "../utils";
 import {
   DecodeCalldataResult,
   QuoteResult,
@@ -47,7 +49,13 @@ const toTxWithChainId = (
  * 预执行、gas 不在此处理。
  */
 export const verifySdk = (p: VerifySdkParams): VerifySdkResult => {
-  const actualDexId = isSwapWrapToken(
+  // A FlowRouter quote must never take the wrap or undecodable-calldata bypass.
+  // Recognize the selected DEX and its allowlisted destination independently.
+  const flowRouter = DEX_ROUTER_WHITELIST[DEX_ENUM.FLOWROUTER];
+  const flowRouterAddress = flowRouter[p.chain as keyof typeof flowRouter];
+  const isFlowRouter = p.dexId === DEX_ENUM.FLOWROUTER ||
+    (!!flowRouterAddress && isSameAddress(p.data?.tx?.to || "", flowRouterAddress));
+  const actualDexId = isFlowRouter ? DEX_ENUM.FLOWROUTER : isSwapWrapToken(
     p.payTokenId,
     p.receiveTokenId,
     p.chain,
@@ -76,7 +84,7 @@ export const verifySdk = (p: VerifySdkParams): VerifySdkResult => {
     tx,
     decoded,
   });
-  const receiverPass = isSwapCalldataReceiverAllowed(
+  const receiverPass = (actualDexId !== DEX_ENUM.FLOWROUTER || !!decoded) && isSwapCalldataReceiverAllowed(
     decoded?.toTokenReceiver,
     p.userAddress
   );

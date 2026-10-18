@@ -65,6 +65,7 @@ export const generateGetQuote =
       | "paraswap_v6"
       | "magpie"
       | "sushi"
+      | "flowrouter"
       | "rabby"
       | "uni";
     dex: DEX_ENUM;

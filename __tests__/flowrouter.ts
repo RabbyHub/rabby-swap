@@ -1,0 +1,246 @@
+import BigNumber from "bignumber.js";
+import { Interface } from "@ethersproject/abi";
+import { CHAINS, CHAINS_ENUM } from "@debank/common";
+import { FlowRouterABI } from "../src/abi";
+import { decodeCalldata, QuoteResult } from "../src/quote";
+import {
+  DEX_ENUM,
+  DEX_ROUTER_WHITELIST,
+  DEX_SPENDER_WHITELIST,
+  DEX_SUPPORT_CHAINS,
+  verifySdk,
+} from "../src";
+
+// @debank/common 0.3.60 (this lockfile) has no HOOD entry, so the decoders of every HOOD DEX return null here.
+// The test adds the chain as the app's chain list would have it. [U] "hood" stands for Rabby's real native id.
+const HOOD_NATIVE = "hood";
+jest.mock("@debank/common", () => {
+  const actual = jest.requireActual("@debank/common");
+  return {
+    ...actual,
+    CHAINS: {
+      ...actual.CHAINS,
+      HOOD: { ...actual.CHAINS.ETH, id: 4663, enum: "HOOD", serverId: "hood", nativeTokenAddress: "hood" },
+    },
+  };
+});
+
+const HOOD = "HOOD" as CHAINS_ENUM;
+const ROUTER = "0x8Ad60fAE44DD6aaFD8A98B7f25EaD026013efdF2";
+const API_NATIVE = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
+const TAKER = "0xe911f518449ba0011d84b047b4cde50daa081ec1";
+const ATTACKER = "0x2222222222222222222222222222222222222222";
+const SLIPPAGE_PERCENT = 0.5; // the saved quotes were requested with slippageBps=50
+
+type Fixture = {
+  name: string;
+  sha256: string;
+  sellToken: string;
+  buyToken: string;
+  sellAmount: string;
+  buyAmount: string;
+  minBuyAmount: string;
+  allowanceTarget: string | null;
+  to: string;
+  value: string;
+  data: string;
+};
+
+// Live https://api.flowrouter.xyz/v1/4663/quote responses (2026-10-16/17, sha256 of the saved bodies). The third one
+// was sent on chain: tx 0xd8560ab493ca97fdd5798a273e2ba55ae270e5d4ce50e0829d7a1d6403b327fb (status 1).
+const FIXTURES: Fixture[] = [
+  {
+    name: "native-to-usdg",
+    sha256: "cbd01fcb585eadd714e380776d31db9568b2ed6cbb1caee5b710ff9145932a2d",
+    sellToken: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+    buyToken: "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+    sellAmount: "1000000000000000",
+    buyAmount: "2422869",
+    minBuyAmount: "2410754",
+    allowanceTarget: null,
+    to: "0x8Ad60fAE44DD6aaFD8A98B7f25EaD026013efdF2",
+    value: "1000000000000000",
+    data: "0xd46cadbc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000038d7ea4c680000000000000000000000000005fc5360d0400a0fd4f2af552add042d716f1d168000000000000000000000000000000000000000000000000000000000024f855000000000000000000000000000000000000000000000000000000000024c902000000000000000000000000e911f518449ba0011d84b047b4cde50daa081ec1000000000000000000000000000000000000000000000000000000000000012000000000000000000000000010fe1518dfea82748eb576f826784f4ddfb673f200000000000000000000000000000000000000000000000000000000000003e900000000000000000000000000000000000000000000000000000000000002e0000000000000000000000000000000000000000000000000000000000000002054464c570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000005fc5360d0400a0fd4f2af552add042d716f1d168000000000000000000000000000000000000000000000000000000000024c90200000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000015000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005fc5360d0400a0fd4f2af552add042d716f1d16800000000000000000000000000000000000000000000000000038d7ea4c68000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005fc5360d0400a0fd4f2af552add042d716f1d1680000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000003c000000000000000000000000e76ca7efdf14a9144d11b98fee72b90a2a1c808000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000ffffffffffff",
+  },
+  {
+    name: "usdg-to-native",
+    sha256: "766fa84f7dc574d1565fd5ef3f9dcb3682741a5bced4632750584d422e553f81",
+    sellToken: "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+    buyToken: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+    sellAmount: "5000000",
+    buyAmount: "2083281964837324",
+    minBuyAmount: "2072865555013137",
+    allowanceTarget: "0x8Ad60fAE44DD6aaFD8A98B7f25EaD026013efdF2",
+    to: "0x8Ad60fAE44DD6aaFD8A98B7f25EaD026013efdF2",
+    value: "0",
+    data: "0xd46cadbc0000000000000000000000005fc5360d0400a0fd4f2af552add042d716f1d16800000000000000000000000000000000000000000000000000000000004c4b400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000766bbe17b29cc00000000000000000000000000000000000000000000000000075d429f12de11000000000000000000000000e911f518449ba0011d84b047b4cde50daa081ec1000000000000000000000000000000000000000000000000000000000000012000000000000000000000000010fe1518dfea82748eb576f826784f4ddfb673f200000000000000000000000000000000000000000000000000000000000003e90000000000000000000000000000000000000000000000000000000000000580000000000000000000000000000000000000000000000000000000000000002054464c57000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000075d429f12de1100000000000000000000000000000000000000000000000000000000000000a000000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000024000000000000000000000000000000000000000000000000000000000000003a0000000000000000000000000000000000000000000000000000000000000001500000000000000000000000000000000000000000000000000000000000000000000000000000000000000005fc5360d0400a0fd4f2af552add042d716f1d16800000000000000000000000005b37fb53a299a1b874a619e1c4c404d52c36f4c00000000000000000000000000000000000000000000000000000000004c4b40000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000005b37fb53a299a1b874a619e1c4c404d52c36f4c0000000000000000000000005fc5360d0400a0fd4f2af552add042d716f1d16800000000000000000000000000000000000000000000000000000000000001f4000000000000000000000000000000000000000000000000000000000000000a000000000000000000000000d1bcbcca41f3bdb6b4812652959c6df725ea2ac000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffff000000000000000000000000000000000000000000000000000000000000000d000000000000000000000000000000000000000000000000000000000000000100000000000000000000000005b37fb53a299a1b874a619e1c4c404d52c36f4c0000000000000000000000000bd7d308f8e1639fab988df18a8011f41eacad730000000000000000000000000000000000000000000000000073107cc789b1e5000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000060000000000000000000000000714187eed11d8fc9500ff6798734c8bb63a8a19b00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000010000000000000000000000000bd7d308f8e1639fab988df18a8011f41eacad7300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000007662dacbc7065000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000000",
+  },
+  {
+    name: "native-to-usdg-executed",
+    sha256: "99fe92feee83ab0ea117b09749a7663640bad1701a20f5bad76a6b69b4674bcf",
+    sellToken: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+    buyToken: "0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+    sellAmount: "2000000000000000",
+    buyAmount: "4838627",
+    minBuyAmount: "4814433",
+    allowanceTarget: null,
+    to: "0x8Ad60fAE44DD6aaFD8A98B7f25EaD026013efdF2",
+    value: "2000000000000000",
+    data: "0xd46cadbc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000071afd498d00000000000000000000000000005fc5360d0400a0fd4f2af552add042d716f1d168000000000000000000000000000000000000000000000000000000000049d4e30000000000000000000000000000000000000000000000000000000000497661000000000000000000000000e911f518449ba0011d84b047b4cde50daa081ec1000000000000000000000000000000000000000000000000000000000000012000000000000000000000000010fe1518dfea82748eb576f826784f4ddfb673f200000000000000000000000000000000000000000000000000000000000003e900000000000000000000000000000000000000000000000000000000000002e0000000000000000000000000000000000000000000000000000000000000002054464c570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000005fc5360d0400a0fd4f2af552add042d716f1d168000000000000000000000000000000000000000000000000000000000049766100000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000015000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005fc5360d0400a0fd4f2af552add042d716f1d16800000000000000000000000000000000000000000000000000071afd498d0000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005fc5360d0400a0fd4f2af552add042d716f1d16800000000000000000000000000000000000000000000000000000000000000640000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000ffffffffffff",
+  },
+];
+
+const rabbyToken = (token: string) =>
+  token.toLowerCase() === API_NATIVE.toLowerCase() ? HOOD_NATIVE : token;
+
+const quoteOf = (f: Fixture, over: Partial<QuoteResult> = {}): QuoteResult => ({
+  tx: { from: TAKER, to: f.to, data: f.data, value: f.value },
+  fromToken: rabbyToken(f.sellToken),
+  fromTokenAmount: f.sellAmount,
+  toToken: rabbyToken(f.buyToken),
+  toTokenAmount: f.buyAmount,
+  spender: f.allowanceTarget ?? f.to,
+  ...over,
+});
+
+const verify = (f: Fixture, quote: QuoteResult, userAddress = TAKER) =>
+  verifySdk({
+    chain: HOOD,
+    dexId: DEX_ENUM.FLOWROUTER,
+    slippage: SLIPPAGE_PERCENT,
+    data: quote,
+    payTokenId: quote.fromToken,
+    receiveTokenId: quote.toToken,
+    nativeTokenAddress: HOOD_NATIVE,
+    chainId: 4663,
+    userAddress,
+  });
+
+const flowRouter = new Interface(FlowRouterABI);
+
+// Re-encodes a saved transaction with one swapTokenInfo field changed.
+const withTokenInfo = (f: Fixture, change: Record<string, string>) => {
+  const parsed = flowRouter.parseTransaction({ data: f.data });
+  const info = parsed.args.tokenInfo;
+  const tokenInfo = {
+    inputToken: info.inputToken,
+    inputAmount: info.inputAmount,
+    outputToken: info.outputToken,
+    outputQuote: info.outputQuote,
+    outputMin: info.outputMin,
+    outputReceiver: info.outputReceiver,
+    ...change,
+  };
+  return flowRouter.encodeFunctionData("swap", [tokenInfo, parsed.args.pathDefinition, parsed.args.executor, parsed.args.referralCode]);
+};
+
+describe("FlowRouter on Hood", () => {
+  it("lists the FlowRouter router and spender for HOOD only", () => {
+    expect(DEX_SUPPORT_CHAINS[DEX_ENUM.FLOWROUTER]).toEqual([HOOD]);
+    const routers = DEX_ROUTER_WHITELIST[DEX_ENUM.FLOWROUTER] as Record<string, string>;
+    const spenders = DEX_SPENDER_WHITELIST[DEX_ENUM.FLOWROUTER] as Record<string, string>;
+    expect(routers).toEqual({ HOOD: ROUTER });
+    expect(spenders).toEqual({ HOOD: ROUTER });
+  });
+
+  it("uses the deployed swap selector", () => {
+    expect(flowRouter.getSighash("swap")).toBe("0xd46cadbc");
+    for (const f of FIXTURES) expect(f.data.slice(0, 10)).toBe("0xd46cadbc");
+  });
+
+  it.each(FIXTURES.map((f) => [f.name, f] as [string, Fixture]))("decodes the live quote %s", (_name, f) => {
+    const decoded = decodeCalldata(DEX_ENUM.FLOWROUTER, { ...f, from: TAKER, chainId: 4663 });
+    const lower = (value: string) => value.toLowerCase(); // the API echoes the request's address spelling
+    expect(decoded && {
+      fromToken: lower(decoded.fromToken),
+      fromTokenAmount: decoded.fromTokenAmount,
+      toToken: lower(decoded.toToken),
+      minReceiveToTokenAmount: decoded.minReceiveToTokenAmount,
+      toTokenReceiver: lower(decoded.toTokenReceiver),
+    }).toEqual({
+      fromToken: lower(rabbyToken(f.sellToken)),
+      fromTokenAmount: f.sellAmount,
+      toToken: lower(rabbyToken(f.buyToken)),
+      minReceiveToTokenAmount: f.minBuyAmount,
+      toTokenReceiver: TAKER,
+    });
+  });
+
+  it.each(FIXTURES.map((f) => [f.name, f] as [string, Fixture]))("passes verifySdk for the live quote %s", (_name, f) => {
+    const result = verify(f, quoteOf(f));
+    expect(result.decoded).not.toBeNull();
+    expect(result).toMatchObject({ routerPass: true, spenderPass: true, callDataPass: true, receiverPass: true, isSdkDataPass: true });
+  });
+
+  it.each(FIXTURES.map((f) => [f.name, f] as [string, Fixture]))("rejects tampered versions of %s", (_name, f) => {
+    expect(verify(f, quoteOf(f, { tx: { from: TAKER, to: ATTACKER, data: f.data, value: f.value } })).routerPass).toBe(false);
+    expect(verify(f, quoteOf(f, { fromTokenAmount: new BigNumber(f.sellAmount).plus(1).toFixed() })).callDataPass).toBe(false);
+    expect(verify(f, quoteOf(f, { toTokenAmount: new BigNumber(f.buyAmount).times(2).toFixed() })).callDataPass).toBe(false);
+    expect(verify(f, quoteOf(f), ATTACKER).receiverPass).toBe(false);
+    const toAttacker = withTokenInfo(f, { outputReceiver: ATTACKER });
+    expect(verify(f, quoteOf(f, { tx: { from: TAKER, to: f.to, data: toAttacker, value: f.value } })).receiverPass).toBe(false);
+    // address(0) is not "the sender" on FlowRouter: the output would go to address(0)
+    const toZero = withTokenInfo(f, { outputReceiver: "0x0000000000000000000000000000000000000000" });
+    expect(verify(f, quoteOf(f, { tx: { from: TAKER, to: f.to, data: toZero, value: f.value } })).receiverPass).toBe(false);
+    // inputAmount 0 = "whole balance" on chain; never equal to a quoted amount
+    const wholeBalance = withTokenInfo(f, { inputAmount: "0" });
+    expect(verify(f, quoteOf(f, { tx: { from: TAKER, to: f.to, data: wholeBalance, value: f.value } })).callDataPass).toBe(false);
+  });
+
+  it("decodes swapPermit2 with the same fields", () => {
+    const f = FIXTURES[1];
+    const parsed = flowRouter.parseTransaction({ data: f.data });
+    const data = flowRouter.encodeFunctionData("swapPermit2", [
+      { contractAddress: "0x000000000022D473030F116dDEE9F6B43aC78BA3", nonce: 1, deadline: 2, signature: "0x" },
+      parsed.args.tokenInfo,
+      parsed.args.pathDefinition,
+      parsed.args.executor,
+      parsed.args.referralCode,
+    ]);
+    expect(decodeCalldata(DEX_ENUM.FLOWROUTER, { from: TAKER, to: f.to, data, value: "0", chainId: 4663 })).toMatchObject({
+      fromToken: f.sellToken,
+      fromTokenAmount: f.sellAmount,
+      toToken: HOOD_NATIVE,
+      minReceiveToTokenAmount: f.minBuyAmount,
+    });
+  });
+
+  it("returns null for another chain", () => {
+    const f = FIXTURES[0];
+    expect(decodeCalldata(DEX_ENUM.FLOWROUTER, { from: TAKER, to: f.to, data: f.data, value: f.value, chainId: 999999 })).toBeNull();
+  });
+
+  it.each(["0x", "0xdeadbeef", "0xd46cadbc", "0x56fda29b"])("fails closed on unsupported or truncated calldata %s", (data) => {
+    for (const f of FIXTURES) {
+      const result = verify(f, quoteOf(f, { tx: { from: TAKER, to: f.to, data, value: f.value } }));
+      expect(result).toMatchObject({ decoded: null, callDataPass: false, receiverPass: false, isSdkDataPass: false });
+    }
+  });
+
+  it("fails closed on truncated dynamic data and extra ABI bytes", () => {
+    for (const f of FIXTURES) {
+      for (const data of [f.data.slice(0, -2), f.data + "00"]) {
+        expect(verify(f, quoteOf(f, { tx: { from: TAKER, to: f.to, data, value: f.value } })).isSdkDataPass).toBe(false);
+      }
+    }
+  });
+
+  it("fails closed when HOOD metadata is missing", () => {
+    const metadata = (CHAINS as any).HOOD;
+    delete (CHAINS as any).HOOD;
+    try {
+      const f = FIXTURES[0];
+      expect(verify(f, quoteOf(f))).toMatchObject({ decoded: null, callDataPass: false, isSdkDataPass: false });
+    } finally {
+      (CHAINS as any).HOOD = metadata;
+    }
+  });
+
+  it("requires decoding for an allowlisted FlowRouter destination even if labelled wrap", () => {
+    const f = FIXTURES[0];
+    const bad = quoteOf(f, { tx: { from: TAKER, to: f.to, data: "0x", value: f.value } });
+    expect(verifySdk({ chain: HOOD, dexId: DEX_ENUM.WRAPTOKEN, slippage: SLIPPAGE_PERCENT, data: bad,
+      payTokenId: bad.fromToken, receiveTokenId: bad.toToken, nativeTokenAddress: HOOD_NATIVE,
+      chainId: 4663, userAddress: TAKER }).isSdkDataPass).toBe(false);
+  });
+});

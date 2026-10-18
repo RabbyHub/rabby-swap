@@ -11,6 +11,7 @@ import { SUPPORT_CHAINS as magpieSupportChains } from "./dexs/magpie";
 import { SUPPORT_CHAINS as rabbySupportChains } from "./dexs/rabby";
 import { SUPPORT_CHAINS as sushiSupportChains } from "./dexs/sushi";
 import { SUPPORT_CHAINS as uniSupportChains } from "./dexs/uni";
+import { SUPPORT_CHAINS as flowRouterSupportChains } from "./dexs/flowrouter";
 
 import { DEX_ENUM } from "./consts";
 
@@ -83,6 +84,7 @@ export const DEX_SUPPORT_CHAINS = {
   [DEX_ENUM.MAGPIE]: magpieSupportChains,
   [DEX_ENUM.RABBY]: rabbySupportChains,
   [DEX_ENUM.UNI]: uniSupportChains,
+  [DEX_ENUM.FLOWROUTER]: flowRouterSupportChains,
 };
 
 export const DEX_ROUTER_WHITELIST = {
@@ -316,6 +318,9 @@ export const DEX_ROUTER_WHITELIST = {
     ["MONAD" as CHAINS_ENUM]: "0x02E5be68D46DAc0B524905bfF209cf47EE6dB2a9",
     ["HOOD" as CHAINS_ENUM]: "0x02E5be68D46DAc0B524905bfF209cf47EE6dB2a9",
     ["ARC" as CHAINS_ENUM]: "0x02E5be68D46DAc0B524905bfF209cf47EE6dB2a9",
+  },
+  [DEX_ENUM.FLOWROUTER]: {
+    ["HOOD" as CHAINS_ENUM]: "0x8Ad60fAE44DD6aaFD8A98B7f25EaD026013efdF2",
   },
 };
 
@@ -551,5 +556,8 @@ export const DEX_SPENDER_WHITELIST = {
     ["MONAD" as CHAINS_ENUM]: "0x02E5be68D46DAc0B524905bfF209cf47EE6dB2a9",
     ["HOOD" as CHAINS_ENUM]: "0x02E5be68D46DAc0B524905bfF209cf47EE6dB2a9",
     ["ARC" as CHAINS_ENUM]: "0x02E5be68D46DAc0B524905bfF209cf47EE6dB2a9",
+  },
+  [DEX_ENUM.FLOWROUTER]: {
+    ["HOOD" as CHAINS_ENUM]: "0x8Ad60fAE44DD6aaFD8A98B7f25EaD026013efdF2",
   },
 };
