@@ -1,11 +1,8 @@
 import BigNumber from "bignumber.js";
 import { CHAINS_ENUM } from "@debank/common";
 import { DEX_ENUM } from "../consts";
-import {
-  DecodeCalldataResult,
-  QuoteResult,
-  TxWithChainId,
-} from "../quote";
+import type { DecodeCalldataResult, TxWithChainId } from "../calldata/types";
+import type { QuoteResult } from "../quote";
 import { decodeSwapCalldata, verifyCalldata } from "./calldata";
 import { verifyRouterAndSpender } from "./contracts";
 import { isSwapCalldataReceiverAllowed } from "./receiver";
@@ -68,13 +65,16 @@ export const verifySdk = (p: VerifySdkParams): VerifySdkResult => {
 
   const tx = toTxWithChainId(p.data, p.chainId);
   const slippageRatio = new BigNumber(p.slippage).div(100).toFixed();
-  const decoded = decodeSwapCalldata(actualDexId, tx);
+  const decoded = decodeSwapCalldata(actualDexId, tx, {
+    nativeTokenAddress: p.nativeTokenAddress,
+  });
   const callDataPass = verifyCalldata({
     data: p.data,
     dexId: actualDexId,
     slippage: slippageRatio,
     tx,
     decoded,
+    nativeTokenAddress: p.nativeTokenAddress,
   });
   const receiverPass = isSwapCalldataReceiverAllowed(
     decoded?.toTokenReceiver,

@@ -1660,54 +1660,5 @@ export const ZeroXABIV2 = [
 
 export const SushiABI = [{ "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "inputs": [{ "internalType": "address", "name": "tokenOut", "type": "address" }, { "internalType": "uint256", "name": "amountOut", "type": "uint256" }], "name": "MinimalOutputBalanceViolation", "type": "error" }, { "inputs": [], "name": "safeExecutor", "outputs": [{ "internalType": "contract SafeExecutor", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "contract IERC20", "name": "tokenIn", "type": "address" }, { "internalType": "uint256", "name": "amountIn", "type": "uint256" }, { "internalType": "address", "name": "recipient", "type": "address" }, { "internalType": "contract IERC20", "name": "tokenOut", "type": "address" }, { "internalType": "uint256", "name": "amountOutMin", "type": "uint256" }, { "internalType": "address", "name": "executor", "type": "address" }, { "internalType": "bytes", "name": "executorData", "type": "bytes" }], "name": "snwap", "outputs": [{ "internalType": "uint256", "name": "amountOut", "type": "uint256" }], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "components": [{ "internalType": "contract IERC20", "name": "token", "type": "address" }, { "internalType": "uint256", "name": "amountIn", "type": "uint256" }, { "internalType": "address", "name": "transferTo", "type": "address" }], "internalType": "struct InputToken[]", "name": "inputTokens", "type": "tuple[]" }, { "components": [{ "internalType": "contract IERC20", "name": "token", "type": "address" }, { "internalType": "address", "name": "recipient", "type": "address" }, { "internalType": "uint256", "name": "amountOutMin", "type": "uint256" }], "internalType": "struct OutputToken[]", "name": "outputTokens", "type": "tuple[]" }, { "components": [{ "internalType": "address", "name": "executor", "type": "address" }, { "internalType": "uint256", "name": "value", "type": "uint256" }, { "internalType": "bytes", "name": "data", "type": "bytes" }], "internalType": "struct Executor[]", "name": "executors", "type": "tuple[]" }], "name": "snwapMultiple", "outputs": [{ "internalType": "uint256[]", "name": "amountOut", "type": "uint256[]" }], "stateMutability": "payable", "type": "function" }]
 
-export const UniABI = [
-  {
-    inputs: [
-      { internalType: "bytes", name: "commands", type: "bytes" },
-      { internalType: "bytes[]", name: "inputs", type: "bytes[]" },
-    ],
-    name: "execute",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "bytes", name: "commands", type: "bytes" },
-      { internalType: "bytes[]", name: "inputs", type: "bytes[]" },
-      { internalType: "uint256", name: "deadline", type: "uint256" },
-    ],
-    name: "execute",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract IUniversalRouter",
-        name: "router",
-        type: "address",
-      },
-      { internalType: "address", name: "token", type: "address" },
-      { internalType: "uint256", name: "amount", type: "uint256" },
-      { internalType: "bytes", name: "commands", type: "bytes" },
-      { internalType: "bytes[]", name: "inputs", type: "bytes[]" },
-      { internalType: "uint256", name: "deadline", type: "uint256" },
-    ],
-    name: "execute",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-];
-
-export const MagpieABI = [
-  {
-    inputs: [{ internalType: "bytes", name: "swapData", type: "bytes" }],
-    name: "swapWithMagpieSignature",
-    outputs: [{ internalType: "uint256", name: "amountOut", type: "uint256" }],
-    stateMutability: "payable",
-    type: "function",
-  },
-];
+export { UniABI } from "./calldata/uni/abi";
+export { MagpieABI } from "./calldata/magpie/abi";

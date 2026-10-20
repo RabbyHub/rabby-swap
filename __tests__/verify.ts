@@ -235,16 +235,19 @@ describe("verifyCalldata", () => {
     }
   );
 
-  it("passes when decoder returns null", () => {
-    expect(
-      verifyCalldata({
-        data: quote(),
-        dexId: DEX_ENUM.UNI,
-        slippage: 0.01,
-        tx: { ...quote().tx, chainId: 1 },
-      })
-    ).toBe(true);
-  });
+  it.each([DEX_ENUM.UNI, DEX_ENUM.MAGPIE])(
+    "rejects an unresolved %s calldata",
+    (dexId) => {
+      expect(
+        verifyCalldata({
+          data: quote(),
+          dexId,
+          slippage: 0.01,
+          tx: { ...quote().tx, chainId: 1 },
+        })
+      ).toBe(false);
+    }
+  );
 
   it("uses a provided decoded result", () => {
     expect(

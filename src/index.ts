@@ -21,3 +21,10 @@ export {
   DEX_SPENDER_WHITELIST,
   UNI_NATIVE_TO_ADDRESSES,
 };
+
+export { decodeCalldata } from "./quote";
+export type {
+  DecodeCalldataOptions,
+  DecodeCalldataResult,
+  TxWithChainId,
+} from "./calldata/types";

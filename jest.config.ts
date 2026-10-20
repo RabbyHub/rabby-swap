@@ -4,7 +4,7 @@ export default {
   resetMocks: false,
   transform: {
     '^.+\\.js$': 'babel-jest',
-    '^.+\\.ts$': 'ts-jest',
+    '^.+\\.ts$': ['ts-jest', { tsconfig: { resolveJsonModule: true } }],
     '^.+\\.(svg|png|jpg)$': '<rootDir>/svgTransform.js'
   }
 };

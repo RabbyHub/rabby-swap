@@ -7,7 +7,8 @@
     "test": "jest",
     "build": "rimraf dist && tsc",
     "preversion": "npm run build",
-    "prepublishOnly": "npm test && npm run build"
+    "prepublishOnly": "npm test && npm run build",
+    "test:swap-calldata": "jest --runInBand --watchman=false --runTestsByPath __tests__/swapCalldata.test.ts __tests__/swapCalldataFixtures.test.ts"
   },
   "files": [
     "dist"
@@ -18,8 +19,12 @@
   },
   "dependencies": {
     "@ethersproject/abi": "^5.7.0",
+    "@uniswap/sdk-core": "7.19.4",
+    "@uniswap/universal-router-sdk": "5.14.0",
+    "@uniswap/v2-sdk": "4.21.5",
     "axios": "^0.27.2",
     "bignumber.js": "^9.1.1",
+    "ethers": "5.8.0",
     "web3-eth-abi": "^1.8.1"
   },
   "devDependencies": {

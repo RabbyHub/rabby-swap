@@ -45,8 +45,7 @@ describe("correctly export dex", () => {
       "ARC" as CHAINS_ENUM,
     ];
     const unsupportedChains = allSwapChains.filter(
-      (chain) =>
-        !WrapTokenAddressMap[chain as keyof typeof WrapTokenAddressMap]
+      (chain) => !WrapTokenAddressMap[chain as keyof typeof WrapTokenAddressMap]
     );
 
     expect(unsupportedChains.sort()).toEqual(
@@ -76,7 +75,11 @@ describe("correctly export dex", () => {
   it("Export decodeCalldata correctly", async () => {
     const supportedDEX = Object.keys(DEX_ROUTER_WHITELIST);
     for (const dex of supportedDEX) {
-      expect(decodeCalldata(dex as any, {} as any)).toBeNull();
+      if (dex === DEX_ENUM.UNI || dex === DEX_ENUM.MAGPIE) {
+        expect(() => decodeCalldata(dex, {} as any)).toThrow();
+      } else {
+        expect(decodeCalldata(dex as any, {} as any)).toBeNull();
+      }
     }
   });
 });
