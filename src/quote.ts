@@ -57,6 +57,10 @@ import {
   getQuote as sushiGetQuote,
   decodeCalldata as sushiDecodeCalldata,
 } from "./dexs/sushi";
+import {
+  getQuote as pancakeGetQuote,
+  decodeCalldata as pancakeDecodeCalldata,
+} from "./dexs/pancake";
 
 export interface QuoteParams {
   fromToken: string;
@@ -135,6 +139,8 @@ export const getQuote = async (
       return await sushiGetQuote(params, api);
     case DEX_ENUM.UNI:
       return await uniGetQuote(params, api);
+    case DEX_ENUM.PANCAKESWAP:
+      return await pancakeGetQuote(params, api);
     default:
       throw new Error(`${id} is not supported!`);
   }
@@ -177,6 +183,8 @@ export const decodeCalldata = (
       return sushiDecodeCalldata(tx);
     case DEX_ENUM.UNI:
       return uniDecodeCalldata(tx);
+    case DEX_ENUM.PANCAKESWAP:
+      return pancakeDecodeCalldata(tx);
     default:
       throw new Error(`${id} is not supported!`);
   }

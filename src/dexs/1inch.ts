@@ -20,6 +20,11 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.LINEA,
   "HOOD" as CHAINS_ENUM,
   "ARC" as CHAINS_ENUM,
+  CHAINS_ENUM.CRO,
+  "UNI" as CHAINS_ENUM,
+  "MONAD" as CHAINS_ENUM,
+  "SONIC" as CHAINS_ENUM,
+  "HYPER" as CHAINS_ENUM,
 ];
 
 export const getQuote = generateGetQuote({
