@@ -66,7 +66,8 @@ export const generateGetQuote =
       | "magpie"
       | "sushi"
       | "rabby"
-      | "uni";
+      | "uni"
+      | "pancake";
     dex: DEX_ENUM;
   }) =>
   async (options: QuoteParams, api: OpenApiService): Promise<QuoteResult> => {
@@ -80,7 +81,7 @@ export const generateGetQuote =
       id: options.userAddress,
       chain_id: options.chainServerId,
       dex_id:
-        options.chain === CHAINS_ENUM.ETH
+        options.chain === CHAINS_ENUM.ETH && dex !== DEX_ENUM.PANCAKESWAP
           ? id
           : `${options.chainServerId}_${id}`,
       pay_token_id: options.fromToken,
