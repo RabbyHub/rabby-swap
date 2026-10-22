@@ -8,11 +8,16 @@ export type { VerifyRouterAndSpenderParams } from "./contracts";
 export {
   CALLDATA_MIN_RECEIVE_TOLERANCE,
   decodeSwapCalldata,
+  decodeSwapCalldataWithDiagnostics,
   matchDecodedCalldata,
   shouldSkipCalldataMatch,
   verifyCalldata,
 } from "./calldata";
-export type { VerifyCalldataParams } from "./calldata";
+export type {
+  VerifyCalldataParams,
+  SwapCalldataDecodeFailure,
+  SwapCalldataDecodeResult,
+} from "./calldata";
 export { isSwapCalldataReceiverAllowed } from "./receiver";
 export { verifySdk } from "./sdk";
 export type { VerifySdkParams, VerifySdkResult } from "./sdk";
