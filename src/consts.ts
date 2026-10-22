@@ -48,4 +48,5 @@ export enum DEX_ENUM {
   RABBY = "Rabby",
   SUSHI = "Sushi",
   UNI = "Uniswap",
+  PANCAKESWAP = "PancakeSwap",
 }

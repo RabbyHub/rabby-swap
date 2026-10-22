@@ -1662,3 +1662,8 @@ export const SushiABI = [{ "inputs": [], "stateMutability": "nonpayable", "type"
 
 export { UniABI } from "./calldata/uni/abi";
 export { MagpieABI } from "./calldata/magpie/abi";
+// IAggregator.swapExactIn from the official router's verified implementation:
+// https://sourcify.dev/server/v2/contract/56/0x88b20da52208607e3bf06a59605acebbe7d2e3d6?fields=abi,sources
+export const PancakeSwapABI = [
+  "function swapExactIn(uint256 orderId, (address inputToken, address outputToken, uint256 minOutputAmount, uint256 deadline) request, uint256[] routesAmount, (uint256[] mixAdapters, address[] assetTo, uint256[] rawData, bytes[] extraData, address fromToken)[][] routes, uint256 feeConfig, address recipient) payable returns (uint256 outputAmtReceived)",
+];

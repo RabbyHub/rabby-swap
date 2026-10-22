@@ -36,7 +36,7 @@ describe("Hood DEX configuration", () => {
 
   it("uses the Hood Universal Router when Uni pays with native ETH", () => {
     expect(uniNativeToAddresses[HOOD]).toBe(
-      "0x8876789976decbfcbbbe364623c63652db8c0904"
+      "0x204FAca1764B154221e35c0d20aBb3c525710498"
     );
   });
 });
