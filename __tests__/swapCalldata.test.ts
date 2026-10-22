@@ -580,21 +580,32 @@ describe("Routes and payments", () => {
       }
     );
 
-    it.each(["0", "1"])(
-      "keeps an ERC20 payout when native input is refunded (minimum %s)",
-      (minimum) => {
-        expect(
+    it.each([
+      { recipient: sender, allowed: true },
+      {
+        recipient: "0x0000000000000000000000000000000000000001",
+        allowed: true,
+      },
+      { recipient: refundReceiver, allowed: false },
+    ])(
+      "checks the native input refund recipient $recipient",
+      ({ recipient, allowed }) => {
+        const decode = () =>
           execute(
             "0x0b08040c",
             [
               encode(["address", "uint256"], [addressThis, 100]),
               amm(weth, outputToken, "95", "90", addressThis, false),
               payment(outputToken, sender, "90"),
-              encode(["address", "uint256"], [refundReceiver, minimum]),
+              encode(["address", "uint256"], [recipient, 0]),
             ],
             "100"
-          )
-        ).toEqual({ ...expected, fromToken: "eth" });
+          );
+        if (allowed) {
+          expect(decode()).toEqual({ ...expected, fromToken: "eth" });
+        } else {
+          expect(decode).toThrow("Multiple output assets or recipients");
+        }
       }
     );
 
@@ -1044,6 +1055,62 @@ describe("Routes and payments", () => {
         })
       ).toEqual(expected);
     });
+
+    it.each(["04", "05"])(
+      "checks the recipient of proxy input refunds (command 0x%s)",
+      (command) => {
+        const proxy = new Interface([
+          "function execute(address router,address token,uint256 amount,bytes commands,bytes[] inputs,uint256 deadline)",
+        ]);
+        const decode = (recipient: string) =>
+          decodeCalldata("Uniswap", {
+            from: sender,
+            to: "0x02E5be68D46DAc0B524905bfF209cf47EE6dB2a9",
+            chainId: 1,
+            value: "0",
+            data: proxy.encodeFunctionData("execute", [
+              router,
+              inputToken,
+              100,
+              `0x08${command}`,
+              [
+                amm(inputToken, outputToken, "95", "90", sender, false),
+                payment(inputToken, recipient, "5"),
+              ],
+              2000000000,
+            ]),
+          });
+        expect(decode(sender)).toEqual(expected);
+        for (const recipient of [
+          refundReceiver,
+          "0x0000000000000000000000000000000000000001",
+        ]) {
+          expect(() => decode(recipient)).toThrow(
+            "Multiple output assets or recipients"
+          );
+        }
+      }
+    );
+
+    it.each(["0", "5"])(
+      "rejects V4 input refunds to a third party (TAKE amount %s)",
+      (amount) => {
+        expect(() =>
+          execute(
+            "0x10",
+            [
+              v4Plan("0x060b0e0e", [
+                v4Single(zero, outputToken, "95", "90"),
+                settle(zero, "100"),
+                payment(zero, refundReceiver, amount),
+                payment(outputToken, sender, "0"),
+              ]),
+            ],
+            "100"
+          )
+        ).toThrow("Multiple output assets or recipients");
+      }
+    );
 
     it("does not take the same V4 pool credit twice after moving it to the router", () => {
       expect(

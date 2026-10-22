@@ -216,9 +216,13 @@ export const setOutput = (
       .toFixed();
     return;
   }
-  // A trailing sweep of the original input is a refund. It must not replace
-  // an already identified payout in a different asset.
-  if (isInputRefund(swap, ctx, output)) return;
+  // Only input returned to the user is a refund; third-party transfers must
+  // remain visible to the final payout checks.
+  if (
+    isInputRefund(swap, ctx, output) &&
+    isSameAddress(resolveRecipient(recipient, ctx), ctx.sender)
+  )
+    return;
   recordPayout(swap, ctx, output, recipient, amount);
 };
 
