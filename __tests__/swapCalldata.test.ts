@@ -7,6 +7,7 @@ import {
   DEX_ROUTER_WHITELIST,
   decodeCalldata as decodeSdkCalldata,
   isSwapCalldataReceiverAllowed,
+  verifyCalldata,
 } from "../src";
 import type { DecodeCalldataOptions, TxWithChainId } from "../src";
 import { UniABI, MagpieABI } from "../src/abi";
@@ -1463,6 +1464,8 @@ describe("Recipients", () => {
     toAsset = TOKEN_OUT,
     amountIn = "1000",
     amountOutMin = "900",
+    feeAsset,
+    feeAmount = "0",
     from = USER,
   }: {
     toAddress: string;
@@ -1470,9 +1473,11 @@ describe("Recipients", () => {
     toAsset?: string;
     amountIn?: string;
     amountOutMin?: string;
+    feeAsset?: string;
+    feeAmount?: string;
     from?: string;
   }) => {
-    const packed = Buffer.alloc(320);
+    const packed = Buffer.alloc(feeAsset ? 352 : 320);
     const writeAddr = (offset: number, addr: string) => {
       Buffer.from(addr.replace(/^0x/, "").padStart(40, "0"), "hex").copy(
         packed,
@@ -1495,13 +1500,29 @@ describe("Recipients", () => {
     packed.writeUInt16BE(68 + 224, 100);
     writeU256(224, amountOutMin);
 
+    if (feeAsset) {
+      packed[206] = 1; // One fee, followed by asset / receiver / amount descriptors.
+      packed[207] = 96;
+      packed.writeUInt16BE(68 + 256, 208);
+      packed[210] = 96;
+      packed.writeUInt16BE(68 + 276, 211);
+      packed.writeUInt16BE(68 + 296, 214);
+      writeAddr(256, feeAsset);
+      writeAddr(276, ATTACKER);
+      writeU256(296, feeAmount);
+    }
+
     return {
       from,
       to: "0x20F6ee51340aDEed01A59B0e65cB3703f3dc860c",
       data: magpieInterface.encodeFunctionData("swapWithBackendSignature", [
         "0x" + packed.toString("hex"),
       ]),
-      value: isSameAddress(fromAsset, NULL_ADDRESS) ? amountIn : "0",
+      value: isSameAddress(fromAsset, NULL_ADDRESS)
+        ? new Decimal(amountIn)
+            .plus(isSameAddress(feeAsset || "", NULL_ADDRESS) ? feeAmount : "0")
+            .toFixed(0)
+        : "0",
       chainId: 1,
     };
   };
@@ -1590,6 +1611,86 @@ describe("Recipients", () => {
         false
       );
     });
+  });
+
+  describe("Magpie fee assets", () => {
+    it.each([
+      {
+        fromAsset: NULL_ADDRESS,
+        feeAsset: NULL_ADDRESS,
+        feeAmount: "10",
+        payment: "1010",
+        allowed: true,
+      },
+      {
+        fromAsset: TOKEN_IN,
+        feeAsset: TOKEN_IN,
+        feeAmount: "10",
+        payment: "1010",
+        allowed: true,
+      },
+      {
+        fromAsset: NULL_ADDRESS,
+        feeAsset: TOKEN_IN,
+        feeAmount: "10",
+        payment: "1000",
+        allowed: false,
+      },
+      {
+        fromAsset: TOKEN_IN,
+        feeAsset: NULL_ADDRESS,
+        feeAmount: "10",
+        payment: "1000",
+        allowed: false,
+      },
+      {
+        fromAsset: TOKEN_IN,
+        feeAsset: WETH,
+        feeAmount: "10",
+        payment: "1000",
+        allowed: false,
+      },
+      {
+        fromAsset: TOKEN_IN,
+        feeAsset: WETH,
+        feeAmount: "0",
+        payment: "1000",
+        allowed: true,
+      },
+      {
+        fromAsset: NULL_ADDRESS,
+        feeAsset: TOKEN_IN,
+        feeAmount: "0",
+        payment: "1000",
+        allowed: true,
+      },
+    ])(
+      "checks $feeAmount fee in $feeAsset for input $fromAsset",
+      ({ fromAsset, feeAsset, feeAmount, payment, allowed }) => {
+        const tx = encodeMagpieSwap({
+          toAddress: USER,
+          fromAsset,
+          feeAsset,
+          feeAmount,
+        });
+        expect(
+          verifyCalldata({
+            dexId: DEX_ENUM.MAGPIE,
+            tx,
+            nativeTokenAddress: ETH_NATIVE,
+            slippage: "0.1",
+            data: {
+              tx,
+              fromToken: fromAsset === NULL_ADDRESS ? ETH_NATIVE : fromAsset,
+              fromTokenAmount: payment,
+              toToken: TOKEN_OUT,
+              toTokenAmount: "1000",
+              spender: tx.to,
+            },
+          })
+        ).toBe(allowed);
+      }
+    );
   });
 
   describe("Magpie calldata receiver", () => {

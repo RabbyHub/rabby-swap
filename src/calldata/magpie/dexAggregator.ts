@@ -14,7 +14,7 @@ export const decodeDexAggregator = (data: PackedReader): PackedSwap => ({
 // LibRouter.getData(): byte 274 holds the fee count, followed by three
 // arrays of compact descriptors (asset, receiver, amount), 3 bytes per entry.
 // transferFees() transfers these separately from the swap's amountIn.
-// Only fees paid in the input asset belong in its total debit.
+// Only input-asset fees fit the single-asset payment checked against the quote.
 // https://sourcify.dev/server/v2/contract/42161/0x20F6ee51340aDEed01A59B0e65cB3703f3dc860c?fields=sources
 // https://docs.fly.trade/developers/api-reference/evm-swap-integration-guide#step-1-get-a-quote
 export const decodeDexAggregatorInputFee = (data: PackedReader): string => {
@@ -27,6 +27,8 @@ export const decodeDexAggregatorInputFee = (data: PackedReader): string => {
     const asset = data.compact(assetOffset, assetOffset + 1);
     const amount = data.compact(amountOffset, amountOffset + 1);
     if (inputAsset.eq(asset)) total = total.plus(amount);
+    else if (new BigNumber(amount).gt(0))
+      throw new Error("Non-input-asset Magpie fees are not supported");
   }
   return total.toFixed(0);
 };
