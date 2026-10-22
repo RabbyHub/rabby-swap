@@ -22,7 +22,7 @@ const spenderWhitelist = DEX_SPENDER_WHITELIST as Record<
 const uniNativeToAddresses = UNI_NATIVE_TO_ADDRESSES as Record<string, string>;
 
 const ARC_NATIVE = "arc";
-const UNI_ROUTER = "0x4fcA4a51Ab4F23A7447b3284fBd7D73289A89Fb1";
+const UNI_ROUTER = "0x8702463e73f74d0b6765aBceb314Ef07aCb92650";
 const UNI_SPENDER = "0x02E5be68D46DAc0B524905bfF209cf47EE6dB2a9";
 const CRCL = "0x2ba0f44bdfc17fba30eda9cdbecb908ca45b043b";
 const ARCHITECTS = "0x8bcb94279fc2c984ec34e0c1f2192df8c69ea4f0";
