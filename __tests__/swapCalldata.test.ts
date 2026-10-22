@@ -313,11 +313,31 @@ describe("Router versions and commands", () => {
       expect(
         decodeCalldata(
           "Uniswap",
-          transaction(execute("0xa1", [nested]), arcRouter, 5042),
+          transaction(execute("0x21", [nested]), arcRouter, 5042),
           { nativeTokenAddress: "arc" }
         )
       ).toEqual(expected);
     });
+
+    it.each(routerVersions)(
+      "rejects optional sub-plans on Router $version",
+      ({ address, chainId, nativeTokenAddress, newVersion }) => {
+        const nested = encode(
+          ["bytes", "bytes[]"],
+          ["0x10", [v4Input(newVersion, 0x07)]]
+        );
+        for (const data of [
+          execute("0xa1", [nested]),
+          execute("0x21", [encode(["bytes", "bytes[]"], ["0xa1", [nested]])]),
+        ]) {
+          expect(() =>
+            decodeCalldata("Uniswap", transaction(data, address, chainId), {
+              nativeTokenAddress,
+            })
+          ).toThrow("Sub-plans with allow-revert are not supported");
+        }
+      }
+    );
 
     it("rejects command/input length mismatches", () => {
       expect(() =>

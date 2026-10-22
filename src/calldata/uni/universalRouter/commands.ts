@@ -29,9 +29,11 @@ export const walkCommands = (
     throw new Error("Commands and inputs lengths differ");
 
   for (let i = 0; i < inputs.length; i++) {
-    // Strip execution flags before passing the command to the SDK parser.
-    const command =
-      parseInt(hex.slice(i * 2, i * 2 + 2), 16) & profile.commandMask;
+    const commandByte = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
+    const command = commandByte & profile.commandMask;
+    // Optional sub-plans do not guarantee their decoded minimum output.
+    if (command === CommandType.EXECUTE_SUB_PLAN && (commandByte & 0x80) !== 0)
+      throw new Error("Sub-plans with allow-revert are not supported");
     const unsupported = () =>
       new Error(
         `Unsupported command 0x${command.toString(
