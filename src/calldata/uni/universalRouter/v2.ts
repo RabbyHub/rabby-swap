@@ -1,5 +1,8 @@
-import { Token, V2_FACTORY_ADDRESSES } from "@uniswap/sdk-core";
-import { computePairAddress } from "@uniswap/v2-sdk";
+import { isAddress, soliditySha3Raw, toChecksumAddress } from "web3-utils";
+import {
+  UNI_V2_FACTORY_ADDRESSES,
+  UNI_V2_PAIR_INIT_CODE_HASH,
+} from "../../../consts";
 
 // A mixed route can pay directly into the next V2 pair instead of the Router.
 // Use the official chain-specific factory and CREATE2 derivation; never guess a
@@ -10,12 +13,26 @@ export const getV2InputPair = (
   chainId: number,
   path: readonly string[]
 ): string | undefined => {
-  const factoryAddress = V2_FACTORY_ADDRESSES[chainId];
+  const factoryAddress = UNI_V2_FACTORY_ADDRESSES[chainId];
   if (!factoryAddress) return undefined;
-  return computePairAddress({
-    factoryAddress,
-    // Only chain and addresses participate in CREATE2; decimals are unused.
-    tokenA: new Token(chainId, path[0], 0),
-    tokenB: new Token(chainId, path[1], 0),
-  });
+  if (!isAddress(path[0]) || !isAddress(path[1])) {
+    throw new Error("Invalid V2 token address");
+  }
+  const [token0, token1] = path
+    .slice(0, 2)
+    .map((token) => token.toLowerCase())
+    .sort();
+  if (token0 === token1)
+    throw new Error("V2 pair requires two distinct tokens");
+  const salt = soliditySha3Raw(
+    { type: "address", value: token0 },
+    { type: "address", value: token1 }
+  );
+  const hash = soliditySha3Raw(
+    { type: "bytes1", value: "0xff" },
+    { type: "address", value: factoryAddress },
+    { type: "bytes32", value: salt },
+    { type: "bytes32", value: UNI_V2_PAIR_INIT_CODE_HASH }
+  );
+  return toChecksumAddress(`0x${hash.slice(-40)}`);
 };

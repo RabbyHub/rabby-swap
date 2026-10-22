@@ -1,4 +1,4 @@
-import { utils } from "ethers";
+import { Interface } from "@ethersproject/abi";
 import BigNumber from "bignumber.js";
 import { getNativeTokenAddress } from "../chain";
 import type {
@@ -14,7 +14,7 @@ import {
 } from "./dexAggregator";
 import { PackedReader } from "./packed";
 
-const magpieInterface = new utils.Interface(MagpieABI);
+const magpieInterface = new Interface(MagpieABI);
 const dexAggregatorSelector = magpieInterface.getSighash(
   "swapWithBackendSignature"
 );
@@ -31,7 +31,7 @@ const readPayload = (tx: TxWithChainId): PackedReader => {
     throw new Error(`Unsupported Magpie calldata selector: ${selector}`);
   }
   const transaction = magpieInterface.parseTransaction({ data: tx.data });
-  const payloadLength = utils.arrayify(transaction.args[0]).length;
+  const payloadLength = (transaction.args[0].length - 2) / 2;
   return new PackedReader(tx.data, payloadLength);
 };
 

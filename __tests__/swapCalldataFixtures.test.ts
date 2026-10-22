@@ -1,5 +1,6 @@
 import type { CHAINS_ENUM } from "@debank/common";
-import { BigNumber, utils } from "ethers";
+import { defaultAbiCoder, Interface } from "@ethersproject/abi";
+import BigNumber from "bignumber.js";
 import { DEX_ENUM, decodeCalldata, verifyCalldata, verifySdk } from "../src";
 import type {
   DecodeCalldataResult,
@@ -38,7 +39,7 @@ const normalize = (decoded: DecodeCalldataResult) => ({
   toToken: decoded.toToken.toLowerCase(),
   toTokenReceiver: decoded.toTokenReceiver.toLowerCase(),
 });
-const uniInterface = new utils.Interface(UniABI);
+const uniInterface = new Interface(UniABI);
 const otherUser = "0x1111111111111111111111111111111111111111";
 const zero = "0x0000000000000000000000000000000000000000";
 
@@ -52,16 +53,18 @@ describe("Recorded Uni and Magpie calldata", () => {
       // Independently sum Arc's six-decimal route inputs before scaling.
       expect(
         sample.rootInputAmounts6
-          .reduce((sum, amount) => sum.add(amount), BigNumber.from(0))
-          .mul("1000000000000")
-          .toString()
+          .reduce((sum, amount) => sum.plus(amount), new BigNumber(0))
+          .times("1000000000000")
+          .toFixed(0)
       ).toBe(sample.expected.fromTokenAmount);
     }
     if (sample.refundCommandIndex !== undefined) {
       const parsed = uniInterface.parseTransaction(sample.tx);
-      const commands = Array.from(utils.arrayify(parsed.args.commands));
+      const commands = Array.from(
+        Buffer.from(parsed.args.commands.slice(2), "hex")
+      );
       const sweepIndex = commands.lastIndexOf(0x04);
-      const [token, recipient, minimum] = utils.defaultAbiCoder.decode(
+      const [token, recipient, minimum] = defaultAbiCoder.decode(
         ["address", "address", "uint256"],
         parsed.args.inputs[sweepIndex]
       );
@@ -69,7 +72,7 @@ describe("Recorded Uni and Magpie calldata", () => {
       expect(recipient.toLowerCase()).toBe(sample.expected.toTokenReceiver);
       expect(minimum.toString()).toBe(sample.expected.minReceiveToTokenAmount);
       expect(commands[sample.refundCommandIndex]).toBe(0x0c);
-      const [, refundMinimum] = utils.defaultAbiCoder.decode(
+      const [, refundMinimum] = defaultAbiCoder.decode(
         ["address", "uint256"],
         parsed.args.inputs[sample.refundCommandIndex]
       );
@@ -100,10 +103,7 @@ describe("SDK fee, precision and recipient verification", () => {
   it.each(
     verificationSamples.filter((sample) => sample.dexId === DEX_ENUM.MAGPIE)
   )("reads the Magpie payload and input fees once: $name", (sample) => {
-    const payloadReads = jest.spyOn(
-      utils.Interface.prototype,
-      "parseTransaction"
-    );
+    const payloadReads = jest.spyOn(Interface.prototype, "parseTransaction");
     const feeReads = jest.spyOn(magpieFees, "decodeDexAggregatorInputFee");
     try {
       expect(verifySdk(paramsFor(sample)).isSdkDataPass).toBe(true);
@@ -168,11 +168,11 @@ describe("SDK fee, precision and recipient verification", () => {
         ...verification,
         decoded: {
           ...result.decoded!,
-          minReceiveToTokenAmount: BigNumber.from(
+          minReceiveToTokenAmount: new BigNumber(
             result.decoded!.minReceiveToTokenAmount
           )
-            .div(2)
-            .toString(),
+            .idiv(2)
+            .toFixed(0),
         },
       })
     ).toBe(false);
@@ -181,9 +181,9 @@ describe("SDK fee, precision and recipient verification", () => {
         ...verification,
         decoded: {
           ...result.decoded!,
-          fromTokenAmount: BigNumber.from(result.decoded!.fromTokenAmount)
-            .add(1)
-            .toString(),
+          fromTokenAmount: new BigNumber(result.decoded!.fromTokenAmount)
+            .plus(1)
+            .toFixed(0),
         },
       })
     ).toBe(false);

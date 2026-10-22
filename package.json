@@ -19,13 +19,11 @@
   },
   "dependencies": {
     "@ethersproject/abi": "^5.7.0",
-    "@uniswap/sdk-core": "7.19.4",
     "@uniswap/universal-router-sdk": "5.14.0",
-    "@uniswap/v2-sdk": "4.21.5",
     "axios": "^0.27.2",
     "bignumber.js": "^9.1.1",
-    "ethers": "5.8.0",
-    "web3-eth-abi": "^1.8.1"
+    "web3-eth-abi": "^1.8.1",
+    "web3-utils": "1.8.1"
   },
   "devDependencies": {
     "@debank/common": "^0.3.60",

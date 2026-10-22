@@ -1,4 +1,4 @@
-import { utils } from "ethers";
+import { Interface } from "@ethersproject/abi";
 import BigNumber from "bignumber.js";
 import { getNativeTokenAddress } from "../chain";
 import type {
@@ -13,7 +13,7 @@ import { walkCommands } from "./universalRouter/commands";
 import { getRouterProfile } from "./universalRouter/profiles";
 import { normalizeUniAssets } from "./assets";
 
-const uniInterface = new utils.Interface(UniABI);
+const uniInterface = new Interface(UniABI);
 
 export const decodeCalldata = (
   tx: TxWithChainId,

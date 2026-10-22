@@ -1,7 +1,7 @@
 import { CHAINS, CHAINS_ENUM } from "@debank/common";
 import { defaultAbiCoder, Interface } from "@ethersproject/abi";
 import Decimal from "bignumber.js";
-import { BigNumber, utils } from "ethers";
+import { encodePacked } from "web3-utils";
 import {
   DEX_ENUM,
   DEX_ROUTER_WHITELIST,
@@ -32,10 +32,10 @@ describe("Router versions and commands", () => {
   const v2Router = "0x66a9893cC07D91D95644AEDD05D03f95e1dBA8Af";
   const arcRouter = "0x4fca4a51ab4f23a7447b3284fbd7d73289a89fb1";
   const eraRouter = "0x28731bcc616b5f51dd52cf2e4df0e78dd1136c06";
-  const universal = new utils.Interface([
+  const universal = new Interface([
     "function execute(bytes commands,bytes[] inputs,uint256 deadline)",
   ]);
-  const encode = utils.defaultAbiCoder.encode.bind(utils.defaultAbiCoder);
+  const encode = defaultAbiCoder.encode.bind(defaultAbiCoder);
   const transaction = (data: string, to = v2Router, chainId = 1) => ({
     from: sender,
     to,
@@ -182,10 +182,11 @@ describe("Router versions and commands", () => {
         msgSender,
         100,
         90,
-        utils.solidityPack(
-          ["address", "uint24", "address"],
-          [fromToken, 3000, toToken]
-        ),
+        encodePacked(
+          { type: "address", value: fromToken },
+          { type: "uint24", value: "3000" },
+          { type: "address", value: toToken }
+        )!,
         true,
       ]
     );
@@ -203,7 +204,9 @@ describe("Router versions and commands", () => {
     });
 
     it.each([0x01, 0x09])("rejects exact-output command %s", (command) => {
-      const data = execute(utils.hexlify(command), [ammInput]);
+      const data = execute(`0x${command.toString(16).padStart(2, "0")}`, [
+        ammInput,
+      ]);
       expect(() => decodeCalldata("Uniswap", transaction(data))).toThrow(
         "current exact-input quote flow"
       );
@@ -254,7 +257,7 @@ describe("Router versions and commands", () => {
     );
 
     it("selects the inner router version for SwapProxy calls", () => {
-      const proxy = new utils.Interface([
+      const proxy = new Interface([
         "function execute(address router,address token,uint256 amount,bytes commands,bytes[] inputs,uint256 deadline)",
       ]);
       const data = proxy.encodeFunctionData("execute", [
@@ -275,16 +278,16 @@ describe("Router versions and commands", () => {
     });
 
     it("rejects executeSigned outside the current quote flow", () => {
-      const signed = new utils.Interface([
+      const signed = new Interface([
         "function executeSigned(bytes commands,bytes[] inputs,bytes32 intent,bytes32 data,bool verifySender,bytes32 nonce,bytes signature,uint256 deadline)",
       ]);
       const data = signed.encodeFunctionData("executeSigned", [
         "0x00",
         [ammInput],
-        utils.hexZeroPad("0x01", 32),
-        utils.hexZeroPad("0x02", 32),
+        "0x" + "01".padStart(64, "0"),
+        "0x" + "02".padStart(64, "0"),
         false,
-        utils.hexZeroPad("0x03", 32),
+        "0x" + "03".padStart(64, "0"),
         "0x" + "11".repeat(65),
         2000000000,
       ]);
@@ -352,7 +355,7 @@ describe("Router versions and commands", () => {
         args: [[fromToken, toToken, 3000, sender, 100, 90, 0]],
       },
     ])("rejects $abi", ({ abi, method, args }) => {
-      const legacy = new utils.Interface([abi]);
+      const legacy = new Interface([abi]);
       expect(() =>
         decodeCalldata(
           "Uniswap",
@@ -383,19 +386,20 @@ describe("local decoder supported formats", () => {
   };
 
   it("decodes a Uni V3 exact-input command", () => {
-    const router = new utils.Interface([
+    const router = new Interface([
       "function execute(bytes commands, bytes[] inputs, uint256 deadline)",
     ]);
-    const input = utils.defaultAbiCoder.encode(
+    const input = defaultAbiCoder.encode(
       ["address", "uint256", "uint256", "bytes", "bool"],
       [
         "0x0000000000000000000000000000000000000001",
         100,
         90,
-        utils.solidityPack(
-          ["address", "uint24", "address"],
-          [fromToken, 3000, toToken]
-        ),
+        encodePacked(
+          { type: "address", value: fromToken },
+          { type: "uint24", value: "3000" },
+          { type: "address", value: toToken }
+        )!,
         true,
       ]
     );
@@ -410,23 +414,24 @@ describe("local decoder supported formats", () => {
   });
 
   it("sums direct parallel V3 exact-input swaps", () => {
-    const router = new utils.Interface([
+    const router = new Interface([
       "function execute(bytes commands,bytes[] inputs,uint256 deadline)",
     ]);
     const inputs = [
       [40, 36],
       [60, 54],
     ].map(([amountIn, amountOut]) =>
-      utils.defaultAbiCoder.encode(
+      defaultAbiCoder.encode(
         ["address", "uint256", "uint256", "bytes", "bool"],
         [
           sender,
           amountIn,
           amountOut,
-          utils.solidityPack(
-            ["address", "uint24", "address"],
-            [fromToken, 3000, toToken]
-          ),
+          encodePacked(
+            { type: "address", value: fromToken },
+            { type: "uint24", value: "3000" },
+            { type: "address", value: toToken }
+          )!,
           true,
         ]
       )
@@ -442,19 +447,20 @@ describe("local decoder supported formats", () => {
   });
 
   it("rejects an unresolved dynamic input instead of returning a zero-amount success", () => {
-    const router = new utils.Interface([
+    const router = new Interface([
       "function execute(bytes commands,bytes[] inputs,uint256 deadline)",
     ]);
-    const input = utils.defaultAbiCoder.encode(
+    const input = defaultAbiCoder.encode(
       ["address", "uint256", "uint256", "bytes", "bool"],
       [
         sender,
         0,
         90,
-        utils.solidityPack(
-          ["address", "uint24", "address"],
-          [fromToken, 3000, toToken]
-        ),
+        encodePacked(
+          { type: "address", value: fromToken },
+          { type: "uint24", value: "3000" },
+          { type: "address", value: toToken }
+        )!,
         false,
       ]
     );
@@ -483,8 +489,8 @@ describe("Routes and payments", () => {
   const zero = "0x0000000000000000000000000000000000000000";
   const weth = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
   const contractBalance = "0x8" + "0".repeat(63);
-  const encode = utils.defaultAbiCoder.encode.bind(utils.defaultAbiCoder);
-  const universal = new utils.Interface([
+  const encode = defaultAbiCoder.encode.bind(defaultAbiCoder);
+  const universal = new Interface([
     "function execute(bytes commands,bytes[] inputs,uint256 deadline)",
   ]);
   const expected = {
@@ -753,7 +759,7 @@ describe("Routes and payments", () => {
   describe("Uni recipient execution context", () => {
     const msgSender = "0x0000000000000000000000000000000000000001";
     const proxyAddress = "0x02e5be68d46dac0b524905bff209cf47ee6db2a9";
-    const proxy = new utils.Interface([
+    const proxy = new Interface([
       "function execute(address router,address token,uint256 amount,bytes commands,bytes[] inputs,uint256 deadline)",
     ]);
     const transaction = (
@@ -823,10 +829,11 @@ describe("Routes and payments", () => {
                 recipient,
                 100,
                 90,
-                utils.solidityPack(
-                  ["address", "uint24", "address"],
-                  [inputToken, 3000, outputToken]
-                ),
+                encodePacked(
+                  { type: "address", value: inputToken },
+                  { type: "uint24", value: "3000" },
+                  { type: "address", value: outputToken }
+                )!,
                 !proxied,
               ]
             ),
@@ -1013,7 +1020,7 @@ describe("Routes and payments", () => {
     });
 
     it("keeps a portion of the prepaid input returned to the user as a refund", () => {
-      const proxy = new utils.Interface([
+      const proxy = new Interface([
         "function execute(address router,address token,uint256 amount,bytes commands,bytes[] inputs,uint256 deadline)",
       ]);
       expect(
@@ -1072,7 +1079,7 @@ describe("Routes and payments", () => {
         settle(inputToken, "100", false),
         payment(outputToken, sender, "0"),
       ]);
-      const proxy = new utils.Interface([
+      const proxy = new Interface([
         "function execute(address router,address token,uint256 amount,bytes commands,bytes[] inputs,uint256 deadline)",
       ]);
       expect(
@@ -1161,10 +1168,11 @@ describe("Routes and payments", () => {
               sender,
               50,
               90,
-              utils.solidityPack(
-                ["address", "uint24", "address"],
-                [intermediateToken, 3000, outputToken]
-              ),
+              encodePacked(
+                { type: "address", value: intermediateToken },
+                { type: "uint24", value: "3000" },
+                { type: "address", value: outputToken }
+              )!,
               false,
             ]
           ),

@@ -3,12 +3,12 @@ import type {
   Param,
   UniversalRouterVersion,
 } from "@uniswap/universal-router-sdk";
-import { utils } from "ethers";
+import { defaultAbiCoder } from "@ethersproject/abi";
 
 const planTypes = ["bytes", "bytes[]"];
 
 export const readPlan = (input: string) => {
-  const [commands, inputs] = utils.defaultAbiCoder.decode(planTypes, input);
+  const [commands, inputs] = defaultAbiCoder.decode(planTypes, input);
   return { commands: commands as string, inputs: inputs as string[] };
 };
 
@@ -23,7 +23,7 @@ export const decodeCommand = (
 ) => {
   const calldata = CommandParser.INTERFACE.encodeFunctionData(
     "execute(bytes,bytes[])",
-    [utils.hexlify(command), [input]]
+    [`0x${command.toString(16).padStart(2, "0")}`, [input]]
   );
   return CommandParser.parseCalldata(calldata, version).commands[0];
 };
@@ -33,8 +33,8 @@ export const decodeV4Action = (
   input: string,
   version: UniversalRouterVersion
 ) => {
-  const plan = utils.defaultAbiCoder.encode(planTypes, [
-    utils.hexlify(action),
+  const plan = defaultAbiCoder.encode(planTypes, [
+    `0x${action.toString(16).padStart(2, "0")}`,
     [input],
   ]);
   const decoded = decodeCommand(CommandType.V4_SWAP, plan, version).params[0];
