@@ -1,11 +1,7 @@
 import { Interface } from "@ethersproject/abi";
 import BigNumber from "bignumber.js";
-import { getNativeTokenAddress } from "../chain";
-import type {
-  DecodeCalldataOptions,
-  DecodeCalldataResult,
-  TxWithChainId,
-} from "../types";
+import { getNativeTokenAddress } from "../../chain";
+import type { DecodeCalldataResult, TxWithChainId } from "../types";
 import { isSameAddress, NULL_ADDRESS } from "../../utils";
 import { MagpieABI } from "./abi";
 import {
@@ -46,11 +42,8 @@ export const decodeInputFee = (
   return decodeDexAggregatorInputFee(readPayload(tx));
 };
 
-export const decodeCalldata = (
-  tx: TxWithChainId,
-  options: DecodeCalldataOptions = {}
-): DecodeCalldataResult => {
-  const native = getNativeTokenAddress(tx.chainId, options.nativeTokenAddress);
+export const decodeCalldata = (tx: TxWithChainId): DecodeCalldataResult => {
+  const native = getNativeTokenAddress(tx.chainId);
   const payload = readPayload(tx);
   const swap = decodeDexAggregator(payload);
   const nativeInput = isSameAddress(swap.fromAsset, NULL_ADDRESS);

@@ -1,11 +1,7 @@
 import { Interface } from "@ethersproject/abi";
 import BigNumber from "bignumber.js";
-import { getNativeTokenAddress } from "../chain";
-import type {
-  DecodeCalldataOptions,
-  DecodeCalldataResult,
-  TxWithChainId,
-} from "../types";
+import { getNativeTokenAddress } from "../../chain";
+import type { DecodeCalldataResult, TxWithChainId } from "../types";
 import { UniABI } from "./abi";
 import { chainToken, finishSwap } from "./shared";
 import type { Context, Swap } from "./shared";
@@ -15,11 +11,8 @@ import { normalizeUniAssets } from "./assets";
 
 const uniInterface = new Interface(UniABI);
 
-export const decodeCalldata = (
-  tx: TxWithChainId,
-  options: DecodeCalldataOptions = {}
-): DecodeCalldataResult => {
-  const native = getNativeTokenAddress(tx.chainId, options.nativeTokenAddress);
+export const decodeCalldata = (tx: TxWithChainId): DecodeCalldataResult => {
+  const native = getNativeTokenAddress(tx.chainId);
   const transaction = uniInterface.parseTransaction({ data: tx.data });
   const ctx: Context = {
     chainId: tx.chainId,

@@ -1,9 +1,10 @@
 import { OpenApiService } from "@rabby-wallet/rabby-api";
-import { CHAINS, CHAINS_ENUM } from "@debank/common";
+import { CHAINS_ENUM } from "@debank/common";
 import BigNumber from "bignumber.js";
 import { QuoteParams, QuoteResult } from "./quote";
 import { ARC_ERC20_USDC, DEX_ENUM } from "./consts";
 import { DEX_SPENDER_WHITELIST } from "./list";
+import { getChainByEnum } from "./chain";
 
 export const isSameAddress = (addr1: string, addr2: string) => {
   if (typeof addr1 !== "string" || typeof addr2 !== "string") return false;
@@ -71,7 +72,11 @@ export const generateGetQuote =
     dex: DEX_ENUM;
   }) =>
   async (options: QuoteParams, api: OpenApiService): Promise<QuoteResult> => {
-    if (!options.chainServerId || !options.nativeTokenAddress) {
+    const chain = getChainByEnum(options.chain);
+    const chainServerId = chain?.serverId ?? options.chainServerId;
+    const nativeTokenAddress =
+      chain?.nativeTokenAddress ?? options.nativeTokenAddress;
+    if (!chainServerId || !nativeTokenAddress) {
       throw new Error(
         `lack chainServerId or nativeTokenAddress is not support}`
       );
@@ -79,11 +84,11 @@ export const generateGetQuote =
 
     const params: Record<string, any> = {
       id: options.userAddress,
-      chain_id: options.chainServerId,
+      chain_id: chainServerId,
       dex_id:
         options.chain === CHAINS_ENUM.ETH && dex !== DEX_ENUM.PANCAKESWAP
           ? id
-          : `${options.chainServerId}_${id}`,
+          : `${chainServerId}_${id}`,
       pay_token_id: options.fromToken,
       pay_token_raw_amount: options.amount,
       receive_token_id: options.toToken,
@@ -108,7 +113,7 @@ export const generateGetQuote =
           chain: options.chain,
           fromToken: options.fromToken,
           payTokenId: data.pay_token.id,
-          nativeTokenAddress: options.nativeTokenAddress,
+          nativeTokenAddress,
           amount: options.amount,
         }),
         to: data.dex_swap_to,

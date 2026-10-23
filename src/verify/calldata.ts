@@ -1,13 +1,9 @@
 import BigNumber from "bignumber.js";
 import { DEX_ENUM } from "../consts";
-import { getNativeTokenAddress } from "../calldata/chain";
+import { getNativeTokenAddress } from "../chain";
 import { decodeInputFee } from "../calldata/magpie";
 import { getComparableUniInputAmount } from "../calldata/uni/assets";
-import type {
-  DecodeCalldataOptions,
-  DecodeCalldataResult,
-  TxWithChainId,
-} from "../calldata/types";
+import type { DecodeCalldataResult, TxWithChainId } from "../calldata/types";
 import type { QuoteResult } from "../quote";
 import { decodeCalldata } from "../quote";
 import { isSameAddress } from "../utils";
@@ -35,8 +31,7 @@ export type SwapCalldataDecodeResult = {
 /** Preserve decode failures separately from the existing verification policy. */
 export const decodeSwapCalldataWithDiagnostics = (
   dexId: DEX_ENUM | null,
-  tx?: TxWithChainId,
-  options: DecodeCalldataOptions = {}
+  tx?: TxWithChainId
 ): SwapCalldataDecodeResult => {
   if (!dexId || dexId === DEX_ENUM.WRAPTOKEN || !tx) return { decoded: null };
   const selector =
@@ -44,7 +39,7 @@ export const decodeSwapCalldataWithDiagnostics = (
       ? tx.data.slice(0, 10).toLowerCase()
       : undefined;
   try {
-    const decoded = decodeCalldata(dexId, tx, options);
+    const decoded = decodeCalldata(dexId, tx);
     return decoded
       ? { decoded }
       : { decoded, decodeFailure: { reason: "returned_null", selector } };
@@ -75,10 +70,9 @@ export const decodeSwapCalldataWithDiagnostics = (
 /** wrap、无 dex、无 tx、解码失败时返回 null，保持原有接口。 */
 export const decodeSwapCalldata = (
   dexId: DEX_ENUM | null,
-  tx?: TxWithChainId,
-  options: DecodeCalldataOptions = {}
+  tx?: TxWithChainId
 ): DecodeCalldataResult | null =>
-  decodeSwapCalldataWithDiagnostics(dexId, tx, options).decoded;
+  decodeSwapCalldataWithDiagnostics(dexId, tx).decoded;
 
 /** token、支付数量、最低到手比对；收款地址由 receiver 模块校验。 */
 export const matchDecodedCalldata = (
@@ -110,7 +104,6 @@ export type VerifyCalldataParams = {
   slippage: string | number;
   tx?: TxWithChainId;
   decoded?: DecodeCalldataResult | null;
-  nativeTokenAddress?: string;
 };
 
 /** 其他 DEX 沿用的跳过策略；Uni/Magpie 必须完成字段校验。 */
@@ -125,9 +118,7 @@ export const verifyCalldata = (p: VerifyCalldataParams) => {
   const decoded =
     p.decoded !== undefined
       ? p.decoded
-      : decodeSwapCalldata(p.dexId, p.tx, {
-          nativeTokenAddress: p.nativeTokenAddress,
-        });
+      : decodeSwapCalldata(p.dexId, p.tx);
   if (p.dexId === DEX_ENUM.UNI || p.dexId === DEX_ENUM.MAGPIE) {
     if (!p.tx || !decoded || !p.data) return false;
     let requestedAmount = p.data.fromTokenAmount;
@@ -143,7 +134,7 @@ export const verifyCalldata = (p: VerifyCalldataParams) => {
           requestedAmount,
           decoded,
           p.tx.chainId,
-          getNativeTokenAddress(p.tx.chainId, p.nativeTokenAddress)
+          getNativeTokenAddress(p.tx.chainId)
         );
       }
     } catch {

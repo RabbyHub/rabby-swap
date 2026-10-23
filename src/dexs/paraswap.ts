@@ -1,5 +1,6 @@
 import { Interface } from "@ethersproject/abi";
-import { CHAINS_ENUM, CHAINS } from "@debank/common";
+import { CHAINS_ENUM } from "@debank/common";
+import { getChainById } from "../chain";
 import { TxWithChainId, DecodeCalldataResult } from "../quote";
 import { generateGetQuote, isSameAddress } from "../utils";
 import { ParaSwapABI } from "../abi";
@@ -27,7 +28,7 @@ export const getQuote = generateGetQuote({
 export const decodeCalldata = (
   tx: TxWithChainId
 ): DecodeCalldataResult | null => {
-  const chain = Object.values(CHAINS).find((item) => item.id === tx.chainId);
+  const chain = getChainById(tx.chainId);
   const nullAddress = "0x0000000000000000000000000000000000000000";
 
   if (!chain) return null;

@@ -4,7 +4,6 @@ import { DEX_ENUM } from "./consts";
 import type {
   Tx,
   TxWithChainId,
-  DecodeCalldataOptions,
   DecodeCalldataResult,
 } from "./calldata/types";
 import { getQuote as wrapTokenGetQuote } from "./dexs/wrapToken";
@@ -71,7 +70,6 @@ import {
 export type {
   Tx,
   TxWithChainId,
-  DecodeCalldataOptions,
   DecodeCalldataResult,
 } from "./calldata/types";
 
@@ -147,8 +145,7 @@ export const getQuote = async (
 
 export const decodeCalldata = (
   id: DEX_ENUM,
-  tx: TxWithChainId,
-  options: DecodeCalldataOptions = {}
+  tx: TxWithChainId
 ): DecodeCalldataResult | null => {
   switch (id) {
     case DEX_ENUM.ONEINCH:
@@ -168,13 +165,13 @@ export const decodeCalldata = (
     case DEX_ENUM.ZEROXAPIV2:
       return zeroXV2DecodeCalldata(tx);
     case DEX_ENUM.MAGPIE:
-      return magpieDecodeCalldata(tx, options);
+      return magpieDecodeCalldata(tx);
     case DEX_ENUM.RABBY:
       return rabbyDecodeCalldata(tx);
     case DEX_ENUM.SUSHI:
       return sushiDecodeCalldata(tx);
     case DEX_ENUM.UNI:
-      return uniDecodeCalldata(tx, options);
+      return uniDecodeCalldata(tx);
     case DEX_ENUM.PANCAKESWAP:
       return pancakeDecodeCalldata(tx);
     default:

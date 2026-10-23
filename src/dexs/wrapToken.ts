@@ -2,11 +2,16 @@ import abiCoder from "web3-eth-abi";
 import { WrapTokenAddressMap, WRAP_TOKEN_SUPPORT_CHAINS } from "../list";
 import { QuoteParams, Tx, QuoteResult } from "../quote";
 import { isSameAddress } from "../utils";
+import { getChainByEnum } from "../chain";
 
 export const SUPPORT_CHAINS = WRAP_TOKEN_SUPPORT_CHAINS;
 
 export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
-  if (!options.chainServerId || !options.nativeTokenAddress) {
+  const chain = getChainByEnum(options.chain);
+  const chainServerId = chain?.serverId ?? options.chainServerId;
+  const nativeTokenAddress =
+    chain?.nativeTokenAddress ?? options.nativeTokenAddress;
+  if (!chainServerId || !nativeTokenAddress) {
     throw new Error(`lack chainServerId or nativeTokenAddress is not support`);
   }
   const wrapTokenAddress =
@@ -17,7 +22,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
   let calldata = "";
   let value = "0";
   if (
-    options.fromToken === options.nativeTokenAddress &&
+    options.fromToken === nativeTokenAddress &&
     isSameAddress(options.toToken, wrapTokenAddress)
   ) {
     calldata = abiCoder.encodeFunctionCall(

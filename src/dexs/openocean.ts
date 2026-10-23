@@ -1,5 +1,6 @@
 import { Interface } from "@ethersproject/abi";
-import { CHAINS_ENUM, CHAINS } from "@debank/common";
+import { CHAINS_ENUM } from "@debank/common";
+import { getChainById } from "../chain";
 import { TxWithChainId, DecodeCalldataResult } from "../quote";
 import { generateGetQuote, isSameAddress, resolveToTokenReceiver } from "../utils";
 import { OpenOceanABI } from "../abi";
@@ -25,7 +26,7 @@ const NATIVE_TOKENS = {
   [CHAINS_ENUM.MANTLE]: "0x0000000000000000000000000000000000000000",
   ["BERA" as CHAINS_ENUM]: "0x0000000000000000000000000000000000000000",
   [CHAINS_ENUM.SCRL]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
-  ["UNi" as CHAINS_ENUM]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  ["UNI" as CHAINS_ENUM]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
   [CHAINS_ENUM.MODE]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
   [CHAINS_ENUM.BLAST]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
   [CHAINS_ENUM.ERA]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
@@ -96,7 +97,7 @@ export const getQuote = generateGetQuote({
 export const decodeCalldata = (
   tx: TxWithChainId
 ): DecodeCalldataResult | null => {
-  const chain = Object.values(CHAINS).find((item) => item.id === tx.chainId);
+  const chain = getChainById(tx.chainId);
   if (!chain) return null;
   const contractInterface = new Interface(OpenOceanABI);
   const result = contractInterface.parseTransaction({ data: tx.data });

@@ -8,6 +8,7 @@ import type { SwapCalldataDecodeFailure } from "./calldata";
 import { verifyRouterAndSpender } from "./contracts";
 import { isSwapCalldataReceiverAllowed } from "./receiver";
 import { isSwapWrapToken } from "./wrap";
+import { getChainById } from "../chain";
 
 export type VerifySdkParams = {
   chain: CHAINS_ENUM;
@@ -17,7 +18,7 @@ export type VerifySdkParams = {
   data: QuoteResult | null;
   payTokenId: string;
   receiveTokenId: string;
-  /** 由应用传入，对应其链目录中的 native 地址。 */
+  /** 链目录未收录时，使用应用传入的 native 标识。 */
   nativeTokenAddress: string;
   /** 解码 calldata 用；应用侧用自己的链目录解析。 */
   chainId: number;
@@ -47,11 +48,13 @@ const toTxWithChainId = (
  * 预执行、gas 不在此处理。
  */
 export const verifySdk = (p: VerifySdkParams): VerifySdkResult => {
+  const nativeTokenAddress =
+    getChainById(p.chainId)?.nativeTokenAddress ?? p.nativeTokenAddress;
   const actualDexId = isSwapWrapToken(
     p.payTokenId,
     p.receiveTokenId,
     p.chain,
-    p.nativeTokenAddress
+    nativeTokenAddress
   )
     ? DEX_ENUM.WRAPTOKEN
     : p.dexId;
@@ -63,15 +66,14 @@ export const verifySdk = (p: VerifySdkParams): VerifySdkResult => {
     spender: p.data?.spender,
     payTokenId: p.payTokenId,
     receiveTokenId: p.receiveTokenId,
-    nativeTokenAddress: p.nativeTokenAddress,
+    nativeTokenAddress,
   });
 
   const tx = toTxWithChainId(p.data, p.chainId);
   const slippageRatio = new BigNumber(p.slippage).div(100).toFixed();
   const { decoded, decodeFailure } = decodeSwapCalldataWithDiagnostics(
     actualDexId,
-    tx,
-    { nativeTokenAddress: p.nativeTokenAddress }
+    tx
   );
   const callDataPass = verifyCalldata({
     data: p.data,
@@ -79,7 +81,6 @@ export const verifySdk = (p: VerifySdkParams): VerifySdkResult => {
     slippage: slippageRatio,
     tx,
     decoded,
-    nativeTokenAddress: p.nativeTokenAddress,
   });
   const receiverPass = isSwapCalldataReceiverAllowed(
     decoded?.toTokenReceiver,

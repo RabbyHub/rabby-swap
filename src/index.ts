@@ -23,8 +23,4 @@ export {
 };
 
 export { decodeCalldata } from "./quote";
-export type {
-  DecodeCalldataOptions,
-  DecodeCalldataResult,
-  TxWithChainId,
-} from "./calldata/types";
+export type { DecodeCalldataResult, TxWithChainId } from "./calldata/types";

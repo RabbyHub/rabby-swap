@@ -12,10 +12,6 @@ export interface TxWithChainId extends Tx {
   chainId: number;
 }
 
-export interface DecodeCalldataOptions {
-  nativeTokenAddress?: string;
-}
-
 export interface DecodeCalldataResult {
   fromToken: string;
   fromTokenAmount: string;

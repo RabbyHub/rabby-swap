@@ -1,4 +1,5 @@
-import { CHAINS, CHAINS_ENUM } from "@debank/common";
+import { CHAINS_ENUM } from "@debank/common";
+import { getChainById } from "../chain";
 import { Interface } from "@ethersproject/abi";
 import BigNumber from "bignumber.js";
 import { TxWithChainId, DecodeCalldataResult } from "../quote";
@@ -27,10 +28,7 @@ export const getQuote = generateGetQuote({
 export const decodeCalldata = (
   tx: TxWithChainId
 ): DecodeCalldataResult | null => {
-  const chain = Object.values(CHAINS).find((item) => item.id === tx.chainId);
-  // Older @debank/common versions do not include Robinhood Chain yet.
-  const nativeTokenAddress =
-    chain?.nativeTokenAddress || (tx.chainId === 4663 ? "hood" : undefined);
+  const nativeTokenAddress = getChainById(tx.chainId)?.nativeTokenAddress;
   if (!nativeTokenAddress) return null;
 
   const contractInterface = new Interface(PancakeSwapABI);

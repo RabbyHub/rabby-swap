@@ -1,5 +1,5 @@
 import { Interface } from "@ethersproject/abi";
-import { CHAINS_ENUM, CHAINS } from "@debank/common";
+import { CHAINS_ENUM } from "@debank/common";
 import { TxWithChainId, DecodeCalldataResult } from "../quote";
 import { generateGetQuote, isSameAddress } from "../utils";
 import { ZeroXABI } from "../abi";

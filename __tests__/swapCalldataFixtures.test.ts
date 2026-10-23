@@ -55,11 +55,10 @@ const zero = "0x0000000000000000000000000000000000000000";
 describe("Recorded other DEX calldata", () => {
   it.each(otherDexSamples)("decodes all five fields: $name", (sample) => {
     const { record } = sample;
-    const result = decodeCalldata(
-      record.dex,
-      { ...record.quote.tx, chainId: record.chainId },
-      { nativeTokenAddress: record.request.nativeTokenAddress }
-    );
+    const result = decodeCalldata(record.dex, {
+      ...record.quote.tx,
+      chainId: record.chainId,
+    });
     expect(result).not.toBeNull();
     expect(normalize(result!)).toEqual(sample.expected);
   });
@@ -75,11 +74,32 @@ describe("Recorded other DEX calldata", () => {
   });
 });
 
+describe("[Sushi] supported chain validation", () => {
+  const sample = otherDexSamples.find(
+    ({ record }) =>
+      record.dex === DEX_ENUM.SUSHI &&
+      record.quote.tx.data.startsWith("0x5f3bd1c8")
+  )!;
+
+  it.each([
+    {
+      name: "a known chain outside Sushi SUPPORT_CHAINS",
+      chainId: 1313161554,
+    },
+    {
+      name: "an unknown chain",
+      chainId: 999999999,
+    },
+  ])("rejects $name", ({ chainId }) => {
+    expect(
+      decodeCalldata(DEX_ENUM.SUSHI, { ...sample.record.quote.tx, chainId })
+    ).toBeNull();
+  });
+});
+
 describe("Recorded Uni and Magpie calldata", () => {
   it.each(samples)("$name", (sample) => {
-    const decoded = decodeCalldata(sample.dexId, sample.tx, {
-      nativeTokenAddress: sample.nativeTokenAddress,
-    })!;
+    const decoded = decodeCalldata(sample.dexId, sample.tx)!;
     expect(normalize(decoded)).toEqual(sample.expected);
     if (sample.rootInputAmounts6) {
       // Independently sum Arc's six-decimal route inputs before scaling.
@@ -162,7 +182,6 @@ describe("SDK fee, precision and recipient verification", () => {
         tx: other.tx,
         data: params.data,
         decoded,
-        nativeTokenAddress: sample.nativeTokenAddress,
         slippage: String(Number(params.slippage) / 100),
       })
     ).toBe(false);
@@ -184,7 +203,6 @@ describe("SDK fee, precision and recipient verification", () => {
       tx: sample.tx,
       data: params.data,
       decoded: result.decoded!,
-      nativeTokenAddress: sample.nativeTokenAddress,
       slippage: String(Number(params.slippage) / 100),
     };
     expect(verifyCalldata(verification)).toBe(true);
