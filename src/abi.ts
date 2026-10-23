@@ -36,69 +36,12 @@ export const OneInchABI = [
         name: "desc",
         type: "tuple",
       },
-      { internalType: "bytes", name: "permit", type: "bytes" },
       { internalType: "bytes", name: "data", type: "bytes" },
     ],
     name: "swap",
     outputs: [
       { internalType: "uint256", name: "returnAmount", type: "uint256" },
       { internalType: "uint256", name: "spentAmount", type: "uint256" },
-    ],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "uint256", name: "amount", type: "uint256" },
-      { internalType: "uint256", name: "minReturn", type: "uint256" },
-      { internalType: "uint256[]", name: "pools", type: "uint256[]" },
-    ],
-    name: "uniswapV3Swap",
-    outputs: [
-      { internalType: "uint256", name: "returnAmount", type: "uint256" },
-    ],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address payable", name: "recipient", type: "address" },
-      { internalType: "uint256", name: "amount", type: "uint256" },
-      { internalType: "uint256", name: "minReturn", type: "uint256" },
-      { internalType: "uint256[]", name: "pools", type: "uint256[]" },
-    ],
-    name: "uniswapV3SwapTo",
-    outputs: [
-      { internalType: "uint256", name: "returnAmount", type: "uint256" },
-    ],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "contract IERC20", name: "srcToken", type: "address" },
-      { internalType: "uint256", name: "amount", type: "uint256" },
-      { internalType: "uint256", name: "minReturn", type: "uint256" },
-      { internalType: "uint256[]", name: "pools", type: "uint256[]" },
-    ],
-    name: "unoswap",
-    outputs: [
-      { internalType: "uint256", name: "returnAmount", type: "uint256" },
-    ],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address payable", name: "recipient", type: "address" },
-      { internalType: "contract IERC20", name: "srcToken", type: "address" },
-      { internalType: "uint256", name: "amount", type: "uint256" },
-      { internalType: "uint256", name: "minReturn", type: "uint256" },
-      { internalType: "uint256[]", name: "pools", type: "uint256[]" },
-    ],
-    name: "unoswapTo",
-    outputs: [
-      { internalType: "uint256", name: "returnAmount", type: "uint256" },
     ],
     stateMutability: "payable",
     type: "function",

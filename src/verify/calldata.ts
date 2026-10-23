@@ -1,12 +1,11 @@
 import BigNumber from "bignumber.js";
-import { DEX_ENUM } from "../consts";
+import { ARC_CHAIN_ID, DEX_ENUM } from "../consts";
 import { getNativeTokenAddress } from "../chain";
 import { decodeInputFee } from "../calldata/magpie";
-import { getComparableUniInputAmount } from "../calldata/uni/assets";
 import type { DecodeCalldataResult, TxWithChainId } from "../calldata/types";
 import type { QuoteResult } from "../quote";
 import { decodeCalldata } from "../quote";
-import { isSameAddress } from "../utils";
+import { getComparableNativeInputAmount, isSameAddress } from "../utils";
 
 /** 解码出的 minReceive 相对「报价 × (1-滑点)」允许的相对偏差。 */
 export const CALLDATA_MIN_RECEIVE_TOLERANCE = 0.05;
@@ -130,7 +129,7 @@ export const verifyCalldata = (p: VerifyCalldataParams) => {
           .plus(decodeInputFee(p.tx, decoded))
           .toFixed(0);
       } else {
-        requestedAmount = getComparableUniInputAmount(
+        requestedAmount = getComparableNativeInputAmount(
           requestedAmount,
           decoded,
           p.tx.chainId,
@@ -148,5 +147,18 @@ export const verifyCalldata = (p: VerifyCalldataParams) => {
     );
   }
   if (shouldSkipCalldataMatch(p.slippage, decoded, p.data, p.tx)) return true;
+  if (p.dexId === DEX_ENUM.ONEINCH && p.tx!.chainId === ARC_CHAIN_ID) {
+    const requestedAmount = getComparableNativeInputAmount(
+      p.data!.fromTokenAmount,
+      decoded!,
+      p.tx!.chainId,
+      getNativeTokenAddress(p.tx!.chainId)
+    );
+    return matchDecodedCalldata(
+      decoded!,
+      { ...p.data!, fromTokenAmount: requestedAmount },
+      p.slippage
+    );
+  }
   return matchDecodedCalldata(decoded!, p.data!, p.slippage);
 };

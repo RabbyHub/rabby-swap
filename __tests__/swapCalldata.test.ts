@@ -11,8 +11,11 @@ import {
 } from "../src";
 import type { TxWithChainId } from "../src";
 import { UniABI, MagpieABI } from "../src/abi";
-import { NULL_ADDRESS, isSameAddress } from "../src/utils";
-import { getComparableUniInputAmount } from "../src/calldata/uni/assets";
+import {
+  NULL_ADDRESS,
+  isSameAddress,
+  getComparableNativeInputAmount,
+} from "../src/utils";
 
 const decodeCalldata = (dexId: string, tx: TxWithChainId) => {
   const result = decodeSdkCalldata(dexId as DEX_ENUM, tx);
@@ -1374,14 +1377,14 @@ describe("[Uniswap] Routes and payments", () => {
         fromToken: "arc",
         fromTokenAmount: truncated,
       };
-      expect(getComparableUniInputAmount(requested, decoded, 5042, "arc")).toBe(
+      expect(getComparableNativeInputAmount(requested, decoded, 5042, "arc")).toBe(
         truncated
       );
-      expect(getComparableUniInputAmount(requested, decoded, 1, "arc")).toBe(
+      expect(getComparableNativeInputAmount(requested, decoded, 1, "arc")).toBe(
         requested
       );
       expect(
-        getComparableUniInputAmount(
+        getComparableNativeInputAmount(
           requested,
           { ...decoded, fromToken: inputToken },
           5042,
@@ -1389,7 +1392,7 @@ describe("[Uniswap] Routes and payments", () => {
         )
       ).toBe(requested);
       expect(
-        getComparableUniInputAmount(
+        getComparableNativeInputAmount(
           requested,
           { ...decoded, fromTokenAmount: requested },
           5042,

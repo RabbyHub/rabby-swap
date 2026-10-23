@@ -74,6 +74,31 @@ describe("Recorded other DEX calldata", () => {
   });
 });
 
+describe("[1inch] Arc native input comparison", () => {
+  const sample = otherDexSamples.find(
+    ({ record }) =>
+      record.dex === DEX_ENUM.ONEINCH &&
+      record.chainId === 5042 &&
+      record.request.fromToken === record.request.nativeTokenAddress
+  )!;
+
+  it.each([-1, 1])("rejects input differing by %s wei from the Arc precision boundary", (delta) => {
+    const params = otherDexParamsFor(sample);
+    const amount = new BigNumber(sample.expected.fromTokenAmount)
+      .plus(delta)
+      .toFixed(0);
+    expect(
+      verifyCalldata({
+        dexId: DEX_ENUM.ONEINCH,
+        data: params.data,
+        slippage: "0.01",
+        tx: { ...sample.record.quote.tx, chainId: 5042 },
+        decoded: { ...sample.expected, fromTokenAmount: amount },
+      })
+    ).toBe(false);
+  });
+});
+
 describe("[Sushi] supported chain validation", () => {
   const sample = otherDexSamples.find(
     ({ record }) =>

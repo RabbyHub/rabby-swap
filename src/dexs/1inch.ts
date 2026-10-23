@@ -1,3 +1,17 @@
+/**
+ * 当前接入 1inch Aggregation Router V6 的一个聚合兑换方法：
+ *
+ * swap，selector：0x07ed2379。
+ * 参数：(address executor, SwapDescription desc, bytes data)。
+ * SwapDescription = (address srcToken, address dstToken, address srcReceiver,
+ *   address dstReceiver, uint256 amount, uint256 minReturnAmount, uint256 flags)。
+ * 场景：按 API 生成的路由数据，由 executor 执行跨流动性来源的聚合兑换。
+ * V6 的 swap 不再包含独立的 permit 参数，最低到账量取 minReturnAmount。
+ *
+ * 官方文档：https://business.1inch.com/portal/documentation/apis/swap/classic-swap/introduction
+ * Ethereum 官方 Router 的已验证实现源码与 ABI：
+ * https://sourcify.dev/server/v2/contract/1/0x111111125421ca6dc452d289314280a0f8842a65?fields=abi,sources
+ */
 import { CHAINS_ENUM } from "@debank/common";
 import { getChainById } from "../chain";
 import { Interface } from "@ethersproject/abi";
