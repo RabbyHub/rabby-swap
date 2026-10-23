@@ -1,11 +1,14 @@
 import BigNumber from "bignumber.js";
 import type { DecodeCalldataResult } from "../types";
-import { isSameAddress, NULL_ADDRESS } from "../../utils";
+import {
+  isSameAddress,
+  normalizeEeeeToken,
+  normalizeZeroAddressToken,
+} from "../../utils";
 import { getArcNativeInputAmount, isSameUniAsset } from "./assets";
 
 export const MSG_SENDER = "0x0000000000000000000000000000000000000001";
 export const ROUTER = "0x0000000000000000000000000000000000000002";
-const EETH = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
 export const CONTRACT_BALANCE = new BigNumber(2).pow(255);
 export type Minimums = Record<string, string>;
 
@@ -37,10 +40,9 @@ export interface Context {
   proxyAmount?: string;
 }
 
+// Uni 解析同时兼容零地址和 0xEeee… 两种原生币标记，因此组合两种转换。
 export const chainToken = (token: string, native: string) =>
-  isSameAddress(token, NULL_ADDRESS) || isSameAddress(token, EETH)
-    ? native
-    : token;
+  normalizeEeeeToken(normalizeZeroAddressToken(token, native), native);
 
 export const realAmount = (amount: string, fallback?: string) =>
   CONTRACT_BALANCE.eq(amount) && fallback ? fallback : amount;

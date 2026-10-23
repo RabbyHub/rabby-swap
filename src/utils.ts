@@ -13,6 +13,28 @@ export const isSameAddress = (addr1: string, addr2: string) => {
 
 export const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
+const EEEE_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
+
+/**
+ * 1inch、Sushi、ParaSwap 等用 0xEeee… 占位表示原生币。
+ * 转为项目使用的链 native 标识以便报价比对，其他代币地址保留原值。
+ */
+export const normalizeEeeeToken = (
+  token: string,
+  nativeTokenAddress: string
+): string =>
+  isSameAddress(token, EEEE_ADDRESS) ? nativeTokenAddress : token;
+
+/**
+ * Magpie、Pancake 等约定零地址表示原生币，需转为项目使用的链 native 标识。
+ * 与 0xEeee… 的约定分开处理，避免扩大各 DEX 的原生币识别范围。
+ */
+export const normalizeZeroAddressToken = (
+  token: string,
+  nativeTokenAddress: string
+): string =>
+  isSameAddress(token, NULL_ADDRESS) ? nativeTokenAddress : token;
+
 export const resolveToTokenReceiver = (
   encodedReceiver: string,
   txFrom: string

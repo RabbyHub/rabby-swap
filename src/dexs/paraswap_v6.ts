@@ -2,10 +2,9 @@ import { Interface } from "@ethersproject/abi";
 import { CHAINS_ENUM } from "@debank/common";
 import { getChainById } from "../chain";
 import { TxWithChainId, DecodeCalldataResult } from "../quote";
-import { generateGetQuote, isSameAddress } from "../utils";
+import { generateGetQuote, normalizeEeeeToken } from "../utils";
 import { ParaSwapV6ABI } from "../abi";
 import { DEX_ENUM } from "../consts";
-const NATIVE_TOKEN = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 
 export const SUPPORT_CHAINS = [
   CHAINS_ENUM.ETH,
@@ -55,13 +54,9 @@ export const decodeCalldata = (
       ] = data;
       if (!srcToken || !destToken || !fromAmount || !toAmount) return null;
       return {
-        fromToken: isSameAddress(srcToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : srcToken,
+        fromToken: normalizeEeeeToken(srcToken, chain.nativeTokenAddress),
         fromTokenAmount: fromAmount.toString(),
-        toToken: isSameAddress(destToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : destToken,
+        toToken: normalizeEeeeToken(destToken, chain.nativeTokenAddress),
         minReceiveToTokenAmount: toAmount.toString(),
         toTokenReceiver: beneficiary === nullAddress ? tx.from : beneficiary,
       };
@@ -79,13 +74,9 @@ export const decodeCalldata = (
       ] = data;
       if (!srcToken || !destToken || !fromAmount || !toAmount) return null;
       return {
-        fromToken: isSameAddress(srcToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : srcToken,
+        fromToken: normalizeEeeeToken(srcToken, chain.nativeTokenAddress),
         fromTokenAmount: fromAmount.toString(),
-        toToken: isSameAddress(destToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : destToken,
+        toToken: normalizeEeeeToken(destToken, chain.nativeTokenAddress),
         minReceiveToTokenAmount: toAmount.toString(),
         toTokenReceiver: beneficiary === nullAddress ? tx.from : beneficiary,
       };
@@ -105,13 +96,9 @@ export const decodeCalldata = (
       ] = data;
       if (!srcToken || !destToken || !fromAmount || !toAmount) return null;
       return {
-        fromToken: isSameAddress(srcToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : srcToken,
+        fromToken: normalizeEeeeToken(srcToken, chain.nativeTokenAddress),
         fromTokenAmount: fromAmount.toString(),
-        toToken: isSameAddress(destToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : destToken,
+        toToken: normalizeEeeeToken(destToken, chain.nativeTokenAddress),
         minReceiveToTokenAmount: toAmount.toString(),
         toTokenReceiver: beneficiary === nullAddress ? tx.from : beneficiary,
       };
@@ -133,13 +120,9 @@ export const decodeCalldata = (
       ] = data;
       if (!srcToken || !destToken || !fromAmount || !toAmount) return null;
       return {
-        fromToken: isSameAddress(srcToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : srcToken,
+        fromToken: normalizeEeeeToken(srcToken, chain.nativeTokenAddress),
         fromTokenAmount: fromAmount.toString(),
-        toToken: isSameAddress(destToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : destToken,
+        toToken: normalizeEeeeToken(destToken, chain.nativeTokenAddress),
         minReceiveToTokenAmount: toAmount.toString(),
         toTokenReceiver: beneficiary === nullAddress ? tx.from : beneficiary,
       };

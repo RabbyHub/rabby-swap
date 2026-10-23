@@ -5,8 +5,7 @@ import BigNumber from "bignumber.js";
 import { TxWithChainId, DecodeCalldataResult } from "../quote";
 import {
   generateGetQuote,
-  isSameAddress,
-  NULL_ADDRESS,
+  normalizeZeroAddressToken,
   resolveToTokenReceiver,
 } from "../utils";
 import { PancakeSwapABI } from "../abi";
@@ -43,13 +42,9 @@ export const decodeCalldata = (
   );
 
   return {
-    fromToken: isSameAddress(request.inputToken, NULL_ADDRESS)
-      ? nativeTokenAddress
-      : request.inputToken,
+    fromToken: normalizeZeroAddressToken(request.inputToken, nativeTokenAddress),
     fromTokenAmount: amount.toFixed(0),
-    toToken: isSameAddress(request.outputToken, NULL_ADDRESS)
-      ? nativeTokenAddress
-      : request.outputToken,
+    toToken: normalizeZeroAddressToken(request.outputToken, nativeTokenAddress),
     // The contract checks this minimum against the recipient's post-fee output.
     minReceiveToTokenAmount: request.minOutputAmount.toString(),
     toTokenReceiver: resolveToTokenReceiver(recipient, tx.from),

@@ -2,7 +2,11 @@ import { Interface } from "@ethersproject/abi";
 import BigNumber from "bignumber.js";
 import { getNativeTokenAddress } from "../../chain";
 import type { DecodeCalldataResult, TxWithChainId } from "../types";
-import { isSameAddress, NULL_ADDRESS } from "../../utils";
+import {
+  isSameAddress,
+  normalizeZeroAddressToken,
+  NULL_ADDRESS,
+} from "../../utils";
 import { MagpieABI } from "./abi";
 import {
   decodeDexAggregator,
@@ -68,11 +72,9 @@ export const decodeCalldata = (tx: TxWithChainId): DecodeCalldataResult => {
     );
 
   const decoded: DecodeCalldataResult = {
-    fromToken: isSameAddress(swap.fromAsset, NULL_ADDRESS)
-      ? native
-      : swap.fromAsset,
+    fromToken: normalizeZeroAddressToken(swap.fromAsset, native),
     fromTokenAmount: amountIn.toFixed(0),
-    toToken: isSameAddress(swap.toAsset, NULL_ADDRESS) ? native : swap.toAsset,
+    toToken: normalizeZeroAddressToken(swap.toAsset, native),
     minReceiveToTokenAmount: swap.amountOutMin,
     // LibRouter reads toAddress literally; zero is not a msg.sender sentinel.
     toTokenReceiver: swap.receiver,

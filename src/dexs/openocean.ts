@@ -6,6 +6,8 @@ import { generateGetQuote, isSameAddress, resolveToTokenReceiver } from "../util
 import { OpenOceanABI } from "../abi";
 import { DEX_ENUM } from "../consts";
 
+// OpenOcean 在不同链使用不同的原生币标记，按当前链的映射匹配后再转换。
+// 保留各链的约定，避免将其他链的标记或普通代币地址误当作当前链的原生币。
 const NATIVE_TOKENS = {
   [CHAINS_ENUM.ETH]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
   [CHAINS_ENUM.POLYGON]: "0x0000000000000000000000000000000000001010",
@@ -38,6 +40,8 @@ const NATIVE_TOKENS = {
   ["PLASMA" as CHAINS_ENUM]: "0x0000000000000000000000000000000000000000",
   ["MONAD" as CHAINS_ENUM]: "0x0000000000000000000000000000000000000000",
   [CHAINS_ENUM.RSK]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  ["HOOD" as CHAINS_ENUM]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  ["SEI" as CHAINS_ENUM]: "0x0000000000000000000000000000000000000000",
 } as Record<CHAINS_ENUM, string>;
 
 export const SUPPORT_CHAINS = [

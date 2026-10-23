@@ -2,10 +2,9 @@ import { Interface } from "@ethersproject/abi";
 import { CHAINS_ENUM } from "@debank/common";
 import { getChainById } from "../chain";
 import { TxWithChainId, DecodeCalldataResult } from "../quote";
-import { generateGetQuote, isSameAddress } from "../utils";
+import { generateGetQuote, normalizeEeeeToken } from "../utils";
 import { ParaSwapABI } from "../abi";
 import { DEX_ENUM } from "../consts";
-const NATIVE_TOKEN = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 
 export const SUPPORT_CHAINS = [
   CHAINS_ENUM.ETH,
@@ -54,13 +53,9 @@ export const decodeCalldata = (
       ] = data;
       if (!fromToken || !toToken || !fromAmount || !toAmount) return null;
       return {
-        fromToken: isSameAddress(fromToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : fromToken,
+        fromToken: normalizeEeeeToken(fromToken, chain.nativeTokenAddress),
         fromTokenAmount: fromAmount.toString(),
-        toToken: isSameAddress(toToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : toToken,
+        toToken: normalizeEeeeToken(toToken, chain.nativeTokenAddress),
         minReceiveToTokenAmount: toAmount.toString(),
         toTokenReceiver: beneficiary === nullAddress ? tx.from : beneficiary,
       };
@@ -79,13 +74,9 @@ export const decodeCalldata = (
         return null;
       const [toToken] = path[path.length - 1];
       return {
-        fromToken: isSameAddress(fromToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : fromToken,
+        fromToken: normalizeEeeeToken(fromToken, chain.nativeTokenAddress),
         fromTokenAmount: fromAmount.toString(),
-        toToken: isSameAddress(toToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : toToken,
+        toToken: normalizeEeeeToken(toToken, chain.nativeTokenAddress),
         minReceiveToTokenAmount: toAmount.toString(),
         toTokenReceiver: beneficiary === nullAddress ? tx.from : beneficiary,
       };
@@ -105,13 +96,9 @@ export const decodeCalldata = (
       const [fromAmountPercent, swapPath] = path[0];
       const [toToken] = swapPath[swapPath.length - 1];
       return {
-        fromToken: isSameAddress(fromToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : fromToken,
+        fromToken: normalizeEeeeToken(fromToken, chain.nativeTokenAddress),
         fromTokenAmount: fromAmount.toString(),
-        toToken: isSameAddress(toToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : toToken,
+        toToken: normalizeEeeeToken(toToken, chain.nativeTokenAddress),
         minReceiveToTokenAmount: toAmount.toString(),
         toTokenReceiver: beneficiary === nullAddress ? tx.from : beneficiary,
       };

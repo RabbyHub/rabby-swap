@@ -21,7 +21,7 @@
 import { CHAINS_ENUM } from "@debank/common";
 import { getChainById } from "../chain";
 import { TxWithChainId, DecodeCalldataResult } from "../quote";
-import { generateGetQuote, isSameAddress } from "../utils";
+import { generateGetQuote, isSameAddress, normalizeEeeeToken } from "../utils";
 import { DEX_ENUM } from "../consts";
 import { Interface } from "@ethersproject/abi";
 import type { Result } from "@ethersproject/abi";
@@ -74,9 +74,6 @@ export const getQuote = generateGetQuote({
   dex: DEX_ENUM.SUSHI,
 });
 
-const normalizeToken = (token: string, nativeTokenAddress: string) =>
-  isSameAddress(token, NATIVE_TOKEN) ? nativeTokenAddress : token;
-
 const decodeSnwap = (
   args: Result,
   nativeTokenAddress: string
@@ -87,9 +84,9 @@ const decodeSnwap = (
     return null;
 
   return {
-    fromToken: normalizeToken(tokenIn, nativeTokenAddress),
+    fromToken: normalizeEeeeToken(tokenIn, nativeTokenAddress),
     fromTokenAmount: amountIn.toString(),
-    toToken: normalizeToken(tokenOut, nativeTokenAddress),
+    toToken: normalizeEeeeToken(tokenOut, nativeTokenAddress),
     minReceiveToTokenAmount: amountOutMin.toString(),
     toTokenReceiver: recipient,
   };
@@ -128,9 +125,9 @@ const decodeSnwapMultiple = (
   const { token, recipient, amountOutMin } = outputTokens[0];
 
   return {
-    fromToken: normalizeToken(tokenIn, nativeTokenAddress),
+    fromToken: normalizeEeeeToken(tokenIn, nativeTokenAddress),
     fromTokenAmount: amountIn.toFixed(0),
-    toToken: normalizeToken(token, nativeTokenAddress),
+    toToken: normalizeEeeeToken(token, nativeTokenAddress),
     minReceiveToTokenAmount: amountOutMin.toString(),
     toTokenReceiver: recipient,
   };

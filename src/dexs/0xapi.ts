@@ -2,11 +2,9 @@ import { Interface } from "@ethersproject/abi";
 import { CHAINS_ENUM } from "@debank/common";
 import { getChainById } from "../chain";
 import { TxWithChainId, DecodeCalldataResult } from "../quote";
-import { generateGetQuote, isSameAddress } from "../utils";
+import { generateGetQuote, normalizeEeeeToken } from "../utils";
 import { ZeroXABI } from "../abi";
 import { DEX_ENUM } from "../consts";
-
-const NATIVE_TOKEN = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
 
 export const SUPPORT_CHAINS = [
   CHAINS_ENUM.ETH,
@@ -44,13 +42,9 @@ export const decodeCalldata = (
     return null;
 
   return {
-    fromToken: isSameAddress(inputToken, NATIVE_TOKEN)
-      ? chain.nativeTokenAddress
-      : inputToken,
+    fromToken: normalizeEeeeToken(inputToken, chain.nativeTokenAddress),
     fromTokenAmount: inputTokenAmount.toString(),
-    toToken: isSameAddress(outputToken, NATIVE_TOKEN)
-      ? chain.nativeTokenAddress
-      : outputToken,
+    toToken: normalizeEeeeToken(outputToken, chain.nativeTokenAddress),
     minReceiveToTokenAmount: minOutputTokenAmount.toString(),
     toTokenReceiver: tx.from,
   };

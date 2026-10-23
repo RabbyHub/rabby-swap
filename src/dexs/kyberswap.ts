@@ -3,11 +3,13 @@ import { getChainById } from "../chain";
 import { Interface } from "@ethersproject/abi";
 
 import { TxWithChainId, DecodeCalldataResult } from "../quote";
-import { generateGetQuote, isSameAddress, resolveToTokenReceiver } from "../utils";
+import {
+  generateGetQuote,
+  normalizeEeeeToken,
+  resolveToTokenReceiver,
+} from "../utils";
 import { KyberswapABI } from "../abi";
 import { DEX_ENUM } from "../consts";
-
-const NATIVE_TOKEN = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 
 // eth op arb bsc avax ftm cro matic aurora linea btt oas
 
@@ -69,13 +71,9 @@ export const decodeCalldata = (
   }
 
   return {
-    fromToken: isSameAddress(srcToken, NATIVE_TOKEN)
-      ? chain.nativeTokenAddress
-      : srcToken,
+    fromToken: normalizeEeeeToken(srcToken, chain.nativeTokenAddress),
     fromTokenAmount: amount.toString(),
-    toToken: isSameAddress(dstToken, NATIVE_TOKEN)
-      ? chain.nativeTokenAddress
-      : dstToken,
+    toToken: normalizeEeeeToken(dstToken, chain.nativeTokenAddress),
     minReceiveToTokenAmount: minReturnAmount.toString(),
     toTokenReceiver: resolveToTokenReceiver(dstReceiver, tx.from),
   };
