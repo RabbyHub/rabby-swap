@@ -39,18 +39,13 @@ export const decodeCalldata = (
   switch (result.name) {
     case "simpleSwap": {
       const [data] = result.args;
-      const [
+      const {
         fromToken,
         toToken,
         fromAmount,
         toAmount,
-        expectedAmount,
-        callees,
-        exchangeData,
-        startIndexes,
-        values,
         beneficiary,
-      ] = data;
+      } = data;
       if (!fromToken || !toToken || !fromAmount || !toAmount) return null;
       return {
         fromToken: normalizeEeeeToken(fromToken, chain.nativeTokenAddress),
@@ -62,14 +57,13 @@ export const decodeCalldata = (
     }
     case "multiSwap": {
       const [data] = result.args;
-      const [
+      const {
         fromToken,
         fromAmount,
         toAmount,
-        expectedAmount,
         beneficiary,
         path,
-      ] = data;
+      } = data;
       if (!fromToken || !fromAmount || !toAmount || !path || path.length <= 0)
         return null;
       const [toToken] = path[path.length - 1];
@@ -83,17 +77,16 @@ export const decodeCalldata = (
     }
     case "megaSwap":
       const [data] = result.args;
-      const [
+      const {
         fromToken,
         fromAmount,
         toAmount,
-        expectedAmount,
         beneficiary,
         path,
-      ] = data;
+      } = data;
       if (!fromToken || !fromAmount || !toAmount || !path || path.length <= 0)
         return null;
-      const [fromAmountPercent, swapPath] = path[0];
+      const [, swapPath] = path[0];
       const [toToken] = swapPath[swapPath.length - 1];
       return {
         fromToken: normalizeEeeeToken(fromToken, chain.nativeTokenAddress),

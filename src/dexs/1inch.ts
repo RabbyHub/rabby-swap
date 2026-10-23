@@ -44,15 +44,14 @@ export const decodeCalldata = (
     return null;
   }
 
-  const [executor, desc] = result.args;
-  const [
+  const [, desc] = result.args;
+  const {
     srcToken,
     dstToken,
-    srcReceiver,
     dstReceiver,
     amount,
     minReturnAmount,
-  ] = desc;
+  } = desc;
 
   if (!srcToken || !dstToken || !dstReceiver || !amount || !minReturnAmount)
     return null;

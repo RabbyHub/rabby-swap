@@ -1,11 +1,7 @@
-import { Interface } from "@ethersproject/abi";
 import { CHAINS_ENUM } from "@debank/common";
 import { TxWithChainId, DecodeCalldataResult } from "../quote";
-import { generateGetQuote, isSameAddress } from "../utils";
-import { ZeroXABI } from "../abi";
+import { generateGetQuote } from "../utils";
 import { DEX_ENUM } from "../consts";
-
-const NATIVE_TOKEN = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
 
 export const SUPPORT_CHAINS = [
   CHAINS_ENUM.ETH,
@@ -32,7 +28,7 @@ export const getQuote = generateGetQuote({
 });
 
 export const decodeCalldata = (
-  tx: TxWithChainId
+  _tx: TxWithChainId
 ): DecodeCalldataResult | null => {
   return null;
 };

@@ -1,6 +1,6 @@
 import abiCoder from "web3-eth-abi";
 import { WrapTokenAddressMap, WRAP_TOKEN_SUPPORT_CHAINS } from "../list";
-import { QuoteParams, Tx, QuoteResult } from "../quote";
+import { QuoteParams, QuoteResult } from "../quote";
 import { isSameAddress } from "../utils";
 import { getChainByEnum } from "../chain";
 

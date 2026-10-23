@@ -72,7 +72,6 @@ export const resolveSwapTxValue = ({
 
 export const generateGetQuote =
   ({
-    SUPPORT_CHAINS,
     id,
     dex,
   }: {

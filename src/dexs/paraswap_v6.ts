@@ -43,15 +43,13 @@ export const decodeCalldata = (
     case "swapExactAmountInOnUniswapV2":
     case "swapExactAmountInOnUniswapV3": {
       const [data] = result.args;
-      const [
+      const {
         srcToken,
         destToken,
         fromAmount,
         toAmount,
-        quotedAmount,
-        metadata,
         beneficiary,
-      ] = data;
+      } = data;
       if (!srcToken || !destToken || !fromAmount || !toAmount) return null;
       return {
         fromToken: normalizeEeeeToken(srcToken, chain.nativeTokenAddress),
@@ -62,16 +60,14 @@ export const decodeCalldata = (
       };
     }
     case "swapExactAmountIn": {
-      const [_, data] = result.args;
-      const [
+      const [, data] = result.args;
+      const {
         srcToken,
         destToken,
         fromAmount,
         toAmount,
-        quotedAmount,
-        metadata,
         beneficiary,
-      ] = data;
+      } = data;
       if (!srcToken || !destToken || !fromAmount || !toAmount) return null;
       return {
         fromToken: normalizeEeeeToken(srcToken, chain.nativeTokenAddress),
@@ -83,17 +79,13 @@ export const decodeCalldata = (
     }
     case "swapExactAmountInOnCurveV1": {
       const [data] = result.args;
-      const [
-        curveData,
-        curveAssets,
+      const {
         srcToken,
         destToken,
         fromAmount,
         toAmount,
-        quotedAmount,
-        metadata,
         beneficiary,
-      ] = data;
+      } = data;
       if (!srcToken || !destToken || !fromAmount || !toAmount) return null;
       return {
         fromToken: normalizeEeeeToken(srcToken, chain.nativeTokenAddress),
@@ -105,19 +97,13 @@ export const decodeCalldata = (
     }
     case "swapExactAmountInOnCurveV2": {
       const [data] = result.args;
-      const [
-        curveData,
-        i,
-        j,
-        poolAddress,
+      const {
         srcToken,
         destToken,
         fromAmount,
         toAmount,
-        quotedAmount,
-        metadata,
         beneficiary,
-      ] = data;
+      } = data;
       if (!srcToken || !destToken || !fromAmount || !toAmount) return null;
       return {
         fromToken: normalizeEeeeToken(srcToken, chain.nativeTokenAddress),

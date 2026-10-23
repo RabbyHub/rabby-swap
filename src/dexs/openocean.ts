@@ -109,15 +109,14 @@ export const decodeCalldata = (
     return null;
   }
 
-  const [caller, data] = result.args;
-  const [
+  const [, data] = result.args;
+  const {
     srcToken,
     dstToken,
-    srcReceiver,
     dstReceiver,
     amount,
     minReturnAmount,
-  ] = data;
+  } = data;
 
   if (!srcToken || !dstToken || !dstReceiver || !amount || !minReturnAmount)
     return null;

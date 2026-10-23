@@ -26,7 +26,7 @@ export const getQuote = generateGetQuote({
 });
 
 export const decodeCalldata = (
-  tx: TxWithChainId
+  _tx: TxWithChainId
 ): DecodeCalldataResult | null => {
   return null;
 };
