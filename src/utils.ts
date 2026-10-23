@@ -13,6 +13,16 @@ export const isSameAddress = (addr1: string, addr2: string) => {
 
 export const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
+/** 按 DEX 指定的原生币标记转换；未配置标记时保留原值。 */
+export const normalizeToken = (
+  token: string,
+  nativeTokenAddress: string,
+  nativeTokenMarker: string | undefined
+): string =>
+  nativeTokenMarker !== undefined && isSameAddress(token, nativeTokenMarker)
+    ? nativeTokenAddress
+    : token;
+
 const EEEE_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 
 /**
@@ -23,7 +33,7 @@ export const normalizeEeeeToken = (
   token: string,
   nativeTokenAddress: string
 ): string =>
-  isSameAddress(token, EEEE_ADDRESS) ? nativeTokenAddress : token;
+  normalizeToken(token, nativeTokenAddress, EEEE_ADDRESS);
 
 /**
  * Magpie、Pancake 等约定零地址表示原生币，需转为项目使用的链 native 标识。
@@ -33,7 +43,7 @@ export const normalizeZeroAddressToken = (
   token: string,
   nativeTokenAddress: string
 ): string =>
-  isSameAddress(token, NULL_ADDRESS) ? nativeTokenAddress : token;
+  normalizeToken(token, nativeTokenAddress, NULL_ADDRESS);
 
 export const resolveToTokenReceiver = (
   encodedReceiver: string,
