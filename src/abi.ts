@@ -1645,10 +1645,12 @@ export const ParaSwapV6ABI = [
   { stateMutability: "payable", type: "receive" },
 ];
 
+// AllowanceHolder.exec and Settler.execute from the official interfaces:
+// https://github.com/0xProject/0x-settler/blob/master/src/allowanceholder/IAllowanceHolder.sol
+// https://github.com/0xProject/0x-settler/blob/master/src/interfaces/ISettlerTakerSubmitted.sol
 export const ZeroXABIV2 = [
-  { inputs: [], stateMutability: "nonpayable", type: "constructor" },
-  { inputs: [], name: "ConfusedDeputy", type: "error" },
-  { stateMutability: "payable", type: "fallback" },
+  "function exec(address operator, address token, uint256 amount, address target, bytes data) payable returns (bytes result)",
+  "function execute((address recipient, address buyToken, uint256 minAmountOut) slippage, bytes[] actions, bytes32 zidAndAffiliate) payable returns (bool)",
 ];
 
 export const SushiABI = [{ "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "inputs": [{ "internalType": "address", "name": "tokenOut", "type": "address" }, { "internalType": "uint256", "name": "amountOut", "type": "uint256" }], "name": "MinimalOutputBalanceViolation", "type": "error" }, { "inputs": [], "name": "safeExecutor", "outputs": [{ "internalType": "contract SafeExecutor", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "contract IERC20", "name": "tokenIn", "type": "address" }, { "internalType": "uint256", "name": "amountIn", "type": "uint256" }, { "internalType": "address", "name": "recipient", "type": "address" }, { "internalType": "contract IERC20", "name": "tokenOut", "type": "address" }, { "internalType": "uint256", "name": "amountOutMin", "type": "uint256" }, { "internalType": "address", "name": "executor", "type": "address" }, { "internalType": "bytes", "name": "executorData", "type": "bytes" }], "name": "snwap", "outputs": [{ "internalType": "uint256", "name": "amountOut", "type": "uint256" }], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "components": [{ "internalType": "contract IERC20", "name": "token", "type": "address" }, { "internalType": "uint256", "name": "amountIn", "type": "uint256" }, { "internalType": "address", "name": "transferTo", "type": "address" }], "internalType": "struct InputToken[]", "name": "inputTokens", "type": "tuple[]" }, { "components": [{ "internalType": "contract IERC20", "name": "token", "type": "address" }, { "internalType": "address", "name": "recipient", "type": "address" }, { "internalType": "uint256", "name": "amountOutMin", "type": "uint256" }], "internalType": "struct OutputToken[]", "name": "outputTokens", "type": "tuple[]" }, { "components": [{ "internalType": "address", "name": "executor", "type": "address" }, { "internalType": "uint256", "name": "value", "type": "uint256" }, { "internalType": "bytes", "name": "data", "type": "bytes" }], "internalType": "struct Executor[]", "name": "executors", "type": "tuple[]" }], "name": "snwapMultiple", "outputs": [{ "internalType": "uint256[]", "name": "amountOut", "type": "uint256[]" }], "stateMutability": "payable", "type": "function" }]
