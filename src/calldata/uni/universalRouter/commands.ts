@@ -48,9 +48,12 @@ export const walkCommands = (
       walkV4(inputs[i], swap, ctx, profile.version);
       continue;
     }
+    // 2.1.2 retains the full-precision fee command introduced in 2.1.1.
+    // https://github.com/Uniswap/universal-router/blob/2.1.2/contracts/libraries/Commands.sol
     if (
       (command === CommandType.PAY_PORTION_FULL_PRECISION &&
-        profile.version !== UniversalRouterVersion.V2_1_1) ||
+        profile.version !== UniversalRouterVersion.V2_1_1 &&
+        profile.version !== UniversalRouterVersion.V2_1_2) ||
       (command === CommandType.BALANCE_CHECK_ERC20 &&
         profile.commandMask === 0x1f)
     )
