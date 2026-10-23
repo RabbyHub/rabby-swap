@@ -1,49 +1,103 @@
 import BigNumber from "bignumber.js";
 import { DEX_ENUM } from "../consts";
-import {
+import { getNativeTokenAddress } from "../calldata/chain";
+import { decodeInputFee } from "../calldata/magpie";
+import { getComparableUniInputAmount } from "../calldata/uni/assets";
+import type {
+  DecodeCalldataOptions,
   DecodeCalldataResult,
-  QuoteResult,
   TxWithChainId,
-  decodeCalldata,
-} from "../quote";
+} from "../calldata/types";
+import type { QuoteResult } from "../quote";
+import { decodeCalldata } from "../quote";
 import { isSameAddress } from "../utils";
 
-/** 解码出的 minReceive 相对「报价 × (1-滑点)」允许的相对偏差。两端现网均为 5%。 */
+/** 解码出的 minReceive 相对「报价 × (1-滑点)」允许的相对偏差。 */
 export const CALLDATA_MIN_RECEIVE_TOLERANCE = 0.05;
 
 /**
- * 尝试解码。wrap、无 dex、无 tx、解码抛错或解不出时返回 null。
+ * unsupported_selector: the top-level function is not supported by the parser.
+ * decode_error: decoding threw; the input or parser needs investigation.
+ * returned_null: the decoder returned no fields without throwing.
+ * Diagnostic only: never attach raw errors or transaction data.
  */
-export const decodeSwapCalldata = (
+export type SwapCalldataDecodeFailure = {
+  reason: "unsupported_selector" | "decode_error" | "returned_null";
+  selector?: string;
+  errorCode?: string;
+};
+
+export type SwapCalldataDecodeResult = {
+  decoded: DecodeCalldataResult | null;
+  decodeFailure?: SwapCalldataDecodeFailure;
+};
+
+/** Preserve decode failures separately from the existing verification policy. */
+export const decodeSwapCalldataWithDiagnostics = (
   dexId: DEX_ENUM | null,
-  tx?: TxWithChainId
-): DecodeCalldataResult | null => {
-  if (!dexId || dexId === DEX_ENUM.WRAPTOKEN || !tx) {
-    return null;
-  }
+  tx?: TxWithChainId,
+  options: DecodeCalldataOptions = {}
+): SwapCalldataDecodeResult => {
+  if (!dexId || dexId === DEX_ENUM.WRAPTOKEN || !tx) return { decoded: null };
+  const selector =
+    typeof tx.data === "string" && /^0x[0-9a-f]{8}/i.test(tx.data)
+      ? tx.data.slice(0, 10).toLowerCase()
+      : undefined;
   try {
-    return decodeCalldata(dexId, tx);
-  } catch {
-    return null;
+    const decoded = decodeCalldata(dexId, tx, options);
+    return decoded
+      ? { decoded }
+      : { decoded, decodeFailure: { reason: "returned_null", selector } };
+  } catch (error) {
+    const decodeError = error as {
+      code?: unknown;
+      reason?: unknown;
+      message?: unknown;
+    } | null | undefined;
+    const unsupportedSelector =
+      !!selector &&
+      (decodeError?.reason === "no matching function" ||
+        decodeError?.message === `Unsupported Magpie calldata selector: ${selector}`);
+    return {
+      decoded: null,
+      decodeFailure: {
+        reason: unsupportedSelector ? "unsupported_selector" : "decode_error",
+        selector,
+        errorCode:
+          typeof decodeError?.code === "string"
+            ? decodeError.code
+            : "UNKNOWN_ERROR",
+      },
+    };
   }
 };
 
-/** 纯比对：token、支付数量、最低到手（相对滑点带）。 */
+/** wrap、无 dex、无 tx、解码失败时返回 null，保持原有接口。 */
+export const decodeSwapCalldata = (
+  dexId: DEX_ENUM | null,
+  tx?: TxWithChainId,
+  options: DecodeCalldataOptions = {}
+): DecodeCalldataResult | null =>
+  decodeSwapCalldataWithDiagnostics(dexId, tx, options).decoded;
+
+/** token、支付数量、最低到手比对；收款地址由 receiver 模块校验。 */
 export const matchDecodedCalldata = (
   decoded: DecodeCalldataResult,
   quote: QuoteResult,
-  slippageRatio: string | number
+  slippageRatio: string | number,
+  requirePositiveMinimum = false
 ) => {
-  const estimateMinReceive = new BigNumber(quote.toTokenAmount).times(
+  const minimum = new BigNumber(quote.toTokenAmount).times(
     new BigNumber(1).minus(slippageRatio)
   );
   return (
+    (!requirePositiveMinimum || minimum.gt(0)) &&
     isSameAddress(decoded.fromToken, quote.fromToken) &&
     decoded.fromTokenAmount === quote.fromTokenAmount &&
     isSameAddress(decoded.toToken, quote.toToken) &&
     new BigNumber(decoded.minReceiveToTokenAmount)
-      .minus(estimateMinReceive)
-      .div(estimateMinReceive)
+      .minus(minimum)
+      .div(minimum)
       .abs()
       .lte(CALLDATA_MIN_RECEIVE_TOLERANCE)
   );
@@ -55,11 +109,11 @@ export type VerifyCalldataParams = {
   /** 已换算成小数的滑点，如 1% → 0.01。 */
   slippage: string | number;
   tx?: TxWithChainId;
-  /** 传入则不再解码。 */
   decoded?: DecodeCalldataResult | null;
+  nativeTokenAddress?: string;
 };
 
-/** 解不出、无滑点或无报价时跳过比对（现网视为通过）。 */
+/** 其他 DEX 沿用的跳过策略；Uni/Magpie 必须完成字段校验。 */
 export const shouldSkipCalldataMatch = (
   slippage: string | number,
   decoded: DecodeCalldataResult | null,
@@ -67,14 +121,41 @@ export const shouldSkipCalldataMatch = (
   tx?: TxWithChainId
 ) => !slippage || !decoded || !data || !tx;
 
-/**
- * 解码并与报价比对。解码成功后不再依赖应用链目录。
- */
 export const verifyCalldata = (p: VerifyCalldataParams) => {
   const decoded =
-    p.decoded !== undefined ? p.decoded : decodeSwapCalldata(p.dexId, p.tx);
-  if (shouldSkipCalldataMatch(p.slippage, decoded, p.data, p.tx)) {
-    return true;
+    p.decoded !== undefined
+      ? p.decoded
+      : decodeSwapCalldata(p.dexId, p.tx, {
+          nativeTokenAddress: p.nativeTokenAddress,
+        });
+  if (p.dexId === DEX_ENUM.UNI || p.dexId === DEX_ENUM.MAGPIE) {
+    if (!p.tx || !decoded || !p.data) return false;
+    let requestedAmount = p.data.fromTokenAmount;
+    let inputAmount = decoded.fromTokenAmount;
+    try {
+      if (p.dexId === DEX_ENUM.MAGPIE) {
+        // Encoded input-asset fees are transferred separately from amountIn.
+        inputAmount = new BigNumber(inputAmount)
+          .plus(decodeInputFee(p.tx, decoded))
+          .toFixed(0);
+      } else {
+        requestedAmount = getComparableUniInputAmount(
+          requestedAmount,
+          decoded,
+          p.tx.chainId,
+          getNativeTokenAddress(p.tx.chainId, p.nativeTokenAddress)
+        );
+      }
+    } catch {
+      return false;
+    }
+    return matchDecodedCalldata(
+      { ...decoded, fromTokenAmount: inputAmount },
+      { ...p.data, fromTokenAmount: requestedAmount },
+      p.slippage,
+      true
+    );
   }
+  if (shouldSkipCalldataMatch(p.slippage, decoded, p.data, p.tx)) return true;
   return matchDecodedCalldata(decoded!, p.data!, p.slippage);
 };

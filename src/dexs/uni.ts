@@ -1,8 +1,8 @@
 import { CHAINS_ENUM } from "@debank/common";
-
-import { TxWithChainId, DecodeCalldataResult } from "../quote";
 import { generateGetQuote } from "../utils";
 import { DEX_ENUM } from "../consts";
+
+export { decodeCalldata } from "../calldata/uni";
 
 export const SUPPORT_CHAINS = [
   CHAINS_ENUM.ETH,
@@ -66,9 +66,3 @@ export const getQuote = generateGetQuote({
   id: "uni",
   dex: DEX_ENUM.UNI,
 });
-
-export const decodeCalldata = (
-  tx: TxWithChainId
-): DecodeCalldataResult | null => {
-  return null;
-};

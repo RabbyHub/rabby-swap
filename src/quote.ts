@@ -1,6 +1,12 @@
 import { CHAINS_ENUM } from "@debank/common";
 import { OpenApiService } from "@rabby-wallet/rabby-api";
 import { DEX_ENUM } from "./consts";
+import type {
+  Tx,
+  TxWithChainId,
+  DecodeCalldataOptions,
+  DecodeCalldataResult,
+} from "./calldata/types";
 import { getQuote as wrapTokenGetQuote } from "./dexs/wrapToken";
 import {
   getQuote as oneInchGetQuote,
@@ -62,6 +68,13 @@ import {
   decodeCalldata as pancakeDecodeCalldata,
 } from "./dexs/pancake";
 
+export type {
+  Tx,
+  TxWithChainId,
+  DecodeCalldataOptions,
+  DecodeCalldataResult,
+} from "./calldata/types";
+
 export interface QuoteParams {
   fromToken: string;
   fromTokenDecimals: number;
@@ -77,20 +90,6 @@ export interface QuoteParams {
   fee?: boolean;
   chainServerId: string;
   nativeTokenAddress: string;
-}
-
-export interface Tx {
-  from: string;
-  to: string;
-  data: string;
-  value: string;
-  chainId?: number;
-  gas?: number;
-  gasPrice?: string;
-}
-
-export interface TxWithChainId extends Tx {
-  chainId: number;
 }
 
 export interface QuoteResult {
@@ -146,17 +145,10 @@ export const getQuote = async (
   }
 };
 
-export interface DecodeCalldataResult {
-  fromToken: string;
-  fromTokenAmount: string;
-  toToken: string;
-  minReceiveToTokenAmount: string;
-  toTokenReceiver: string;
-}
-
 export const decodeCalldata = (
   id: DEX_ENUM,
-  tx: TxWithChainId
+  tx: TxWithChainId,
+  options: DecodeCalldataOptions = {}
 ): DecodeCalldataResult | null => {
   switch (id) {
     case DEX_ENUM.ONEINCH:
@@ -176,13 +168,13 @@ export const decodeCalldata = (
     case DEX_ENUM.ZEROXAPIV2:
       return zeroXV2DecodeCalldata(tx);
     case DEX_ENUM.MAGPIE:
-      return magpieDecodeCalldata(tx);
+      return magpieDecodeCalldata(tx, options);
     case DEX_ENUM.RABBY:
       return rabbyDecodeCalldata(tx);
     case DEX_ENUM.SUSHI:
       return sushiDecodeCalldata(tx);
     case DEX_ENUM.UNI:
-      return uniDecodeCalldata(tx);
+      return uniDecodeCalldata(tx, options);
     case DEX_ENUM.PANCAKESWAP:
       return pancakeDecodeCalldata(tx);
     default:
