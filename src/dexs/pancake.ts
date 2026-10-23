@@ -1,11 +1,11 @@
-import { CHAINS, CHAINS_ENUM } from "@debank/common";
+import { CHAINS_ENUM } from "@debank/common";
+import { getChainById } from "../chain";
 import { Interface } from "@ethersproject/abi";
 import BigNumber from "bignumber.js";
 import { TxWithChainId, DecodeCalldataResult } from "../quote";
 import {
   generateGetQuote,
-  isSameAddress,
-  NULL_ADDRESS,
+  normalizeZeroAddressToken,
   resolveToTokenReceiver,
 } from "../utils";
 import { PancakeSwapABI } from "../abi";
@@ -27,10 +27,7 @@ export const getQuote = generateGetQuote({
 export const decodeCalldata = (
   tx: TxWithChainId
 ): DecodeCalldataResult | null => {
-  const chain = Object.values(CHAINS).find((item) => item.id === tx.chainId);
-  // Older @debank/common versions do not include Robinhood Chain yet.
-  const nativeTokenAddress =
-    chain?.nativeTokenAddress || (tx.chainId === 4663 ? "hood" : undefined);
+  const nativeTokenAddress = getChainById(tx.chainId)?.nativeTokenAddress;
   if (!nativeTokenAddress) return null;
 
   const contractInterface = new Interface(PancakeSwapABI);
@@ -45,13 +42,9 @@ export const decodeCalldata = (
   );
 
   return {
-    fromToken: isSameAddress(request.inputToken, NULL_ADDRESS)
-      ? nativeTokenAddress
-      : request.inputToken,
+    fromToken: normalizeZeroAddressToken(request.inputToken, nativeTokenAddress),
     fromTokenAmount: amount.toFixed(0),
-    toToken: isSameAddress(request.outputToken, NULL_ADDRESS)
-      ? nativeTokenAddress
-      : request.outputToken,
+    toToken: normalizeZeroAddressToken(request.outputToken, nativeTokenAddress),
     // The contract checks this minimum against the recipient's post-fee output.
     minReceiveToTokenAmount: request.minOutputAmount.toString(),
     toTokenReceiver: resolveToTokenReceiver(recipient, tx.from),

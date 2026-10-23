@@ -1,11 +1,10 @@
 import { Interface } from "@ethersproject/abi";
-import { CHAINS_ENUM, CHAINS } from "@debank/common";
+import { CHAINS_ENUM } from "@debank/common";
+import { getChainById } from "../chain";
 import { TxWithChainId, DecodeCalldataResult } from "../quote";
-import { generateGetQuote, isSameAddress } from "../utils";
+import { generateGetQuote, normalizeEeeeToken } from "../utils";
 import { ZeroXABI } from "../abi";
 import { DEX_ENUM } from "../consts";
-
-const NATIVE_TOKEN = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
 
 export const SUPPORT_CHAINS = [
   CHAINS_ENUM.ETH,
@@ -28,7 +27,7 @@ export const getQuote = generateGetQuote({
 export const decodeCalldata = (
   tx: TxWithChainId
 ): DecodeCalldataResult | null => {
-  const chain = Object.values(CHAINS).find((item) => item.id === tx.chainId);
+  const chain = getChainById(tx.chainId);
   if (!chain) return null;
   const contractInterface = new Interface(ZeroXABI);
   const result = contractInterface.parseTransaction({ data: tx.data });
@@ -43,13 +42,9 @@ export const decodeCalldata = (
     return null;
 
   return {
-    fromToken: isSameAddress(inputToken, NATIVE_TOKEN)
-      ? chain.nativeTokenAddress
-      : inputToken,
+    fromToken: normalizeEeeeToken(inputToken, chain.nativeTokenAddress),
     fromTokenAmount: inputTokenAmount.toString(),
-    toToken: isSameAddress(outputToken, NATIVE_TOKEN)
-      ? chain.nativeTokenAddress
-      : outputToken,
+    toToken: normalizeEeeeToken(outputToken, chain.nativeTokenAddress),
     minReceiveToTokenAmount: minOutputTokenAmount.toString(),
     toTokenReceiver: tx.from,
   };

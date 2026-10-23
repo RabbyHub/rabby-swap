@@ -1,4 +1,4 @@
-import { CHAINS_ENUM, CHAINS } from "@debank/common";
+import { CHAINS_ENUM } from "@debank/common";
 import { TxWithChainId, DecodeCalldataResult } from "../quote";
 import { generateGetQuote } from "../utils";
 import { DEX_ENUM } from "../consts";
@@ -26,7 +26,7 @@ export const getQuote = generateGetQuote({
 });
 
 export const decodeCalldata = (
-  tx: TxWithChainId
+  _tx: TxWithChainId
 ): DecodeCalldataResult | null => {
   return null;
 };

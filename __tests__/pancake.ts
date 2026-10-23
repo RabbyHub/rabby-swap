@@ -61,7 +61,7 @@ const sdkParams = (fixture: Fixture) => ({
   userAddress: USER,
 });
 
-describe("PancakeSwap real quote fixtures", () => {
+describe("[PancakeSwap] PancakeSwap real quote fixtures", () => {
   it.each(fixtures)("decodes every field of $name", (fixture) => {
     const decoded = decodeCalldata(DEX_ENUM.PANCAKESWAP, toTx(fixture));
 
@@ -155,7 +155,7 @@ const encodeSwap = ({
   ]),
 });
 
-describe("PancakeSwap swapExactIn semantics", () => {
+describe("[PancakeSwap] PancakeSwap swapExactIn semantics", () => {
   it("sums split-route inputs without losing integer precision", () => {
     const decoded = decodeCalldata(
       DEX_ENUM.PANCAKESWAP,

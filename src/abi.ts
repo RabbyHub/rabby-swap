@@ -36,69 +36,12 @@ export const OneInchABI = [
         name: "desc",
         type: "tuple",
       },
-      { internalType: "bytes", name: "permit", type: "bytes" },
       { internalType: "bytes", name: "data", type: "bytes" },
     ],
     name: "swap",
     outputs: [
       { internalType: "uint256", name: "returnAmount", type: "uint256" },
       { internalType: "uint256", name: "spentAmount", type: "uint256" },
-    ],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "uint256", name: "amount", type: "uint256" },
-      { internalType: "uint256", name: "minReturn", type: "uint256" },
-      { internalType: "uint256[]", name: "pools", type: "uint256[]" },
-    ],
-    name: "uniswapV3Swap",
-    outputs: [
-      { internalType: "uint256", name: "returnAmount", type: "uint256" },
-    ],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address payable", name: "recipient", type: "address" },
-      { internalType: "uint256", name: "amount", type: "uint256" },
-      { internalType: "uint256", name: "minReturn", type: "uint256" },
-      { internalType: "uint256[]", name: "pools", type: "uint256[]" },
-    ],
-    name: "uniswapV3SwapTo",
-    outputs: [
-      { internalType: "uint256", name: "returnAmount", type: "uint256" },
-    ],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "contract IERC20", name: "srcToken", type: "address" },
-      { internalType: "uint256", name: "amount", type: "uint256" },
-      { internalType: "uint256", name: "minReturn", type: "uint256" },
-      { internalType: "uint256[]", name: "pools", type: "uint256[]" },
-    ],
-    name: "unoswap",
-    outputs: [
-      { internalType: "uint256", name: "returnAmount", type: "uint256" },
-    ],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address payable", name: "recipient", type: "address" },
-      { internalType: "contract IERC20", name: "srcToken", type: "address" },
-      { internalType: "uint256", name: "amount", type: "uint256" },
-      { internalType: "uint256", name: "minReturn", type: "uint256" },
-      { internalType: "uint256[]", name: "pools", type: "uint256[]" },
-    ],
-    name: "unoswapTo",
-    outputs: [
-      { internalType: "uint256", name: "returnAmount", type: "uint256" },
     ],
     stateMutability: "payable",
     type: "function",
@@ -753,6 +696,56 @@ export const OpenOceanABI = [
       },
     ],
     name: "swap",
+    outputs: [
+      { internalType: "uint256", name: "returnAmount", type: "uint256" },
+    ],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IOpenOceanCaller",
+        name: "caller",
+        type: "address",
+      },
+      {
+        components: [
+          {
+            internalType: "contract IERC20",
+            name: "srcToken",
+            type: "address",
+          },
+          {
+            internalType: "contract IERC20",
+            name: "dstToken",
+            type: "address",
+          },
+          { internalType: "address", name: "srcReceiver", type: "address" },
+          { internalType: "address", name: "dstReceiver", type: "address" },
+          { internalType: "uint256", name: "amount", type: "uint256" },
+          { internalType: "uint256", name: "minReturnAmount", type: "uint256" },
+          { internalType: "uint256", name: "flags", type: "uint256" },
+          { internalType: "address", name: "referrer", type: "address" },
+          { internalType: "bytes", name: "permit", type: "bytes" },
+        ],
+        internalType: "struct OpenOceanExchange.SimpleSwapDescription",
+        name: "desc",
+        type: "tuple",
+      },
+      {
+        components: [
+          { internalType: "uint256", name: "target", type: "uint256" },
+          { internalType: "uint256", name: "gasLimit", type: "uint256" },
+          { internalType: "uint256", name: "value", type: "uint256" },
+          { internalType: "bytes", name: "data", type: "bytes" },
+        ],
+        internalType: "struct IOpenOceanCaller.CallDescription[]",
+        name: "calls",
+        type: "tuple[]",
+      },
+    ],
+    name: "simpleSwap",
     outputs: [
       { internalType: "uint256", name: "returnAmount", type: "uint256" },
     ],
@@ -1652,10 +1645,12 @@ export const ParaSwapV6ABI = [
   { stateMutability: "payable", type: "receive" },
 ];
 
+// AllowanceHolder.exec and Settler.execute from the official interfaces:
+// https://github.com/0xProject/0x-settler/blob/master/src/allowanceholder/IAllowanceHolder.sol
+// https://github.com/0xProject/0x-settler/blob/master/src/interfaces/ISettlerTakerSubmitted.sol
 export const ZeroXABIV2 = [
-  { inputs: [], stateMutability: "nonpayable", type: "constructor" },
-  { inputs: [], name: "ConfusedDeputy", type: "error" },
-  { stateMutability: "payable", type: "fallback" },
+  "function exec(address operator, address token, uint256 amount, address target, bytes data) payable returns (bytes result)",
+  "function execute((address recipient, address buyToken, uint256 minAmountOut) slippage, bytes[] actions, bytes32 zidAndAffiliate) payable returns (bool)",
 ];
 
 export const SushiABI = [{ "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "inputs": [{ "internalType": "address", "name": "tokenOut", "type": "address" }, { "internalType": "uint256", "name": "amountOut", "type": "uint256" }], "name": "MinimalOutputBalanceViolation", "type": "error" }, { "inputs": [], "name": "safeExecutor", "outputs": [{ "internalType": "contract SafeExecutor", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "contract IERC20", "name": "tokenIn", "type": "address" }, { "internalType": "uint256", "name": "amountIn", "type": "uint256" }, { "internalType": "address", "name": "recipient", "type": "address" }, { "internalType": "contract IERC20", "name": "tokenOut", "type": "address" }, { "internalType": "uint256", "name": "amountOutMin", "type": "uint256" }, { "internalType": "address", "name": "executor", "type": "address" }, { "internalType": "bytes", "name": "executorData", "type": "bytes" }], "name": "snwap", "outputs": [{ "internalType": "uint256", "name": "amountOut", "type": "uint256" }], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "components": [{ "internalType": "contract IERC20", "name": "token", "type": "address" }, { "internalType": "uint256", "name": "amountIn", "type": "uint256" }, { "internalType": "address", "name": "transferTo", "type": "address" }], "internalType": "struct InputToken[]", "name": "inputTokens", "type": "tuple[]" }, { "components": [{ "internalType": "contract IERC20", "name": "token", "type": "address" }, { "internalType": "address", "name": "recipient", "type": "address" }, { "internalType": "uint256", "name": "amountOutMin", "type": "uint256" }], "internalType": "struct OutputToken[]", "name": "outputTokens", "type": "tuple[]" }, { "components": [{ "internalType": "address", "name": "executor", "type": "address" }, { "internalType": "uint256", "name": "value", "type": "uint256" }, { "internalType": "bytes", "name": "data", "type": "bytes" }], "internalType": "struct Executor[]", "name": "executors", "type": "tuple[]" }], "name": "snwapMultiple", "outputs": [{ "internalType": "uint256[]", "name": "amountOut", "type": "uint256[]" }], "stateMutability": "payable", "type": "function" }]

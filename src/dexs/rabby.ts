@@ -4,8 +4,6 @@ import { TxWithChainId, DecodeCalldataResult } from "../quote";
 import { generateGetQuote } from "../utils";
 import { DEX_ENUM } from "../consts";
 
-const NATIVE_TOKEN = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
-
 export const SUPPORT_CHAINS = [CHAINS_ENUM.ETH];
 
 export const getQuote = generateGetQuote({
@@ -15,7 +13,7 @@ export const getQuote = generateGetQuote({
 });
 
 export const decodeCalldata = (
-  tx: TxWithChainId
+  _tx: TxWithChainId
 ): DecodeCalldataResult | null => {
   return null;
 };

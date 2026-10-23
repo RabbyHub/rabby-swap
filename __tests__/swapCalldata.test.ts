@@ -9,22 +9,21 @@ import {
   isSwapCalldataReceiverAllowed,
   verifyCalldata,
 } from "../src";
-import type { DecodeCalldataOptions, TxWithChainId } from "../src";
+import type { TxWithChainId } from "../src";
 import { UniABI, MagpieABI } from "../src/abi";
-import { NULL_ADDRESS, isSameAddress } from "../src/utils";
-import { getComparableUniInputAmount } from "../src/calldata/uni/assets";
+import {
+  NULL_ADDRESS,
+  isSameAddress,
+  getComparableNativeInputAmount,
+} from "../src/utils";
 
-const decodeCalldata = (
-  dexId: string,
-  tx: TxWithChainId,
-  options: DecodeCalldataOptions = {}
-) => {
-  const result = decodeSdkCalldata(dexId as DEX_ENUM, tx, options);
+const decodeCalldata = (dexId: string, tx: TxWithChainId) => {
+  const result = decodeSdkCalldata(dexId as DEX_ENUM, tx);
   if (!result) throw new Error(`${dexId} returned no decoded calldata`);
   return result;
 };
 
-describe("Router versions and commands", () => {
+describe("[Uniswap] Router versions and commands", () => {
   const fromToken = "0x1111111111111111111111111111111111111111";
   const toToken = "0x2222222222222222222222222222222222222222";
   const sender = "0x3333333333333333333333333333333333333333";
@@ -117,38 +116,33 @@ describe("Router versions and commands", () => {
       version: "2.0",
       address: v2Router,
       chainId: 1,
-      nativeTokenAddress: "eth",
       newVersion: false,
     },
     {
       version: "2.1.1",
       address: arcRouter,
       chainId: 5042,
-      nativeTokenAddress: "arc",
       newVersion: true,
     },
     ...[
       {
         address: "0x23617e59A5925b2A4Bf75d73ff6711cD0b29De85",
         chainId: 1,
-        nativeTokenAddress: "eth",
       },
       {
         address: "0x8702463e73f74d0b6765aBceb314Ef07aCb92650",
         chainId: 5042,
-        nativeTokenAddress: "arc",
       },
       {
         address: "0x204FAca1764B154221e35c0d20aBb3c525710498",
         chainId: 4663,
-        nativeTokenAddress: "hood",
       },
     ].map((profile) => ({ ...profile, version: "2.1.2", newVersion: true })),
   ];
 
   describe.each(routerVersions)(
     "current Universal Router $version / chain $chainId",
-    ({ address, chainId, nativeTokenAddress, newVersion }) => {
+    ({ address, chainId, newVersion }) => {
       it.each([
         { name: "single exact input", action: 0x06 },
         { name: "path exact input", action: 0x07 },
@@ -159,9 +153,7 @@ describe("Router versions and commands", () => {
           2000000000,
         ]);
         expect(
-          decodeCalldata("Uniswap", transaction(data, address, chainId), {
-            nativeTokenAddress,
-          })
+          decodeCalldata("Uniswap", transaction(data, address, chainId))
         ).toEqual(expected);
       });
 
@@ -172,9 +164,7 @@ describe("Router versions and commands", () => {
           2000000000,
         ]);
         expect(
-          decodeCalldata("Uniswap", transaction(data, address, chainId), {
-            nativeTokenAddress,
-          })
+          decodeCalldata("Uniswap", transaction(data, address, chainId))
         ).toEqual({ ...expected, fromToken: toToken, toToken: fromToken });
       });
 
@@ -185,9 +175,7 @@ describe("Router versions and commands", () => {
           2000000000,
         ]);
         expect(() =>
-          decodeCalldata("Uniswap", transaction(data, address, chainId), {
-            nativeTokenAddress,
-          })
+          decodeCalldata("Uniswap", transaction(data, address, chainId))
         ).toThrow("current exact-input quote flow");
       });
     }
@@ -235,9 +223,7 @@ describe("Router versions and commands", () => {
       const tx = transaction(data, eraRouter, 324);
       expect(decodeCalldata("Uniswap", tx)).toEqual(expected);
       expect(() =>
-        decodeCalldata("Uniswap", transaction(data, arcRouter, 5042), {
-          nativeTokenAddress: "arc",
-        })
+        decodeCalldata("Uniswap", transaction(data, arcRouter, 5042))
       ).toThrow("Unsupported command 0x20");
     });
 
@@ -276,7 +262,7 @@ describe("Router versions and commands", () => {
 
     describe.each(routerVersions.filter(({ version }) => version === "2.1.2"))(
       "2.1.2 fee commands / chain $chainId",
-      ({ address, chainId, nativeTokenAddress }) => {
+      ({ address, chainId }) => {
         it.each([false, true])(
           "deducts full-precision output fees (SwapProxy=%s)",
           (viaProxy) => {
@@ -331,8 +317,7 @@ describe("Router versions and commands", () => {
                     ? "0x02E5be68D46DAc0B524905bfF209cf47EE6dB2a9"
                     : address,
                   chainId
-                ),
-                { nativeTokenAddress }
+                )
               )
             ).toEqual(expected);
           }
@@ -365,8 +350,7 @@ describe("Router versions and commands", () => {
       expect(
         decodeCalldata(
           "Uniswap",
-          transaction(data, "0x02E5be68D46DAc0B524905bfF209cf47EE6dB2a9", 5042),
-          { nativeTokenAddress: "arc" }
+          transaction(data, "0x02E5be68D46DAc0B524905bfF209cf47EE6dB2a9", 5042)
         )
       ).toEqual(expected);
     });
@@ -386,9 +370,7 @@ describe("Router versions and commands", () => {
         2000000000,
       ]);
       expect(() =>
-        decodeCalldata("Uniswap", transaction(data, arcRouter, 5042), {
-          nativeTokenAddress: "arc",
-        })
+        decodeCalldata("Uniswap", transaction(data, arcRouter, 5042))
       ).toThrow("no matching function");
     });
 
@@ -407,15 +389,14 @@ describe("Router versions and commands", () => {
       expect(
         decodeCalldata(
           "Uniswap",
-          transaction(execute("0x21", [nested]), arcRouter, 5042),
-          { nativeTokenAddress: "arc" }
+          transaction(execute("0x21", [nested]), arcRouter, 5042)
         )
       ).toEqual(expected);
     });
 
     it.each(routerVersions)(
       "rejects optional sub-plans on Router $version",
-      ({ address, chainId, nativeTokenAddress, newVersion }) => {
+      ({ address, chainId, newVersion }) => {
         const nested = encode(
           ["bytes", "bytes[]"],
           ["0x10", [v4Input(newVersion, 0x07)]]
@@ -425,9 +406,7 @@ describe("Router versions and commands", () => {
           execute("0x21", [encode(["bytes", "bytes[]"], ["0xa1", [nested]])]),
         ]) {
           expect(() =>
-            decodeCalldata("Uniswap", transaction(data, address, chainId), {
-              nativeTokenAddress,
-            })
+            decodeCalldata("Uniswap", transaction(data, address, chainId))
           ).toThrow("Sub-plans with allow-revert are not supported");
         }
       }
@@ -480,7 +459,7 @@ describe("Router versions and commands", () => {
   });
 });
 
-describe("local decoder supported formats", () => {
+describe("[Uniswap] local decoder supported formats", () => {
   const fromToken = "0x1111111111111111111111111111111111111111";
   const toToken = "0x2222222222222222222222222222222222222222";
   const sender = "0x3333333333333333333333333333333333333333";
@@ -589,7 +568,7 @@ describe("local decoder supported formats", () => {
   });
 });
 
-describe("Routes and payments", () => {
+describe("[Uniswap] Routes and payments", () => {
   const inputToken = "0x1111111111111111111111111111111111111111";
   const outputToken = "0x2222222222222222222222222222222222222222";
   const sender = "0x3333333333333333333333333333333333333333";
@@ -1398,14 +1377,14 @@ describe("Routes and payments", () => {
         fromToken: "arc",
         fromTokenAmount: truncated,
       };
-      expect(getComparableUniInputAmount(requested, decoded, 5042, "arc")).toBe(
+      expect(getComparableNativeInputAmount(requested, decoded, 5042, "arc")).toBe(
         truncated
       );
-      expect(getComparableUniInputAmount(requested, decoded, 1, "arc")).toBe(
+      expect(getComparableNativeInputAmount(requested, decoded, 1, "arc")).toBe(
         requested
       );
       expect(
-        getComparableUniInputAmount(
+        getComparableNativeInputAmount(
           requested,
           { ...decoded, fromToken: inputToken },
           5042,
@@ -1413,7 +1392,7 @@ describe("Routes and payments", () => {
         )
       ).toBe(requested);
       expect(
-        getComparableUniInputAmount(
+        getComparableNativeInputAmount(
           requested,
           { ...decoded, fromTokenAmount: requested },
           5042,
@@ -1620,7 +1599,7 @@ describe("Recipients", () => {
     };
   };
 
-  describe("Uni calldata receiver", () => {
+  describe("[Uniswap] Uni calldata receiver", () => {
     it("returns the encoded V3 recipient instead of tx.from", () => {
       const res = decodeCalldata(DEX_ENUM.UNI, encodeUniV3ExactIn(ATTACKER));
 
@@ -1706,7 +1685,7 @@ describe("Recipients", () => {
     });
   });
 
-  describe("Magpie fee assets", () => {
+  describe("[Magpie] Magpie fee assets", () => {
     it.each([
       {
         fromAsset: NULL_ADDRESS,
@@ -1770,7 +1749,6 @@ describe("Recipients", () => {
           verifyCalldata({
             dexId: DEX_ENUM.MAGPIE,
             tx,
-            nativeTokenAddress: ETH_NATIVE,
             slippage: "0.1",
             data: {
               tx,
@@ -1786,7 +1764,7 @@ describe("Recipients", () => {
     );
   });
 
-  describe("Magpie calldata receiver", () => {
+  describe("[Magpie] Magpie calldata receiver", () => {
     it("returns the packed toAddress instead of tx.from", () => {
       const res = decodeCalldata(
         DEX_ENUM.MAGPIE,

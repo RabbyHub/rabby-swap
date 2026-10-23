@@ -12,6 +12,7 @@ import { UniABI } from "../src/abi";
 import * as magpieFees from "../src/calldata/magpie/dexAggregator";
 import uni from "./fixtures/swap-calldata/uni.json";
 import magpie from "./fixtures/swap-calldata/magpie.json";
+import { otherDexSamples, otherDexParamsFor } from "./otherDexFixtures";
 
 type Fixture = {
   name: string;
@@ -30,8 +31,16 @@ type Fixture = {
   rootInputAmounts6?: string[];
 };
 const samples: Fixture[] = [
-  ...uni.map((sample) => ({ ...sample, dexId: DEX_ENUM.UNI })),
-  ...magpie.map((sample) => ({ ...sample, dexId: DEX_ENUM.MAGPIE })),
+  ...uni.map((sample) => ({
+    ...sample,
+    name: `[Uniswap] ${sample.name}`,
+    dexId: DEX_ENUM.UNI,
+  })),
+  ...magpie.map((sample) => ({
+    ...sample,
+    name: `[Magpie] ${sample.name}`,
+    dexId: DEX_ENUM.MAGPIE,
+  })),
 ];
 const normalize = (decoded: DecodeCalldataResult) => ({
   ...decoded,
@@ -43,11 +52,75 @@ const uniInterface = new Interface(UniABI);
 const otherUser = "0x1111111111111111111111111111111111111111";
 const zero = "0x0000000000000000000000000000000000000000";
 
+describe("Recorded other DEX calldata", () => {
+  it.each(otherDexSamples)("decodes all five fields: $name", (sample) => {
+    const { record } = sample;
+    const result = decodeCalldata(record.dex, {
+      ...record.quote.tx,
+      chainId: record.chainId,
+    });
+    expect(result).not.toBeNull();
+    expect(normalize(result!)).toEqual(sample.expected);
+  });
+
+  it.each(otherDexSamples)("verifies the original request: $name", (sample) => {
+    const result = verifySdk(otherDexParamsFor(sample));
+    // A skipped comparison after a null decode is not a successful verification.
+    expect(result.decoded).not.toBeNull();
+    expect(result.decodeFailure).toBeUndefined();
+    expect(normalize(result.decoded!)).toEqual(sample.expected);
+    expect(result.callDataPass).toBe(true);
+    expect(result.receiverPass).toBe(true);
+  });
+});
+
+describe("[1inch] Arc native input comparison", () => {
+  const sample = otherDexSamples.find(
+    ({ record }) =>
+      record.dex === DEX_ENUM.ONEINCH &&
+      record.chainId === 5042 &&
+      record.request.fromToken === record.request.nativeTokenAddress
+  )!;
+
+  it.each([-1, 1])("rejects input differing by %s wei from the Arc precision boundary", (delta) => {
+    const params = otherDexParamsFor(sample);
+    const amount = new BigNumber(sample.expected.fromTokenAmount)
+      .plus(delta)
+      .toFixed(0);
+    expect(
+      verifyCalldata({
+        dexId: DEX_ENUM.ONEINCH,
+        data: params.data,
+        slippage: "0.01",
+        tx: { ...sample.record.quote.tx, chainId: 5042 },
+        decoded: { ...sample.expected, fromTokenAmount: amount },
+      })
+    ).toBe(false);
+  });
+});
+
+describe("[Sushi] supported chain validation", () => {
+  const sample = otherDexSamples.find(
+    ({ record }) =>
+      record.dex === DEX_ENUM.SUSHI &&
+      record.quote.tx.data.startsWith("0x5f3bd1c8")
+  )!;
+
+  it.each([
+    {
+      name: "an unknown chain",
+      chainId: 999999999,
+    },
+  ])("rejects $name", ({ chainId }) => {
+    expect(
+      decodeCalldata(DEX_ENUM.SUSHI, { ...sample.record.quote.tx, chainId })
+    ).toBeNull();
+  });
+});
+
 describe("Recorded Uni and Magpie calldata", () => {
   it.each(samples)("$name", (sample) => {
-    const decoded = decodeCalldata(sample.dexId, sample.tx, {
-      nativeTokenAddress: sample.nativeTokenAddress,
-    })!;
+    const decoded = decodeCalldata(sample.dexId, sample.tx)!;
     expect(normalize(decoded)).toEqual(sample.expected);
     if (sample.rootInputAmounts6) {
       // Independently sum Arc's six-decimal route inputs before scaling.
@@ -115,7 +188,7 @@ describe("SDK fee, precision and recipient verification", () => {
     }
   });
 
-  it("does not reuse Magpie fees for different calldata", () => {
+  it("[Magpie] does not reuse Magpie fees for different calldata", () => {
     const sample = sdkSamples[1];
     const other = verificationSamples.find(
       (item) =>
@@ -130,7 +203,6 @@ describe("SDK fee, precision and recipient verification", () => {
         tx: other.tx,
         data: params.data,
         decoded,
-        nativeTokenAddress: sample.nativeTokenAddress,
         slippage: String(Number(params.slippage) / 100),
       })
     ).toBe(false);
@@ -152,7 +224,6 @@ describe("SDK fee, precision and recipient verification", () => {
       tx: sample.tx,
       data: params.data,
       decoded: result.decoded!,
-      nativeTokenAddress: sample.nativeTokenAddress,
       slippage: String(Number(params.slippage) / 100),
     };
     expect(verifyCalldata(verification)).toBe(true);
@@ -226,7 +297,7 @@ describe("SDK fee, precision and recipient verification", () => {
     { recipient: zero, allowed: true },
     { recipient: otherUser, allowed: false },
   ])(
-    "checks the literal Magpie recipient $recipient",
+    "[Magpie] checks the literal Magpie recipient $recipient",
     ({ recipient, allowed }) => {
       const params = paramsFor(sdkSamples[1]);
       const data = params.data!;
