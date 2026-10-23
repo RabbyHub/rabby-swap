@@ -24,7 +24,7 @@ const decodeCalldata = (
   return result;
 };
 
-describe("Router versions and commands", () => {
+describe("[Uniswap] Router versions and commands", () => {
   const fromToken = "0x1111111111111111111111111111111111111111";
   const toToken = "0x2222222222222222222222222222222222222222";
   const sender = "0x3333333333333333333333333333333333333333";
@@ -480,7 +480,7 @@ describe("Router versions and commands", () => {
   });
 });
 
-describe("local decoder supported formats", () => {
+describe("[Uniswap] local decoder supported formats", () => {
   const fromToken = "0x1111111111111111111111111111111111111111";
   const toToken = "0x2222222222222222222222222222222222222222";
   const sender = "0x3333333333333333333333333333333333333333";
@@ -589,7 +589,7 @@ describe("local decoder supported formats", () => {
   });
 });
 
-describe("Routes and payments", () => {
+describe("[Uniswap] Routes and payments", () => {
   const inputToken = "0x1111111111111111111111111111111111111111";
   const outputToken = "0x2222222222222222222222222222222222222222";
   const sender = "0x3333333333333333333333333333333333333333";
@@ -1620,7 +1620,7 @@ describe("Recipients", () => {
     };
   };
 
-  describe("Uni calldata receiver", () => {
+  describe("[Uniswap] Uni calldata receiver", () => {
     it("returns the encoded V3 recipient instead of tx.from", () => {
       const res = decodeCalldata(DEX_ENUM.UNI, encodeUniV3ExactIn(ATTACKER));
 
@@ -1706,7 +1706,7 @@ describe("Recipients", () => {
     });
   });
 
-  describe("Magpie fee assets", () => {
+  describe("[Magpie] Magpie fee assets", () => {
     it.each([
       {
         fromAsset: NULL_ADDRESS,
@@ -1786,7 +1786,7 @@ describe("Recipients", () => {
     );
   });
 
-  describe("Magpie calldata receiver", () => {
+  describe("[Magpie] Magpie calldata receiver", () => {
     it("returns the packed toAddress instead of tx.from", () => {
       const res = decodeCalldata(
         DEX_ENUM.MAGPIE,

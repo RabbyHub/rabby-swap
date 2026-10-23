@@ -12,6 +12,7 @@ import { UniABI } from "../src/abi";
 import * as magpieFees from "../src/calldata/magpie/dexAggregator";
 import uni from "./fixtures/swap-calldata/uni.json";
 import magpie from "./fixtures/swap-calldata/magpie.json";
+import { otherDexSamples, otherDexParamsFor } from "./otherDexFixtures";
 
 type Fixture = {
   name: string;
@@ -30,8 +31,16 @@ type Fixture = {
   rootInputAmounts6?: string[];
 };
 const samples: Fixture[] = [
-  ...uni.map((sample) => ({ ...sample, dexId: DEX_ENUM.UNI })),
-  ...magpie.map((sample) => ({ ...sample, dexId: DEX_ENUM.MAGPIE })),
+  ...uni.map((sample) => ({
+    ...sample,
+    name: `[Uniswap] ${sample.name}`,
+    dexId: DEX_ENUM.UNI,
+  })),
+  ...magpie.map((sample) => ({
+    ...sample,
+    name: `[Magpie] ${sample.name}`,
+    dexId: DEX_ENUM.MAGPIE,
+  })),
 ];
 const normalize = (decoded: DecodeCalldataResult) => ({
   ...decoded,
@@ -42,6 +51,29 @@ const normalize = (decoded: DecodeCalldataResult) => ({
 const uniInterface = new Interface(UniABI);
 const otherUser = "0x1111111111111111111111111111111111111111";
 const zero = "0x0000000000000000000000000000000000000000";
+
+describe("Recorded other DEX calldata", () => {
+  it.each(otherDexSamples)("decodes all five fields: $name", (sample) => {
+    const { record } = sample;
+    const result = decodeCalldata(
+      record.dex,
+      { ...record.quote.tx, chainId: record.chainId },
+      { nativeTokenAddress: record.request.nativeTokenAddress }
+    );
+    expect(result).not.toBeNull();
+    expect(normalize(result!)).toEqual(sample.expected);
+  });
+
+  it.each(otherDexSamples)("verifies the original request: $name", (sample) => {
+    const result = verifySdk(otherDexParamsFor(sample));
+    // A skipped comparison after a null decode is not a successful verification.
+    expect(result.decoded).not.toBeNull();
+    expect(result.decodeFailure).toBeUndefined();
+    expect(normalize(result.decoded!)).toEqual(sample.expected);
+    expect(result.callDataPass).toBe(true);
+    expect(result.receiverPass).toBe(true);
+  });
+});
 
 describe("Recorded Uni and Magpie calldata", () => {
   it.each(samples)("$name", (sample) => {
@@ -115,7 +147,7 @@ describe("SDK fee, precision and recipient verification", () => {
     }
   });
 
-  it("does not reuse Magpie fees for different calldata", () => {
+  it("[Magpie] does not reuse Magpie fees for different calldata", () => {
     const sample = sdkSamples[1];
     const other = verificationSamples.find(
       (item) =>
@@ -226,7 +258,7 @@ describe("SDK fee, precision and recipient verification", () => {
     { recipient: zero, allowed: true },
     { recipient: otherUser, allowed: false },
   ])(
-    "checks the literal Magpie recipient $recipient",
+    "[Magpie] checks the literal Magpie recipient $recipient",
     ({ recipient, allowed }) => {
       const params = paramsFor(sdkSamples[1]);
       const data = params.data!;
