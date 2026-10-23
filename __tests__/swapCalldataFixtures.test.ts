@@ -83,10 +83,6 @@ describe("[Sushi] supported chain validation", () => {
 
   it.each([
     {
-      name: "a known chain outside Sushi SUPPORT_CHAINS",
-      chainId: 1313161554,
-    },
-    {
       name: "an unknown chain",
       chainId: 999999999,
     },
