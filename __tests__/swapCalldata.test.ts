@@ -127,6 +127,23 @@ describe("Router versions and commands", () => {
       nativeTokenAddress: "arc",
       newVersion: true,
     },
+    ...[
+      {
+        address: "0x23617e59A5925b2A4Bf75d73ff6711cD0b29De85",
+        chainId: 1,
+        nativeTokenAddress: "eth",
+      },
+      {
+        address: "0x8702463e73f74d0b6765aBceb314Ef07aCb92650",
+        chainId: 5042,
+        nativeTokenAddress: "arc",
+      },
+      {
+        address: "0x204FAca1764B154221e35c0d20aBb3c525710498",
+        chainId: 4663,
+        nativeTokenAddress: "hood",
+      },
+    ].map((profile) => ({ ...profile, version: "2.1.2", newVersion: true })),
   ];
 
   describe.each(routerVersions)(
@@ -243,7 +260,7 @@ describe("Router versions and commands", () => {
       "0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad",
       "0xd92a36b0000531ef3063ded4de20a0783308446c",
       "0x4c82d1fbfe28c977cbb58d8c7ff8fcf9f70a2cca",
-      "0x23617e59a5925b2a4bf75d73ff6711cd0b29de85",
+      "0x8702463e73f74d0b6765abceb314ef07acb92650", // Arc's 2.1.2 router on Ethereum.
       "0xab863e752bf67d8dcdd929eaae9be9dc83fb3bbb",
     ])(
       "rejects a router outside the current chain configuration: %s",
@@ -256,6 +273,82 @@ describe("Router versions and commands", () => {
         ).toThrow("Unknown Universal Router version");
       }
     );
+
+    describe.each(routerVersions.filter(({ version }) => version === "2.1.2"))(
+      "2.1.2 fee commands / chain $chainId",
+      ({ address, chainId, nativeTokenAddress }) => {
+        it.each([false, true])(
+          "deducts full-precision output fees (SwapProxy=%s)",
+          (viaProxy) => {
+            // Encode independently: a 100-token minimum minus a 10% output fee
+            // leaves 90 for the user. V3 in 2.1.2 includes minHopPriceX36.
+            const swap = encode(
+              ["address", "uint256", "uint256", "bytes", "bool", "uint256[]"],
+              [
+                "0x0000000000000000000000000000000000000002",
+                100,
+                100,
+                encodePacked(
+                  { type: "address", value: fromToken },
+                  { type: "uint24", value: "3000" },
+                  { type: "address", value: toToken }
+                )!,
+                !viaProxy,
+                [0],
+              ]
+            );
+            const inputs = [
+              swap,
+              encode(
+                ["address", "address", "uint256"],
+                [
+                  toToken,
+                  "0x4444444444444444444444444444444444444444",
+                  "100000000000000000",
+                ]
+              ),
+              encode(["address", "address", "uint256"], [toToken, sender, 90]),
+            ];
+            const proxy = new Interface([
+              "function execute(address router,address token,uint256 amount,bytes commands,bytes[] inputs,uint256 deadline)",
+            ]);
+            const data = viaProxy
+              ? proxy.encodeFunctionData("execute", [
+                  address,
+                  fromToken,
+                  100,
+                  "0x000704",
+                  inputs,
+                  2000000000,
+                ])
+              : execute("0x000704", inputs);
+            expect(
+              decodeCalldata(
+                "Uniswap",
+                transaction(
+                  data,
+                  viaProxy
+                    ? "0x02E5be68D46DAc0B524905bfF209cf47EE6dB2a9"
+                    : address,
+                  chainId
+                ),
+                { nativeTokenAddress }
+              )
+            ).toEqual(expected);
+          }
+        );
+      }
+    );
+
+    it("still rejects the full-precision fee command on Router 2.0", () => {
+      const fee = encode(
+        ["address", "address", "uint256"],
+        [toToken, sender, "100000000000000000"]
+      );
+      expect(() =>
+        decodeCalldata("Uniswap", transaction(execute("0x07", [fee])))
+      ).toThrow("Unsupported command 0x7");
+    });
 
     it("selects the inner router version for SwapProxy calls", () => {
       const proxy = new Interface([
