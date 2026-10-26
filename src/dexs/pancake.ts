@@ -2,7 +2,7 @@ import { CHAINS_ENUM } from "@debank/common";
 import { getChainById } from "../chain";
 import { Interface } from "@ethersproject/abi";
 import BigNumber from "bignumber.js";
-import { TxWithChainId, DecodeCalldataResult } from "../quote";
+import type { TxWithChainId, DecodeCalldataResult } from "../calldata/types";
 import {
   generateGetQuote,
   normalizeZeroAddressToken,

@@ -22,7 +22,7 @@ import { CHAINS_ENUM } from "@debank/common";
 import { Interface } from "@ethersproject/abi";
 import type { Result } from "@ethersproject/abi";
 import { getChainById } from "../chain";
-import { TxWithChainId, DecodeCalldataResult } from "../quote";
+import type { TxWithChainId, DecodeCalldataResult } from "../calldata/types";
 import {
   generateGetQuote,
   normalizeEeeeToken,

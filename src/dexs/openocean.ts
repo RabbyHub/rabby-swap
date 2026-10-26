@@ -26,7 +26,7 @@ import type { Result } from "@ethersproject/abi";
 import { CHAINS_ENUM } from "@debank/common";
 import { getChainById } from "../chain";
 import type { SwapChainInfo } from "../chain";
-import { TxWithChainId, DecodeCalldataResult } from "../quote";
+import type { TxWithChainId, DecodeCalldataResult } from "../calldata/types";
 import {
   generateGetQuote,
   normalizeToken,

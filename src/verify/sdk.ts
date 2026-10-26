@@ -3,8 +3,9 @@ import { CHAINS_ENUM } from "@debank/common";
 import { DEX_ENUM } from "../consts";
 import type { DecodeCalldataResult, TxWithChainId } from "../calldata/types";
 import type { QuoteResult } from "../quote";
-import { decodeSwapCalldataWithDiagnostics, verifyCalldata } from "./calldata";
-import type { SwapCalldataDecodeFailure } from "./calldata";
+import { verifyCalldata } from "./calldata";
+import { decodeSwapCalldataWithDiagnostics } from "./decode";
+import type { SwapCalldataDecodeFailure } from "./decode";
 import { verifyRouterAndSpender } from "./contracts";
 import { isSwapCalldataReceiverAllowed } from "./receiver";
 import { isSwapWrapToken } from "./wrap";
@@ -43,7 +44,7 @@ const toTxWithChainId = (
   data?.tx ? { ...data.tx, chainId } : undefined;
 
 /**
- * 组合 router / spender / calldata。
+ * 统一入口：合约地址校验 → calldata 解析 → 解析结果校验 → 收款人校验。
  * native↔WETH 视为 wrap，走 WRAPTOKEN（不解码、不查 DEX 白名单）。
  * 预执行、gas 不在此处理。
  */
@@ -59,6 +60,7 @@ export const verifySdk = (p: VerifySdkParams): VerifySdkResult => {
     ? DEX_ENUM.WRAPTOKEN
     : p.dexId;
 
+  // 1. Router / Spender 地址校验（contracts.ts）。
   const [routerPass, spenderPass] = verifyRouterAndSpender({
     chain: p.chain,
     dexId: actualDexId,
@@ -71,10 +73,12 @@ export const verifySdk = (p: VerifySdkParams): VerifySdkResult => {
 
   const tx = toTxWithChainId(p.data, p.chainId);
   const slippageRatio = new BigNumber(p.slippage).div(100).toFixed();
+  // 2. Calldata 解析及失败诊断（decode.ts）。
   const { decoded, decodeFailure } = decodeSwapCalldataWithDiagnostics(
     actualDexId,
     tx
   );
+  // 3. 解析结果与报价的币对、金额、最低到账量比较（calldata.ts）。
   const callDataPass = verifyCalldata({
     data: p.data,
     dexId: actualDexId,
@@ -82,6 +86,7 @@ export const verifySdk = (p: VerifySdkParams): VerifySdkResult => {
     tx,
     decoded,
   });
+  // 4. Receiver 收款地址校验（receiver.ts）。
   const receiverPass = isSwapCalldataReceiverAllowed(
     decoded?.toTokenReceiver,
     p.userAddress

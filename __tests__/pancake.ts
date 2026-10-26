@@ -3,7 +3,9 @@ import { CHAINS_ENUM } from "@debank/common";
 import BigNumber from "bignumber.js";
 import { PancakeSwapABI } from "../src/abi";
 import { DEX_ENUM } from "../src/consts";
-import { decodeCalldata, QuoteResult, TxWithChainId } from "../src/quote";
+import { decodeCalldata } from "../src/quote";
+import type { QuoteResult } from "../src/quote";
+import type { TxWithChainId } from "../src/calldata/types";
 import { decodeSwapCalldata, verifySdk } from "../src";
 import { NULL_ADDRESS } from "../src/utils";
 

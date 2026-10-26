@@ -13,7 +13,8 @@ import {
   verifySdk,
   isSwapCalldataReceiverAllowed,
 } from "../src";
-import { DecodeCalldataResult, QuoteResult } from "../src/quote";
+import type { QuoteResult } from "../src/quote";
+import type { DecodeCalldataResult } from "../src/calldata/types";
 
 const ETH_NATIVE = CHAINS[CHAINS_ENUM.ETH].nativeTokenAddress;
 const WETH = WrapTokenAddressMap[CHAINS_ENUM.ETH];

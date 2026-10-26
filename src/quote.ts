@@ -39,15 +39,11 @@ import {
   decodeCalldata as zeroXV2DecodeCalldata,
 } from "./dexs/0xapi_v2";
 
-import {
-  getQuote as magpieGetQuote,
-  decodeCalldata as magpieDecodeCalldata,
-} from "./dexs/magpie";
+import { getQuote as magpieGetQuote } from "./dexs/magpie";
+import { decodeCalldata as magpieDecodeCalldata } from "./calldata/magpie";
 
-import {
-  getQuote as uniGetQuote,
-  decodeCalldata as uniDecodeCalldata,
-} from "./dexs/uni";
+import { getQuote as uniGetQuote } from "./dexs/uni";
+import { decodeCalldata as uniDecodeCalldata } from "./calldata/uni";
 
 import {
   getQuote as sushiGetQuote,
@@ -57,12 +53,6 @@ import {
   getQuote as pancakeGetQuote,
   decodeCalldata as pancakeDecodeCalldata,
 } from "./dexs/pancake";
-
-export type {
-  Tx,
-  TxWithChainId,
-  DecodeCalldataResult,
-} from "./calldata/types";
 
 export interface QuoteParams {
   fromToken: string;

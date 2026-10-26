@@ -10,7 +10,8 @@ import {
   verifyCalldata,
 } from "../src";
 import type { TxWithChainId } from "../src";
-import { UniABI, MagpieABI } from "../src/abi";
+import { UniABI } from "../src/calldata/uni/abi";
+import { MagpieABI } from "../src/calldata/magpie/abi";
 import {
   NULL_ADDRESS,
   isSameAddress,

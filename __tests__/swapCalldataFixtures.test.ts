@@ -8,7 +8,7 @@ import type {
   VerifySdkParams,
 } from "../src";
 import type { QuoteResult } from "../src/quote";
-import { UniABI } from "../src/abi";
+import { UniABI } from "../src/calldata/uni/abi";
 import * as magpieFees from "../src/calldata/magpie/dexAggregator";
 import uni from "./fixtures/swap-calldata/uni.json";
 import magpie from "./fixtures/swap-calldata/magpie.json";
