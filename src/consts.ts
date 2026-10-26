@@ -45,10 +45,10 @@ export enum DEX_ENUM {
   OPENOCEAN = "OpenOcean",
   KYBERSWAP = "Kyberswap",
   PARASWAPV6 = "ParaSwapV6",
+  /** @deprecated ODOS 已移除，仅兼容旧版前端的枚举引用。 */
   ODOS = "ODOS",
   ZEROXAPIV2 = "0xAPIV2",
   MAGPIE = "Magpie",
-  RABBY = "Rabby",
   SUSHI = "Sushi",
   UNI = "Uniswap",
   PANCAKESWAP = "PancakeSwap",

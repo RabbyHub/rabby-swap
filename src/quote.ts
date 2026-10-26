@@ -35,11 +35,6 @@ import {
 } from "./dexs/paraswap_v6";
 
 import {
-  getQuote as odosGetQuote,
-  decodeCalldata as odosDecodeCalldata,
-} from "./dexs/odos";
-
-import {
   getQuote as zeroXV2GetQuote,
   decodeCalldata as zeroXV2DecodeCalldata,
 } from "./dexs/0xapi_v2";
@@ -49,10 +44,6 @@ import {
   decodeCalldata as magpieDecodeCalldata,
 } from "./dexs/magpie";
 
-import {
-  getQuote as rabbyGetQuote,
-  decodeCalldata as rabbyDecodeCalldata,
-} from "./dexs/rabby";
 import {
   getQuote as uniGetQuote,
   decodeCalldata as uniDecodeCalldata,
@@ -124,14 +115,10 @@ export const getQuote = async (
       return await kyberswapGetQuote(params, api);
     case DEX_ENUM.PARASWAPV6:
       return await paraSwapV6GetQuote(params, api);
-    case DEX_ENUM.ODOS:
-      return await odosGetQuote(params, api);
     case DEX_ENUM.ZEROXAPIV2:
       return await zeroXV2GetQuote(params, api);
     case DEX_ENUM.MAGPIE:
       return await magpieGetQuote(params, api);
-    case DEX_ENUM.RABBY:
-      return await rabbyGetQuote(params, api);
     case DEX_ENUM.SUSHI:
       return await sushiGetQuote(params, api);
     case DEX_ENUM.UNI:
@@ -160,14 +147,10 @@ export const decodeCalldata = (
       return kyberswapDecodeCalldata(tx);
     case DEX_ENUM.PARASWAPV6:
       return paraSwapV6DecodeCalldata(tx);
-    case DEX_ENUM.ODOS:
-      return odosDecodeCalldata(tx);
     case DEX_ENUM.ZEROXAPIV2:
       return zeroXV2DecodeCalldata(tx);
     case DEX_ENUM.MAGPIE:
       return magpieDecodeCalldata(tx);
-    case DEX_ENUM.RABBY:
-      return rabbyDecodeCalldata(tx);
     case DEX_ENUM.SUSHI:
       return sushiDecodeCalldata(tx);
     case DEX_ENUM.UNI:

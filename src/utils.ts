@@ -118,11 +118,9 @@ export const generateGetQuote =
       | "1inch_v6"
       | "paraswap"
       | "kyberswap"
-      | "odos"
       | "paraswap_v6"
       | "magpie"
       | "sushi"
-      | "rabby"
       | "uni"
       | "pancake";
     dex: DEX_ENUM;
