@@ -17,14 +17,18 @@
  *    slippage 定义：https://github.com/0xProject/0x-settler/blob/master/src/interfaces/ISettlerBase.sol
  *
  * 现有报价都是 exec 包裹 execute。单独的 execute 没有顶层支付数量，不在当前解析范围。
+ * 校验限制：operator 与 target 一致；实际原生币支付量需匹配输入。
  */
 import { CHAINS_ENUM } from "@debank/common";
 import { Interface } from "@ethersproject/abi";
 import type { Result } from "@ethersproject/abi";
+import BigNumber from "bignumber.js";
 import { getChainById } from "../chain";
 import type { TxWithChainId, DecodeCalldataResult } from "../calldata/types";
 import {
   generateGetQuote,
+  isSameAddress,
+  NULL_ADDRESS,
   normalizeEeeeToken,
   normalizeZeroAddressToken,
 } from "../utils";
@@ -84,12 +88,22 @@ const decodeSettlerExecute = (
 const decodeAllowanceHolderExec = (
   args: Result,
   nativeTokenAddress: string,
-  contractInterface: Interface
+  contractInterface: Interface,
+  tx: TxWithChainId
 ): DecodeCalldataResult | null => {
-  const { token, amount, data } = args;
+  const { operator, token, amount, target, data } = args;
   if (token == null || amount == null || typeof data !== "string" || !data) {
     return null;
   }
+
+  // 扣款方需与实际执行方一致。
+  if (!isSameAddress(operator, target)) return null;
+
+  // exec 会将 msg.value 转给 target；实际支付原生币的数量必须与输入一致。
+  const expectedValue = isSameAddress(token, NULL_ADDRESS)
+    ? amount.toString()
+    : "0";
+  if (!new BigNumber(tx.value).eq(expectedValue)) return null;
 
   const output = decodeSettlerExecute(data, nativeTokenAddress, contractInterface);
   if (!output) return null;
@@ -114,7 +128,8 @@ export const decodeCalldata = (
       return decodeAllowanceHolderExec(
         result.args,
         chain.nativeTokenAddress,
-        contractInterface
+        contractInterface,
+        tx
       );
     default:
       return null;

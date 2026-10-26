@@ -76,12 +76,18 @@ export const getQuote = generateGetQuote({
 
 const decodeSnwap = (
   args: Result,
-  nativeTokenAddress: string
+  nativeTokenAddress: string,
+  txValue: string
 ): DecodeCalldataResult | null => {
   const [tokenIn, amountIn, recipient, tokenOut, amountOutMin] = args;
 
   if (!tokenIn || !amountIn || !recipient || !tokenOut || !amountOutMin)
     return null;
+
+  // 合约仍会将 msg.value 转给执行器；ERC20 输入不允许额外支付原生币。
+  if (!isSameAddress(tokenIn, NATIVE_TOKEN) && !new BigNumber(txValue).isZero()) {
+    return null;
+  }
 
   return {
     fromToken: normalizeEeeeToken(tokenIn, nativeTokenAddress),
@@ -103,6 +109,9 @@ const decodeSnwapMultiple = (
 
   const tokenIn: string = inputTokens[0].token;
   const nativeInput = isSameAddress(tokenIn, NATIVE_TOKEN);
+  // 合约仍会将 msg.value 转给执行器；ERC20 输入不允许额外支付原生币。
+  if (!nativeInput && !new BigNumber(txValue).isZero()) return null;
+
   if (
     inputTokens.some(
       (input) =>
@@ -143,7 +152,7 @@ export const decodeCalldata = (
   const result = contractInterface.parseTransaction({ data: tx.data });
   switch (result.name) {
     case "snwap":
-      return decodeSnwap(result.args, chain.nativeTokenAddress);
+      return decodeSnwap(result.args, chain.nativeTokenAddress, tx.value);
     case "snwapMultiple":
       return decodeSnwapMultiple(result.args, chain.nativeTokenAddress, tx.value);
     default:
