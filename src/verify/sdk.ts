@@ -32,7 +32,7 @@ export type VerifySdkResult = {
   receiverPass: boolean;
   isSdkDataPass: boolean;
   decoded: DecodeCalldataResult | null;
-  /** Diagnostic only; does not change isSdkDataPass. */
+  /** 普通 DEX 解析失败时，callDataPass 和 isSdkDataPass 均为 false。 */
   decodeFailure?: SwapCalldataDecodeFailure;
 };
 

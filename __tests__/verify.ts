@@ -263,7 +263,7 @@ describe("verifyCalldata", () => {
 });
 
 describe("verifySdk", () => {
-  it("combines router, spender and calldata", () => {
+  it("rejects undecodable calldata even when router and spender match", () => {
     const res = verifySdk({
       chain: CHAINS_ENUM.ETH,
       dexId: DEX_ENUM.ONEINCH,
@@ -277,9 +277,9 @@ describe("verifySdk", () => {
     });
     expect(res.routerPass).toBe(true);
     expect(res.spenderPass).toBe(true);
-    expect(res.callDataPass).toBe(true);
+    expect(res.callDataPass).toBe(false);
     expect(res.receiverPass).toBe(true);
-    expect(res.isSdkDataPass).toBe(true);
+    expect(res.isSdkDataPass).toBe(false);
     expect(res.decoded).toBeNull();
   });
 

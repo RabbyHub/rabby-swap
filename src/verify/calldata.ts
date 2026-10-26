@@ -114,12 +114,15 @@ export const shouldSkipCalldataMatch = (
 ) => !slippage || !decoded || !data || !tx;
 
 export const verifyCalldata = (p: VerifyCalldataParams) => {
+  if (!p.dexId || !p.tx || !p.data) return false;
+  // Wrap 由 SDK 本地构造，沿用独立流程；普通 DEX 必须成功解析后才能校验。
+  if (p.dexId === DEX_ENUM.WRAPTOKEN) return true;
   const decoded =
     p.decoded !== undefined
       ? p.decoded
       : decodeSwapCalldata(p.dexId, p.tx);
+  if (!decoded) return false;
   if (p.dexId === DEX_ENUM.UNI || p.dexId === DEX_ENUM.MAGPIE) {
-    if (!p.tx || !decoded || !p.data) return false;
     let requestedAmount = p.data.fromTokenAmount;
     let inputAmount = decoded.fromTokenAmount;
     try {
