@@ -4,8 +4,11 @@ import { otherDexParamsFor } from "./otherDexFixtures";
 import regressions from "./fixtures/swap-calldata/oct26-regressions.json";
 
 type Sample = Parameters<typeof otherDexParamsFor>[0];
-const samples = regressions.valid as Sample[];
-const invalidTempo = regressions.invalidTempo as Omit<Sample, "expected">[];
+const samples = regressions.valid as unknown as Sample[];
+const invalidTempo = regressions.invalidTempo as unknown as Omit<
+  Sample,
+  "expected"
+>[];
 const zero = "0x0000000000000000000000000000000000000000";
 const other = "0x1111111111111111111111111111111111111111";
 const inch = new Interface([
