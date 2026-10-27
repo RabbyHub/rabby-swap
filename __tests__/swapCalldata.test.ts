@@ -1628,7 +1628,9 @@ describe("Recipients", () => {
 
       expect(isSameAddress(res!.toTokenReceiver, ATTACKER)).toBe(true);
       expect(isSameAddress(res!.toToken, ETH_NATIVE)).toBe(true);
-      expect(res!.minReceiveToTokenAmount).toBe("800");
+      // Unwrap forwards the full WETH balance. The swap already guaranteed 900;
+      // the unwrap amountMin of 800 only reverts if the balance is lower.
+      expect(res!.minReceiveToTokenAmount).toBe("900");
       expect(isSwapCalldataReceiverAllowed(res!.toTokenReceiver, USER)).toBe(
         false
       );

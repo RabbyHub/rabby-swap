@@ -8,7 +8,7 @@
     "build": "rimraf dist && tsc",
     "preversion": "npm run build",
     "prepublishOnly": "npm test && npm run build",
-    "test:swap-calldata": "jest --runInBand --watchman=false --runTestsByPath __tests__/swapCalldata.test.ts __tests__/swapCalldataFixtures.test.ts __tests__/pancake.ts",
+    "test:swap-calldata": "jest --runInBand --watchman=false --runTestsByPath __tests__/swapCalldata.test.ts __tests__/swapCalldataFixtures.test.ts __tests__/pancake.ts __tests__/dexCalldataRegression.test.ts",
     "test:swap-calldata:uni": "yarn test:swap-calldata --testNamePattern='\\[Uniswap\\]'",
     "test:swap-calldata:magpie": "yarn test:swap-calldata --testNamePattern='\\[Magpie\\]'",
     "test:swap-calldata:pancake": "yarn test:swap-calldata --testNamePattern='\\[PancakeSwap\\]'",

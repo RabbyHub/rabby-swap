@@ -15,11 +15,12 @@ export type {
 } from "./decode";
 export {
   CALLDATA_MIN_RECEIVE_TOLERANCE,
+  calldataMismatchReasons,
   matchDecodedCalldata,
   shouldSkipCalldataMatch,
   verifyCalldata,
 } from "./calldata";
-export type { VerifyCalldataParams } from "./calldata";
+export type { SwapCalldataMismatch, VerifyCalldataParams } from "./calldata";
 export { isSwapCalldataReceiverAllowed } from "./receiver";
 export { verifySdk } from "./sdk";
 export type { VerifySdkParams, VerifySdkResult } from "./sdk";

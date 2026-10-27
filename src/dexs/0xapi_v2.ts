@@ -11,7 +11,8 @@
  * 2. Settler.execute，selector：0x1fff991f。
  *    参数：(AllowedSlippage slippage, bytes[] actions, bytes32 zidAndAffiliate)。
  *    AllowedSlippage = (address recipient, address buyToken, uint256 minAmountOut)。
- *    场景：Settler 执行聚合动作；输出币、最低到账和收款地址取自 slippage。
+ *    场景：Settler 执行聚合动作；输出约束通常取自 slippage。
+ *    slippage 为空时，仅支持从末尾 UNISWAPV3（0x8d68a156）读取输出约束。
  *    输出币用 0xEeee… 表示原生币。
  *    官方接口：https://github.com/0xProject/0x-settler/blob/master/src/interfaces/ISettlerTakerSubmitted.sol
  *    slippage 定义：https://github.com/0xProject/0x-settler/blob/master/src/interfaces/ISettlerBase.sol
@@ -32,6 +33,7 @@ import {
   normalizeEeeeToken,
   normalizeZeroAddressToken,
 } from "../utils";
+import { isAddress } from "web3-utils";
 import { ZeroXABIV2 } from "../abi";
 import { DEX_ENUM } from "../consts";
 
@@ -59,6 +61,45 @@ export const getQuote = generateGetQuote({
   dex: DEX_ENUM.ZEROXAPIV2,
 });
 
+const terminalSwapInterface = new Interface([
+  "function UNISWAPV3(address recipient,uint256 ppm,bytes path,uint256 amountOutMin)",
+]);
+
+const decodeTerminalSwap = (actions: string[], nativeTokenAddress: string) => {
+  if (!actions.length) return null;
+  let swap;
+  try {
+    swap = terminalSwapInterface.parseTransaction({
+      data: actions[actions.length - 1],
+    });
+  } catch {
+    return null;
+  }
+  const { recipient, ppm, path, amountOutMin } = swap.args;
+  // The terminal action itself enforces this minimum and pays recipient.
+  // Path = input(20) + n * [forkId(1), poolId(3), sqrtLimit(20), output(20)].
+  // https://github.com/0xProject/0x-settler/blob/master/src/core/UniswapV3Fork.sol
+  const length = (path.length - 2) / 2;
+  const output = `0x${path.slice(-40)}`;
+  if (
+    length < 64 ||
+    (length - 20) % 44 !== 0 ||
+    ppm.isZero() ||
+    ppm.gt(1000000) ||
+    amountOutMin.isZero() ||
+    !isAddress(recipient) ||
+    isSameAddress(recipient, NULL_ADDRESS) ||
+    !isAddress(output) ||
+    isSameAddress(output, NULL_ADDRESS)
+  )
+    return null;
+  return {
+    toToken: normalizeEeeeToken(output, nativeTokenAddress),
+    minReceiveToTokenAmount: amountOutMin.toString(),
+    toTokenReceiver: recipient,
+  };
+};
+
 const decodeSettlerExecute = (
   data: string,
   nativeTokenAddress: string,
@@ -77,6 +118,19 @@ const decodeSettlerExecute = (
 
   const { recipient, buyToken, minAmountOut } = result.args.slippage;
   if (!recipient || !buyToken || minAmountOut == null) return null;
+
+  // Settler skips the final transfer/check when both fields are zero.
+  // https://github.com/0xProject/0x-settler/blob/master/src/SettlerBase.sol#L88-L111
+  if (isSameAddress(buyToken, NULL_ADDRESS) && minAmountOut.isZero()) {
+    // shortcut: recognize only a terminal UNISWAPV3 payout; reject other actions
+    // until their output guarantees are independently implemented and tested.
+    return decodeTerminalSwap(result.args.actions, nativeTokenAddress);
+  }
+  if (
+    isSameAddress(recipient, NULL_ADDRESS) ||
+    isSameAddress(buyToken, NULL_ADDRESS)
+  )
+    return null;
 
   return {
     toToken: normalizeEeeeToken(buyToken, nativeTokenAddress),
@@ -105,7 +159,11 @@ const decodeAllowanceHolderExec = (
     : "0";
   if (!new BigNumber(tx.value).eq(expectedValue)) return null;
 
-  const output = decodeSettlerExecute(data, nativeTokenAddress, contractInterface);
+  const output = decodeSettlerExecute(
+    data,
+    nativeTokenAddress,
+    contractInterface
+  );
   if (!output) return null;
 
   return {

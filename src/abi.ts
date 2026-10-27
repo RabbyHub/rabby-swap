@@ -1,5 +1,17 @@
 export const OneInchABI = [
   {
+    type: "function",
+    name: "unoswap",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "token", type: "uint256" },
+      { name: "amount", type: "uint256" },
+      { name: "minReturn", type: "uint256" },
+      { name: "dex", type: "uint256" },
+    ],
+    outputs: [{ name: "returnAmount", type: "uint256" }],
+  },
+  {
     inputs: [
       {
         internalType: "contract IAggregationExecutor",

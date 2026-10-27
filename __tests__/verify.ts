@@ -7,6 +7,7 @@ import {
   getRouter,
   getSpender,
   isSwapWrapToken,
+  calldataMismatchReasons,
   matchDecodedCalldata,
   verifyCalldata,
   verifyRouterAndSpender,
@@ -188,6 +189,31 @@ describe("isSwapCalldataReceiverAllowed", () => {
 });
 
 describe("matchDecodedCalldata", () => {
+  it.each([false, true])(
+    "rejects a zero minimum even when the expected minimum rounds to zero (strict=%s)",
+    (requirePositiveMinimum) => {
+      expect(
+        matchDecodedCalldata(
+          { ...decoded, minReceiveToTokenAmount: "0" },
+          quote({ toTokenAmount: "1" }),
+          0.01,
+          requirePositiveMinimum
+        )
+      ).toBe(false);
+    }
+  );
+
+  it("accepts a positive minimum rounded down to integer units", () => {
+    expect(
+      matchDecodedCalldata(
+        { ...decoded, minReceiveToTokenAmount: "1" },
+        quote({ toTokenAmount: "2" }),
+        0.01,
+        true
+      )
+    ).toBe(true);
+  });
+
   it("passes when decoded matches quote within 5%", () => {
     expect(matchDecodedCalldata(decoded, quote(), 0.01)).toBe(true);
   });
@@ -249,6 +275,23 @@ describe("verifyCalldata", () => {
       ).toBe(false);
     }
   );
+
+  it("names the mismatched fields without including their values", () => {
+    expect(
+      calldataMismatchReasons({
+        data: quote(),
+        dexId: DEX_ENUM.ONEINCH,
+        slippage: 0.01,
+        tx: { ...quote().tx, chainId: 1 },
+        decoded: {
+          ...decoded,
+          fromToken: ATTACKER,
+          fromTokenAmount: "1",
+          minReceiveToTokenAmount: "1",
+        },
+      })
+    ).toEqual(["from_token", "from_amount", "min_receive"]);
+  });
 
   it("uses a provided decoded result", () => {
     expect(

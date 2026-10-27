@@ -3,7 +3,8 @@ import { CHAINS_ENUM } from "@debank/common";
 import { DEX_ENUM } from "../consts";
 import type { DecodeCalldataResult, TxWithChainId } from "../calldata/types";
 import type { QuoteResult } from "../quote";
-import { verifyCalldata } from "./calldata";
+import { calldataMismatchReasons } from "./calldata";
+import type { SwapCalldataMismatch } from "./calldata";
 import { decodeSwapCalldataWithDiagnostics } from "./decode";
 import type { SwapCalldataDecodeFailure } from "./decode";
 import { verifyRouterAndSpender } from "./contracts";
@@ -35,6 +36,8 @@ export type VerifySdkResult = {
   decoded: DecodeCalldataResult | null;
   /** 普通 DEX 解析失败时，callDataPass 和 isSdkDataPass 均为 false。 */
   decodeFailure?: SwapCalldataDecodeFailure;
+  /** 解析成功但字段比对失败时的原因码。不含地址、金额或 calldata。 */
+  calldataMismatch?: SwapCalldataMismatch[];
 };
 
 const toTxWithChainId = (
@@ -79,13 +82,15 @@ export const verifySdk = (p: VerifySdkParams): VerifySdkResult => {
     tx
   );
   // 3. 解析结果与报价的币对、金额、最低到账量比较（calldata.ts）。
-  const callDataPass = verifyCalldata({
+  const calldataParams = {
     data: p.data,
     dexId: actualDexId,
     slippage: slippageRatio,
     tx,
     decoded,
-  });
+  };
+  const calldataMismatch = calldataMismatchReasons(calldataParams);
+  const callDataPass = calldataMismatch.length === 0;
   // 4. Receiver 收款地址校验（receiver.ts）。
   const receiverPass = isSwapCalldataReceiverAllowed(
     decoded?.toTokenReceiver,
@@ -100,5 +105,6 @@ export const verifySdk = (p: VerifySdkParams): VerifySdkResult => {
     isSdkDataPass: routerPass && spenderPass && callDataPass && receiverPass,
     decoded,
     decodeFailure,
+    calldataMismatch: callDataPass ? undefined : calldataMismatch,
   };
 };

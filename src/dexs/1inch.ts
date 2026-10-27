@@ -1,5 +1,5 @@
 /**
- * 当前接入 1inch Aggregation Router V6 的一个聚合兑换方法：
+ * 接入 Aggregation Router V6 的 swap，以及可确认池/币种的 V3 unoswap。
  *
  * swap，selector：0x07ed2379。
  * 参数：(address executor, SwapDescription desc, bytes data)。
@@ -7,6 +7,8 @@
  *   address dstReceiver, uint256 amount, uint256 minReturnAmount, uint256 flags)。
  * 场景：按 API 生成的路由数据，由 executor 执行跨流动性来源的聚合兑换。
  * V6 的 swap 不再包含独立的 permit 参数，最低到账量取 minReturnAmount。
+ * unoswap，selector 0x83800a8e：(uint256 token,uint256 amount,uint256 minReturn,uint256 dex)。
+ * 输出币不在参数中；仅在可独立推导 V3 池地址及方向时返回结果。
  *
  * 官方文档：https://business.1inch.com/portal/documentation/apis/swap/classic-swap/introduction
  * Ethereum 官方 Router 的已验证实现源码与 ABI：
@@ -19,6 +21,7 @@ import type { TxWithChainId, DecodeCalldataResult } from "../calldata/types";
 import { generateGetQuote, normalizeEeeeToken } from "../utils";
 import { OneInchABI } from "../abi";
 import { DEX_ENUM } from "../consts";
+import { decodeUnoswap } from "../calldata/oneinch/unoswap";
 
 export const SUPPORT_CHAINS = [
   CHAINS_ENUM.ETH,
@@ -54,18 +57,14 @@ export const decodeCalldata = (
   const contractInterface = new Interface(OneInchABI);
   const result = contractInterface.parseTransaction({ data: tx.data });
 
+  if (result.name === "unoswap") return decodeUnoswap(result.args, tx);
+
   if (result.name !== "swap") {
     return null;
   }
 
   const [, desc] = result.args;
-  const {
-    srcToken,
-    dstToken,
-    dstReceiver,
-    amount,
-    minReturnAmount,
-  } = desc;
+  const { srcToken, dstToken, dstReceiver, amount, minReturnAmount } = desc;
 
   if (!srcToken || !dstToken || !dstReceiver || !amount || !minReturnAmount)
     return null;
