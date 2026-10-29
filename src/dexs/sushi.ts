@@ -84,14 +84,18 @@ const decodeSnwap = (
   if (!tokenIn || !amountIn || !recipient || !tokenOut || !amountOutMin)
     return null;
 
+  const nativeInput = isSameAddress(tokenIn, NATIVE_TOKEN);
   // 合约仍会将 msg.value 转给执行器；ERC20 输入不允许额外支付原生币。
-  if (!isSameAddress(tokenIn, NATIVE_TOKEN) && !new BigNumber(txValue).isZero()) {
+  if (!nativeInput && !new BigNumber(txValue).isZero()) {
     return null;
   }
 
   return {
     fromToken: normalizeEeeeToken(tokenIn, nativeTokenAddress),
-    fromTokenAmount: amountIn.toString(),
+    // 原生币输入时合约不读取 amountIn，实际支付金额是 msg.value。
+    fromTokenAmount: nativeInput
+      ? new BigNumber(txValue).toFixed(0)
+      : amountIn.toString(),
     toToken: normalizeEeeeToken(tokenOut, nativeTokenAddress),
     minReceiveToTokenAmount: amountOutMin.toString(),
     toTokenReceiver: recipient,
