@@ -1,12 +1,15 @@
-import { CHAINS_ENUM, CHAINS } from "@debank/common";
+import { CHAINS_ENUM } from "@debank/common";
+import { getChainById } from "../chain";
 import { Interface } from "@ethersproject/abi";
 
-import { TxWithChainId, DecodeCalldataResult } from "../quote";
-import { generateGetQuote, isSameAddress, resolveToTokenReceiver } from "../utils";
+import type { TxWithChainId, DecodeCalldataResult } from "../calldata/types";
+import {
+  generateGetQuote,
+  normalizeEeeeToken,
+  resolveToTokenReceiver,
+} from "../utils";
 import { KyberswapABI } from "../abi";
 import { DEX_ENUM } from "../consts";
-
-const NATIVE_TOKEN = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 
 // eth op arb bsc avax ftm cro matic aurora linea btt oas
 
@@ -46,7 +49,7 @@ export const getQuote = generateGetQuote({
 export const decodeCalldata = (
   tx: TxWithChainId
 ): DecodeCalldataResult | null => {
-  const chain = Object.values(CHAINS).find((item) => item.id === tx.chainId);
+  const chain = getChainById(tx.chainId);
   if (!chain) return null;
   const contractInterface = new Interface(KyberswapABI);
   const result = contractInterface.parseTransaction({ data: tx.data });
@@ -68,13 +71,9 @@ export const decodeCalldata = (
   }
 
   return {
-    fromToken: isSameAddress(srcToken, NATIVE_TOKEN)
-      ? chain.nativeTokenAddress
-      : srcToken,
+    fromToken: normalizeEeeeToken(srcToken, chain.nativeTokenAddress),
     fromTokenAmount: amount.toString(),
-    toToken: isSameAddress(dstToken, NATIVE_TOKEN)
-      ? chain.nativeTokenAddress
-      : dstToken,
+    toToken: normalizeEeeeToken(dstToken, chain.nativeTokenAddress),
     minReceiveToTokenAmount: minReturnAmount.toString(),
     toTokenReceiver: resolveToTokenReceiver(dstReceiver, tx.from),
   };

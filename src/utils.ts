@@ -1,9 +1,11 @@
 import { OpenApiService } from "@rabby-wallet/rabby-api";
-import { CHAINS, CHAINS_ENUM } from "@debank/common";
+import { CHAINS_ENUM } from "@debank/common";
 import BigNumber from "bignumber.js";
 import { QuoteParams, QuoteResult } from "./quote";
-import { ARC_ERC20_USDC, DEX_ENUM } from "./consts";
+import type { DecodeCalldataResult } from "./calldata/types";
+import { ARC_CHAIN_ID, ARC_ERC20_USDC, ARC_NATIVE_SCALE, DEX_ENUM } from "./consts";
 import { DEX_SPENDER_WHITELIST } from "./list";
+import { getChainByEnum } from "./chain";
 
 export const isSameAddress = (addr1: string, addr2: string) => {
   if (typeof addr1 !== "string" || typeof addr2 !== "string") return false;
@@ -12,13 +14,69 @@ export const isSameAddress = (addr1: string, addr2: string) => {
 
 export const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
+/** 按 DEX 指定的原生币标记转换；未配置标记时保留原值。 */
+export const normalizeToken = (
+  token: string,
+  nativeTokenAddress: string,
+  nativeTokenMarker: string | undefined
+): string =>
+  nativeTokenMarker !== undefined && isSameAddress(token, nativeTokenMarker)
+    ? nativeTokenAddress
+    : token;
+
+const EEEE_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
+
+/**
+ * 1inch、Sushi、ParaSwap 等用 0xEeee… 占位表示原生币。
+ * 转为项目使用的链 native 标识以便报价比对，其他代币地址保留原值。
+ */
+export const normalizeEeeeToken = (
+  token: string,
+  nativeTokenAddress: string
+): string =>
+  normalizeToken(token, nativeTokenAddress, EEEE_ADDRESS);
+
+/**
+ * Magpie、Pancake 等约定零地址表示原生币，需转为项目使用的链 native 标识。
+ * 与 0xEeee… 的约定分开处理，避免扩大各 DEX 的原生币识别范围。
+ */
+export const normalizeZeroAddressToken = (
+  token: string,
+  nativeTokenAddress: string
+): string =>
+  normalizeToken(token, nativeTokenAddress, NULL_ADDRESS);
+
 export const resolveToTokenReceiver = (
   encodedReceiver: string,
   txFrom: string
 ) => (isSameAddress(encodedReceiver, NULL_ADDRESS) ? txFrom : encodedReceiver);
 
 const ARC = "ARC" as CHAINS_ENUM;
-const ARC_USDC_TO_NATIVE_SCALE = 1e12;
+
+/**
+ * Arc 原生 USDC 为 18 位，ERC20 接口为 6 位；往返转换会截断末尾 12 位。
+ * 仅在金额比较时换算请求值，保留 calldata 解码值、报价和交易金额。
+ * https://docs.arc.io/arc/concepts/stablecoin-native-model#two-interfaces-one-balance
+ */
+export const getComparableNativeInputAmount = (
+  requestedAmount: string,
+  decoded: DecodeCalldataResult,
+  chainId: number,
+  native: string
+): string => {
+  if (
+    decoded.fromTokenAmount !== requestedAmount &&
+    chainId === ARC_CHAIN_ID &&
+    isSameAddress(decoded.fromToken, native) &&
+    !isSameAddress(native, ARC_ERC20_USDC)
+  ) {
+    return new BigNumber(requestedAmount)
+      .idiv(ARC_NATIVE_SCALE)
+      .times(ARC_NATIVE_SCALE)
+      .toFixed(0);
+  }
+  return requestedAmount;
+};
 
 /** Uni quotes 0x3600 USDC as a native path on Arc; attach scaled native value. */
 export const resolveSwapTxValue = ({
@@ -41,7 +99,7 @@ export const resolveSwapTxValue = ({
     chain === ARC &&
     isSameAddress(fromToken, ARC_ERC20_USDC)
   ) {
-    return new BigNumber(amount).times(ARC_USDC_TO_NATIVE_SCALE).toFixed(0);
+    return new BigNumber(amount).times(ARC_NATIVE_SCALE).toFixed(0);
   }
 
   return isSameAddress(payTokenId, nativeTokenAddress) ? amount : "0";
@@ -49,7 +107,6 @@ export const resolveSwapTxValue = ({
 
 export const generateGetQuote =
   ({
-    SUPPORT_CHAINS,
     id,
     dex,
   }: {
@@ -61,17 +118,19 @@ export const generateGetQuote =
       | "1inch_v6"
       | "paraswap"
       | "kyberswap"
-      | "odos"
       | "paraswap_v6"
       | "magpie"
       | "sushi"
-      | "rabby"
       | "uni"
       | "pancake";
     dex: DEX_ENUM;
   }) =>
   async (options: QuoteParams, api: OpenApiService): Promise<QuoteResult> => {
-    if (!options.chainServerId || !options.nativeTokenAddress) {
+    const chain = getChainByEnum(options.chain);
+    const chainServerId = chain?.serverId ?? options.chainServerId;
+    const nativeTokenAddress =
+      chain?.nativeTokenAddress ?? options.nativeTokenAddress;
+    if (!chainServerId || !nativeTokenAddress) {
       throw new Error(
         `lack chainServerId or nativeTokenAddress is not support}`
       );
@@ -79,11 +138,11 @@ export const generateGetQuote =
 
     const params: Record<string, any> = {
       id: options.userAddress,
-      chain_id: options.chainServerId,
+      chain_id: chainServerId,
       dex_id:
         options.chain === CHAINS_ENUM.ETH && dex !== DEX_ENUM.PANCAKESWAP
           ? id
-          : `${options.chainServerId}_${id}`,
+          : `${chainServerId}_${id}`,
       pay_token_id: options.fromToken,
       pay_token_raw_amount: options.amount,
       receive_token_id: options.toToken,
@@ -108,7 +167,7 @@ export const generateGetQuote =
           chain: options.chain,
           fromToken: options.fromToken,
           payTokenId: data.pay_token.id,
-          nativeTokenAddress: options.nativeTokenAddress,
+          nativeTokenAddress,
           amount: options.amount,
         }),
         to: data.dex_swap_to,

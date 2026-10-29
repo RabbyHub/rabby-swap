@@ -6,18 +6,21 @@ export { isSwapWrapToken } from "./wrap";
 export { getRouter, getSpender, verifyRouterAndSpender } from "./contracts";
 export type { VerifyRouterAndSpenderParams } from "./contracts";
 export {
-  CALLDATA_MIN_RECEIVE_TOLERANCE,
   decodeSwapCalldata,
   decodeSwapCalldataWithDiagnostics,
+} from "./decode";
+export type {
+  SwapCalldataDecodeFailure,
+  SwapCalldataDecodeResult,
+} from "./decode";
+export {
+  CALLDATA_MIN_RECEIVE_TOLERANCE,
+  calldataMismatchReasons,
   matchDecodedCalldata,
   shouldSkipCalldataMatch,
   verifyCalldata,
 } from "./calldata";
-export type {
-  VerifyCalldataParams,
-  SwapCalldataDecodeFailure,
-  SwapCalldataDecodeResult,
-} from "./calldata";
+export type { SwapCalldataMismatch, VerifyCalldataParams } from "./calldata";
 export { isSwapCalldataReceiverAllowed } from "./receiver";
 export { verifySdk } from "./sdk";
 export type { VerifySdkParams, VerifySdkResult } from "./sdk";

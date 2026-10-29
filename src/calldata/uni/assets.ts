@@ -1,10 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { DecodeCalldataResult } from "../types";
 import { isSameAddress } from "../../utils";
-import { ARC_ERC20_USDC } from "../../consts";
-
-const ARC_CHAIN_ID = 5042;
-const ARC_NATIVE_SCALE = "1000000000000";
+import { ARC_CHAIN_ID, ARC_ERC20_USDC, ARC_NATIVE_SCALE } from "../../consts";
 
 // Arc funds its ERC20 USDC route through msg.value without a WETH-style wrap.
 // Fix the complete input before reading individual router-funded split legs,
@@ -70,28 +67,4 @@ export const normalizeUniAssets = (
         }
       : {}),
   };
-};
-
-export const getComparableUniInputAmount = (
-  requestedAmount: string,
-  decoded: DecodeCalldataResult,
-  chainId: number,
-  native: string
-): string => {
-  // Keep exact native-value inputs intact. Only Arc's native USDC can also
-  // travel through its 6-decimal ERC20 interface, which truncates 12 digits.
-  // Compare against that exact integer conversion, without a general tolerance.
-  // https://www.arc.io/blog/arc-compatibility-guide-for-existing-evm-apps
-  if (
-    decoded.fromTokenAmount !== requestedAmount &&
-    chainId === ARC_CHAIN_ID &&
-    isSameAddress(decoded.fromToken, native) &&
-    !isSameAddress(native, ARC_ERC20_USDC)
-  ) {
-    return new BigNumber(requestedAmount)
-      .idiv(ARC_NATIVE_SCALE)
-      .times(ARC_NATIVE_SCALE)
-      .toFixed(0);
-  }
-  return requestedAmount;
 };

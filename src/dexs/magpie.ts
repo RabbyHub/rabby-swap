@@ -2,8 +2,6 @@ import { CHAINS_ENUM } from "@debank/common";
 import { generateGetQuote } from "../utils";
 import { DEX_ENUM } from "../consts";
 
-export { decodeCalldata } from "../calldata/magpie";
-
 export const SUPPORT_CHAINS = [
   CHAINS_ENUM.ETH,
   CHAINS_ENUM.OP,

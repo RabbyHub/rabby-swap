@@ -34,6 +34,9 @@ export const UNI_V2_PAIR_INIT_CODE_HASH =
 export const ARC_ERC20_USDC =
   "0x3600000000000000000000000000000000000000";
 
+export const ARC_CHAIN_ID = 5042;
+export const ARC_NATIVE_SCALE = "1000000000000";
+
 export enum DEX_ENUM {
   ONEINCH = "1inch",
   PARASWAP = "ParaSwap",
@@ -42,10 +45,10 @@ export enum DEX_ENUM {
   OPENOCEAN = "OpenOcean",
   KYBERSWAP = "Kyberswap",
   PARASWAPV6 = "ParaSwapV6",
+  /** @deprecated ODOS 已移除，仅兼容旧版前端的枚举引用。 */
   ODOS = "ODOS",
   ZEROXAPIV2 = "0xAPIV2",
   MAGPIE = "Magpie",
-  RABBY = "Rabby",
   SUSHI = "Sushi",
   UNI = "Uniswap",
   PANCAKESWAP = "PancakeSwap",

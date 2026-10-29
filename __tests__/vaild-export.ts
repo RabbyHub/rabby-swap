@@ -22,6 +22,12 @@ describe("correctly export dex", () => {
       DEX_ENUM.WRAPTOKEN,
       ...Object.keys(DEX_ROUTER_WHITELIST),
     ];
+    // Kept so old clients can still read the key. No chains and no router.
+    expectResult.splice(
+      expectResult.indexOf(DEX_ENUM.PARASWAPV6) + 1,
+      0,
+      DEX_ENUM.ODOS
+    );
     expect(supportedDEX).toEqual(expectResult);
   });
 
@@ -60,12 +66,19 @@ describe("correctly export dex", () => {
   });
 
   it("Export getQuote correctly", async () => {
-    const supportedDEX = Object.keys(DEX_SUPPORT_CHAINS);
-    for (const dex of supportedDEX) {
-      expect(
+    // ODOS stays in DEX_SUPPORT_CHAINS so old clients can read the key, but it
+    // has no chains and is no longer dispatched.
+    const quotableDEX = Object.keys(DEX_SUPPORT_CHAINS).filter(
+      (dex) => dex !== DEX_ENUM.ODOS
+    );
+    for (const dex of quotableDEX) {
+      await expect(
         getQuote(dex as any, {} as any, {} as any)
       ).rejects.not.toThrowError(`${dex} is not supported!`);
     }
+    await expect(
+      getQuote(DEX_ENUM.ODOS, {} as any, {} as any)
+    ).rejects.toThrow("ODOS is not supported!");
   });
 
   it("Export verifySdk correctly", () => {

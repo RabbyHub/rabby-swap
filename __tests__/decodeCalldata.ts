@@ -1,4 +1,5 @@
-import { decodeCalldata, DecodeCalldataResult } from "../src/quote";
+import { decodeCalldata } from "../src/quote";
+import type { DecodeCalldataResult } from "../src/calldata/types";
 import { DEX_ENUM } from "../src/consts";
 import { CHAINS_ENUM, CHAINS } from "@debank/common";
 

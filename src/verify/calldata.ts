@@ -1,84 +1,65 @@
 import BigNumber from "bignumber.js";
-import { DEX_ENUM } from "../consts";
-import { getNativeTokenAddress } from "../calldata/chain";
+import { ARC_CHAIN_ID, DEX_ENUM } from "../consts";
+import { getNativeTokenAddress } from "../chain";
 import { decodeInputFee } from "../calldata/magpie";
-import { getComparableUniInputAmount } from "../calldata/uni/assets";
-import type {
-  DecodeCalldataOptions,
-  DecodeCalldataResult,
-  TxWithChainId,
-} from "../calldata/types";
+import type { DecodeCalldataResult, TxWithChainId } from "../calldata/types";
 import type { QuoteResult } from "../quote";
-import { decodeCalldata } from "../quote";
-import { isSameAddress } from "../utils";
+import { decodeSwapCalldata } from "./decode";
+import { getComparableNativeInputAmount, isSameAddress } from "../utils";
 
 /** 解码出的 minReceive 相对「报价 × (1-滑点)」允许的相对偏差。 */
 export const CALLDATA_MIN_RECEIVE_TOLERANCE = 0.05;
 
-/**
- * unsupported_selector: the top-level function is not supported by the parser.
- * decode_error: decoding threw; the input or parser needs investigation.
- * returned_null: the decoder returned no fields without throwing.
- * Diagnostic only: never attach raw errors or transaction data.
- */
-export type SwapCalldataDecodeFailure = {
-  reason: "unsupported_selector" | "decode_error" | "returned_null";
-  selector?: string;
-  errorCode?: string;
-};
+/** 比对失败的稳定原因码。不含地址、金额或 calldata。 */
+export type SwapCalldataMismatch =
+  | "missing_dex"
+  | "missing_tx"
+  | "missing_quote"
+  | "not_decoded"
+  | "fee_adjustment"
+  | "from_token"
+  | "from_amount"
+  | "to_token"
+  | "min_receive"
+  | "non_positive_minimum";
 
-export type SwapCalldataDecodeResult = {
-  decoded: DecodeCalldataResult | null;
-  decodeFailure?: SwapCalldataDecodeFailure;
-};
+/** 最低到账须为正。允许等于滑点下限的向下取整，或相对偏差不超过 5%。 */
+const minReceiveMatches = (
+  minReceive: BigNumber,
+  minimum: BigNumber
+) =>
+  minReceive.gt(0) &&
+  minimum.gt(0) &&
+  (minReceive.eq(minimum.integerValue(BigNumber.ROUND_FLOOR)) ||
+    minReceive.minus(minimum).div(minimum).abs().lte(CALLDATA_MIN_RECEIVE_TOLERANCE));
 
-/** Preserve decode failures separately from the existing verification policy. */
-export const decodeSwapCalldataWithDiagnostics = (
-  dexId: DEX_ENUM | null,
-  tx?: TxWithChainId,
-  options: DecodeCalldataOptions = {}
-): SwapCalldataDecodeResult => {
-  if (!dexId || dexId === DEX_ENUM.WRAPTOKEN || !tx) return { decoded: null };
-  const selector =
-    typeof tx.data === "string" && /^0x[0-9a-f]{8}/i.test(tx.data)
-      ? tx.data.slice(0, 10).toLowerCase()
-      : undefined;
-  try {
-    const decoded = decodeCalldata(dexId, tx, options);
-    return decoded
-      ? { decoded }
-      : { decoded, decodeFailure: { reason: "returned_null", selector } };
-  } catch (error) {
-    const decodeError = error as {
-      code?: unknown;
-      reason?: unknown;
-      message?: unknown;
-    } | null | undefined;
-    const unsupportedSelector =
-      !!selector &&
-      (decodeError?.reason === "no matching function" ||
-        decodeError?.message === `Unsupported Magpie calldata selector: ${selector}`);
-    return {
-      decoded: null,
-      decodeFailure: {
-        reason: unsupportedSelector ? "unsupported_selector" : "decode_error",
-        selector,
-        errorCode:
-          typeof decodeError?.code === "string"
-            ? decodeError.code
-            : "UNKNOWN_ERROR",
-      },
-    };
+const mismatchReasons = (
+  decoded: DecodeCalldataResult,
+  quote: QuoteResult,
+  slippageRatio: string | number,
+  requirePositiveMinimum = false
+): SwapCalldataMismatch[] => {
+  const minimum = new BigNumber(quote.toTokenAmount).times(
+    new BigNumber(1).minus(slippageRatio)
+  );
+  const reasons: SwapCalldataMismatch[] = [];
+  if (requirePositiveMinimum && !minimum.gt(0)) {
+    reasons.push("non_positive_minimum");
   }
+  if (!isSameAddress(decoded.fromToken, quote.fromToken)) {
+    reasons.push("from_token");
+  }
+  if (decoded.fromTokenAmount !== quote.fromTokenAmount) {
+    reasons.push("from_amount");
+  }
+  if (!isSameAddress(decoded.toToken, quote.toToken)) {
+    reasons.push("to_token");
+  }
+  if (!minReceiveMatches(new BigNumber(decoded.minReceiveToTokenAmount), minimum)) {
+    reasons.push("min_receive");
+  }
+  return reasons;
 };
-
-/** wrap、无 dex、无 tx、解码失败时返回 null，保持原有接口。 */
-export const decodeSwapCalldata = (
-  dexId: DEX_ENUM | null,
-  tx?: TxWithChainId,
-  options: DecodeCalldataOptions = {}
-): DecodeCalldataResult | null =>
-  decodeSwapCalldataWithDiagnostics(dexId, tx, options).decoded;
 
 /** token、支付数量、最低到手比对；收款地址由 receiver 模块校验。 */
 export const matchDecodedCalldata = (
@@ -87,20 +68,8 @@ export const matchDecodedCalldata = (
   slippageRatio: string | number,
   requirePositiveMinimum = false
 ) => {
-  const minimum = new BigNumber(quote.toTokenAmount).times(
-    new BigNumber(1).minus(slippageRatio)
-  );
-  return (
-    (!requirePositiveMinimum || minimum.gt(0)) &&
-    isSameAddress(decoded.fromToken, quote.fromToken) &&
-    decoded.fromTokenAmount === quote.fromTokenAmount &&
-    isSameAddress(decoded.toToken, quote.toToken) &&
-    new BigNumber(decoded.minReceiveToTokenAmount)
-      .minus(minimum)
-      .div(minimum)
-      .abs()
-      .lte(CALLDATA_MIN_RECEIVE_TOLERANCE)
-  );
+  return mismatchReasons(decoded, quote, slippageRatio, requirePositiveMinimum)
+    .length === 0;
 };
 
 export type VerifyCalldataParams = {
@@ -110,7 +79,6 @@ export type VerifyCalldataParams = {
   slippage: string | number;
   tx?: TxWithChainId;
   decoded?: DecodeCalldataResult | null;
-  nativeTokenAddress?: string;
 };
 
 /** 其他 DEX 沿用的跳过策略；Uni/Magpie 必须完成字段校验。 */
@@ -121,15 +89,21 @@ export const shouldSkipCalldataMatch = (
   tx?: TxWithChainId
 ) => !slippage || !decoded || !data || !tx;
 
-export const verifyCalldata = (p: VerifyCalldataParams) => {
+/** 失败原因只含稳定码，供上报使用。通过时返回空数组。 */
+export const calldataMismatchReasons = (
+  p: VerifyCalldataParams
+): SwapCalldataMismatch[] => {
+  if (!p.dexId) return ["missing_dex"];
+  if (!p.tx) return ["missing_tx"];
+  if (!p.data) return ["missing_quote"];
+  // Wrap 由 SDK 本地构造，沿用独立流程；普通 DEX 必须成功解析后才能校验。
+  if (p.dexId === DEX_ENUM.WRAPTOKEN) return [];
   const decoded =
     p.decoded !== undefined
       ? p.decoded
-      : decodeSwapCalldata(p.dexId, p.tx, {
-          nativeTokenAddress: p.nativeTokenAddress,
-        });
+      : decodeSwapCalldata(p.dexId, p.tx);
+  if (!decoded) return ["not_decoded"];
   if (p.dexId === DEX_ENUM.UNI || p.dexId === DEX_ENUM.MAGPIE) {
-    if (!p.tx || !decoded || !p.data) return false;
     let requestedAmount = p.data.fromTokenAmount;
     let inputAmount = decoded.fromTokenAmount;
     try {
@@ -139,23 +113,39 @@ export const verifyCalldata = (p: VerifyCalldataParams) => {
           .plus(decodeInputFee(p.tx, decoded))
           .toFixed(0);
       } else {
-        requestedAmount = getComparableUniInputAmount(
+        requestedAmount = getComparableNativeInputAmount(
           requestedAmount,
           decoded,
           p.tx.chainId,
-          getNativeTokenAddress(p.tx.chainId, p.nativeTokenAddress)
+          getNativeTokenAddress(p.tx.chainId)
         );
       }
     } catch {
-      return false;
+      return ["fee_adjustment"];
     }
-    return matchDecodedCalldata(
+    return mismatchReasons(
       { ...decoded, fromTokenAmount: inputAmount },
       { ...p.data, fromTokenAmount: requestedAmount },
       p.slippage,
       true
     );
   }
-  if (shouldSkipCalldataMatch(p.slippage, decoded, p.data, p.tx)) return true;
-  return matchDecodedCalldata(decoded!, p.data!, p.slippage);
+  if (shouldSkipCalldataMatch(p.slippage, decoded, p.data, p.tx)) return [];
+  if (p.dexId === DEX_ENUM.ONEINCH && p.tx.chainId === ARC_CHAIN_ID) {
+    const requestedAmount = getComparableNativeInputAmount(
+      p.data.fromTokenAmount,
+      decoded,
+      p.tx.chainId,
+      getNativeTokenAddress(p.tx.chainId)
+    );
+    return mismatchReasons(
+      decoded,
+      { ...p.data, fromTokenAmount: requestedAmount },
+      p.slippage
+    );
+  }
+  return mismatchReasons(decoded, p.data, p.slippage);
 };
+
+export const verifyCalldata = (p: VerifyCalldataParams) =>
+  calldataMismatchReasons(p).length === 0;

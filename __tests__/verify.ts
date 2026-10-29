@@ -7,13 +7,15 @@ import {
   getRouter,
   getSpender,
   isSwapWrapToken,
+  calldataMismatchReasons,
   matchDecodedCalldata,
   verifyCalldata,
   verifyRouterAndSpender,
   verifySdk,
   isSwapCalldataReceiverAllowed,
 } from "../src";
-import { DecodeCalldataResult, QuoteResult } from "../src/quote";
+import type { QuoteResult } from "../src/quote";
+import type { DecodeCalldataResult } from "../src/calldata/types";
 
 const ETH_NATIVE = CHAINS[CHAINS_ENUM.ETH].nativeTokenAddress;
 const WETH = WrapTokenAddressMap[CHAINS_ENUM.ETH];
@@ -187,6 +189,31 @@ describe("isSwapCalldataReceiverAllowed", () => {
 });
 
 describe("matchDecodedCalldata", () => {
+  it.each([false, true])(
+    "rejects a zero minimum even when the expected minimum rounds to zero (strict=%s)",
+    (requirePositiveMinimum) => {
+      expect(
+        matchDecodedCalldata(
+          { ...decoded, minReceiveToTokenAmount: "0" },
+          quote({ toTokenAmount: "1" }),
+          0.01,
+          requirePositiveMinimum
+        )
+      ).toBe(false);
+    }
+  );
+
+  it("accepts a positive minimum rounded down to integer units", () => {
+    expect(
+      matchDecodedCalldata(
+        { ...decoded, minReceiveToTokenAmount: "1" },
+        quote({ toTokenAmount: "2" }),
+        0.01,
+        true
+      )
+    ).toBe(true);
+  });
+
   it("passes when decoded matches quote within 5%", () => {
     expect(matchDecodedCalldata(decoded, quote(), 0.01)).toBe(true);
   });
@@ -249,6 +276,23 @@ describe("verifyCalldata", () => {
     }
   );
 
+  it("names the mismatched fields without including their values", () => {
+    expect(
+      calldataMismatchReasons({
+        data: quote(),
+        dexId: DEX_ENUM.ONEINCH,
+        slippage: 0.01,
+        tx: { ...quote().tx, chainId: 1 },
+        decoded: {
+          ...decoded,
+          fromToken: ATTACKER,
+          fromTokenAmount: "1",
+          minReceiveToTokenAmount: "1",
+        },
+      })
+    ).toEqual(["from_token", "from_amount", "min_receive"]);
+  });
+
   it("uses a provided decoded result", () => {
     expect(
       verifyCalldata({
@@ -263,7 +307,7 @@ describe("verifyCalldata", () => {
 });
 
 describe("verifySdk", () => {
-  it("combines router, spender and calldata", () => {
+  it("rejects undecodable calldata even when router and spender match", () => {
     const res = verifySdk({
       chain: CHAINS_ENUM.ETH,
       dexId: DEX_ENUM.ONEINCH,
@@ -277,9 +321,9 @@ describe("verifySdk", () => {
     });
     expect(res.routerPass).toBe(true);
     expect(res.spenderPass).toBe(true);
-    expect(res.callDataPass).toBe(true);
+    expect(res.callDataPass).toBe(false);
     expect(res.receiverPass).toBe(true);
-    expect(res.isSdkDataPass).toBe(true);
+    expect(res.isSdkDataPass).toBe(false);
     expect(res.decoded).toBeNull();
   });
 

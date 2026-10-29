@@ -1,11 +1,15 @@
 import BigNumber from "bignumber.js";
+import { WETH_ADDRESS } from "@uniswap/universal-router-sdk";
 import type { DecodeCalldataResult } from "../types";
-import { isSameAddress, NULL_ADDRESS } from "../../utils";
+import {
+  isSameAddress,
+  normalizeEeeeToken,
+  normalizeZeroAddressToken,
+} from "../../utils";
 import { getArcNativeInputAmount, isSameUniAsset } from "./assets";
 
 export const MSG_SENDER = "0x0000000000000000000000000000000000000001";
 export const ROUTER = "0x0000000000000000000000000000000000000002";
-const EETH = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
 export const CONTRACT_BALANCE = new BigNumber(2).pow(255);
 export type Minimums = Record<string, string>;
 
@@ -37,10 +41,9 @@ export interface Context {
   proxyAmount?: string;
 }
 
+// Uni 解析同时兼容零地址和 0xEeee… 两种原生币标记，因此组合两种转换。
 export const chainToken = (token: string, native: string) =>
-  isSameAddress(token, NULL_ADDRESS) || isSameAddress(token, EETH)
-    ? native
-    : token;
+  normalizeEeeeToken(normalizeZeroAddressToken(token, native), native);
 
 export const realAmount = (amount: string, fallback?: string) =>
   CONTRACT_BALANCE.eq(amount) && fallback ? fallback : amount;
@@ -203,13 +206,16 @@ export const setOutput = (
   if (isRouter(recipient, ctx) && !poolMinimums) return;
   const pending = poolMinimums || (swap.pendingMinimums ||= {});
   const key = output.toLowerCase();
-  const amount = minimum ?? pending[key] ?? "0";
+  // Full-balance payouts retain the lower bound already guaranteed by swaps.
+  const amount = exactAmount
+    ? minimum ?? pending[key] ?? "0"
+    : BigNumber.max(minimum ?? "0", pending[key] ?? "0").toFixed();
   pending[key] = exactAmount
     ? BigNumber.max(0, new BigNumber(pending[key] || 0).minus(amount)).toFixed()
     : "0";
   if (isRouter(recipient, ctx)) {
-    // TAKE moves pool credit into the router; it is not another pool credit
-    // or a payout to the user. Keep the two balances separate.
+    // Moving credit into the router is not a payout to the user.
+    // Keep the source and router balances separate.
     const routerMinimums = (swap.pendingMinimums ||= {});
     routerMinimums[key] = new BigNumber(routerMinimums[key] || 0)
       .plus(amount)
@@ -296,7 +302,12 @@ export const unwrapNative = (
   recipient: string,
   minimum: string
 ) => {
-  setOutput(swap, ctx, ctx.native, recipient, minimum);
+  const pending = (swap.pendingMinimums ||= {});
+  const wrappedKey = WETH_ADDRESS(ctx.chainId).toLowerCase();
+  // Unwrap transfers WETH only; existing native funds remain in the router.
+  const unwrapped = { [ctx.native.toLowerCase()]: pending[wrappedKey] || "0" };
+  pending[wrappedKey] = "0";
+  setOutput(swap, ctx, ctx.native, recipient, minimum, false, unwrapped);
 };
 
 export const finishSwap = (swap: Swap): DecodeCalldataResult => {

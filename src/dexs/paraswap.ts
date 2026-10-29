@@ -1,10 +1,10 @@
 import { Interface } from "@ethersproject/abi";
-import { CHAINS_ENUM, CHAINS } from "@debank/common";
-import { TxWithChainId, DecodeCalldataResult } from "../quote";
-import { generateGetQuote, isSameAddress } from "../utils";
+import { CHAINS_ENUM } from "@debank/common";
+import { getChainById } from "../chain";
+import type { TxWithChainId, DecodeCalldataResult } from "../calldata/types";
+import { generateGetQuote, normalizeEeeeToken } from "../utils";
 import { ParaSwapABI } from "../abi";
 import { DEX_ENUM } from "../consts";
-const NATIVE_TOKEN = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 
 export const SUPPORT_CHAINS = [
   CHAINS_ENUM.ETH,
@@ -27,7 +27,7 @@ export const getQuote = generateGetQuote({
 export const decodeCalldata = (
   tx: TxWithChainId
 ): DecodeCalldataResult | null => {
-  const chain = Object.values(CHAINS).find((item) => item.id === tx.chainId);
+  const chain = getChainById(tx.chainId);
   const nullAddress = "0x0000000000000000000000000000000000000000";
 
   if (!chain) return null;
@@ -39,78 +39,59 @@ export const decodeCalldata = (
   switch (result.name) {
     case "simpleSwap": {
       const [data] = result.args;
-      const [
+      const {
         fromToken,
         toToken,
         fromAmount,
         toAmount,
-        expectedAmount,
-        callees,
-        exchangeData,
-        startIndexes,
-        values,
         beneficiary,
-      ] = data;
+      } = data;
       if (!fromToken || !toToken || !fromAmount || !toAmount) return null;
       return {
-        fromToken: isSameAddress(fromToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : fromToken,
+        fromToken: normalizeEeeeToken(fromToken, chain.nativeTokenAddress),
         fromTokenAmount: fromAmount.toString(),
-        toToken: isSameAddress(toToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : toToken,
+        toToken: normalizeEeeeToken(toToken, chain.nativeTokenAddress),
         minReceiveToTokenAmount: toAmount.toString(),
         toTokenReceiver: beneficiary === nullAddress ? tx.from : beneficiary,
       };
     }
     case "multiSwap": {
       const [data] = result.args;
-      const [
+      const {
         fromToken,
         fromAmount,
         toAmount,
-        expectedAmount,
         beneficiary,
         path,
-      ] = data;
+      } = data;
       if (!fromToken || !fromAmount || !toAmount || !path || path.length <= 0)
         return null;
       const [toToken] = path[path.length - 1];
       return {
-        fromToken: isSameAddress(fromToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : fromToken,
+        fromToken: normalizeEeeeToken(fromToken, chain.nativeTokenAddress),
         fromTokenAmount: fromAmount.toString(),
-        toToken: isSameAddress(toToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : toToken,
+        toToken: normalizeEeeeToken(toToken, chain.nativeTokenAddress),
         minReceiveToTokenAmount: toAmount.toString(),
         toTokenReceiver: beneficiary === nullAddress ? tx.from : beneficiary,
       };
     }
     case "megaSwap":
       const [data] = result.args;
-      const [
+      const {
         fromToken,
         fromAmount,
         toAmount,
-        expectedAmount,
         beneficiary,
         path,
-      ] = data;
+      } = data;
       if (!fromToken || !fromAmount || !toAmount || !path || path.length <= 0)
         return null;
-      const [fromAmountPercent, swapPath] = path[0];
+      const [, swapPath] = path[0];
       const [toToken] = swapPath[swapPath.length - 1];
       return {
-        fromToken: isSameAddress(fromToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : fromToken,
+        fromToken: normalizeEeeeToken(fromToken, chain.nativeTokenAddress),
         fromTokenAmount: fromAmount.toString(),
-        toToken: isSameAddress(toToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : toToken,
+        toToken: normalizeEeeeToken(toToken, chain.nativeTokenAddress),
         minReceiveToTokenAmount: toAmount.toString(),
         toTokenReceiver: beneficiary === nullAddress ? tx.from : beneficiary,
       };

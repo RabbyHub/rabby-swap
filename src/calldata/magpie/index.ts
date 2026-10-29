@@ -1,12 +1,12 @@
 import { Interface } from "@ethersproject/abi";
 import BigNumber from "bignumber.js";
-import { getNativeTokenAddress } from "../chain";
-import type {
-  DecodeCalldataOptions,
-  DecodeCalldataResult,
-  TxWithChainId,
-} from "../types";
-import { isSameAddress, NULL_ADDRESS } from "../../utils";
+import { getNativeTokenAddress } from "../../chain";
+import type { DecodeCalldataResult, TxWithChainId } from "../types";
+import {
+  isSameAddress,
+  normalizeZeroAddressToken,
+  NULL_ADDRESS,
+} from "../../utils";
 import { MagpieABI } from "./abi";
 import {
   decodeDexAggregator,
@@ -46,11 +46,8 @@ export const decodeInputFee = (
   return decodeDexAggregatorInputFee(readPayload(tx));
 };
 
-export const decodeCalldata = (
-  tx: TxWithChainId,
-  options: DecodeCalldataOptions = {}
-): DecodeCalldataResult => {
-  const native = getNativeTokenAddress(tx.chainId, options.nativeTokenAddress);
+export const decodeCalldata = (tx: TxWithChainId): DecodeCalldataResult => {
+  const native = getNativeTokenAddress(tx.chainId);
   const payload = readPayload(tx);
   const swap = decodeDexAggregator(payload);
   const nativeInput = isSameAddress(swap.fromAsset, NULL_ADDRESS);
@@ -75,11 +72,9 @@ export const decodeCalldata = (
     );
 
   const decoded: DecodeCalldataResult = {
-    fromToken: isSameAddress(swap.fromAsset, NULL_ADDRESS)
-      ? native
-      : swap.fromAsset,
+    fromToken: normalizeZeroAddressToken(swap.fromAsset, native),
     fromTokenAmount: amountIn.toFixed(0),
-    toToken: isSameAddress(swap.toAsset, NULL_ADDRESS) ? native : swap.toAsset,
+    toToken: normalizeZeroAddressToken(swap.toAsset, native),
     minReceiveToTokenAmount: swap.amountOutMin,
     // LibRouter reads toAddress literally; zero is not a msg.sender sentinel.
     toTokenReceiver: swap.receiver,

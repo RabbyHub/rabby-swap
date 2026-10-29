@@ -4,7 +4,6 @@ import { DEX_ENUM } from "./consts";
 import type {
   Tx,
   TxWithChainId,
-  DecodeCalldataOptions,
   DecodeCalldataResult,
 } from "./calldata/types";
 import { getQuote as wrapTokenGetQuote } from "./dexs/wrapToken";
@@ -36,28 +35,15 @@ import {
 } from "./dexs/paraswap_v6";
 
 import {
-  getQuote as odosGetQuote,
-  decodeCalldata as odosDecodeCalldata,
-} from "./dexs/odos";
-
-import {
   getQuote as zeroXV2GetQuote,
   decodeCalldata as zeroXV2DecodeCalldata,
 } from "./dexs/0xapi_v2";
 
-import {
-  getQuote as magpieGetQuote,
-  decodeCalldata as magpieDecodeCalldata,
-} from "./dexs/magpie";
+import { getQuote as magpieGetQuote } from "./dexs/magpie";
+import { decodeCalldata as magpieDecodeCalldata } from "./calldata/magpie";
 
-import {
-  getQuote as rabbyGetQuote,
-  decodeCalldata as rabbyDecodeCalldata,
-} from "./dexs/rabby";
-import {
-  getQuote as uniGetQuote,
-  decodeCalldata as uniDecodeCalldata,
-} from "./dexs/uni";
+import { getQuote as uniGetQuote } from "./dexs/uni";
+import { decodeCalldata as uniDecodeCalldata } from "./calldata/uni";
 
 import {
   getQuote as sushiGetQuote,
@@ -67,13 +53,6 @@ import {
   getQuote as pancakeGetQuote,
   decodeCalldata as pancakeDecodeCalldata,
 } from "./dexs/pancake";
-
-export type {
-  Tx,
-  TxWithChainId,
-  DecodeCalldataOptions,
-  DecodeCalldataResult,
-} from "./calldata/types";
 
 export interface QuoteParams {
   fromToken: string;
@@ -126,14 +105,10 @@ export const getQuote = async (
       return await kyberswapGetQuote(params, api);
     case DEX_ENUM.PARASWAPV6:
       return await paraSwapV6GetQuote(params, api);
-    case DEX_ENUM.ODOS:
-      return await odosGetQuote(params, api);
     case DEX_ENUM.ZEROXAPIV2:
       return await zeroXV2GetQuote(params, api);
     case DEX_ENUM.MAGPIE:
       return await magpieGetQuote(params, api);
-    case DEX_ENUM.RABBY:
-      return await rabbyGetQuote(params, api);
     case DEX_ENUM.SUSHI:
       return await sushiGetQuote(params, api);
     case DEX_ENUM.UNI:
@@ -147,8 +122,7 @@ export const getQuote = async (
 
 export const decodeCalldata = (
   id: DEX_ENUM,
-  tx: TxWithChainId,
-  options: DecodeCalldataOptions = {}
+  tx: TxWithChainId
 ): DecodeCalldataResult | null => {
   switch (id) {
     case DEX_ENUM.ONEINCH:
@@ -163,18 +137,14 @@ export const decodeCalldata = (
       return kyberswapDecodeCalldata(tx);
     case DEX_ENUM.PARASWAPV6:
       return paraSwapV6DecodeCalldata(tx);
-    case DEX_ENUM.ODOS:
-      return odosDecodeCalldata(tx);
     case DEX_ENUM.ZEROXAPIV2:
       return zeroXV2DecodeCalldata(tx);
     case DEX_ENUM.MAGPIE:
-      return magpieDecodeCalldata(tx, options);
-    case DEX_ENUM.RABBY:
-      return rabbyDecodeCalldata(tx);
+      return magpieDecodeCalldata(tx);
     case DEX_ENUM.SUSHI:
       return sushiDecodeCalldata(tx);
     case DEX_ENUM.UNI:
-      return uniDecodeCalldata(tx, options);
+      return uniDecodeCalldata(tx);
     case DEX_ENUM.PANCAKESWAP:
       return pancakeDecodeCalldata(tx);
     default:

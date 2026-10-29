@@ -1,10 +1,10 @@
 import { Interface } from "@ethersproject/abi";
-import { CHAINS_ENUM, CHAINS } from "@debank/common";
-import { TxWithChainId, DecodeCalldataResult } from "../quote";
-import { generateGetQuote, isSameAddress } from "../utils";
+import { CHAINS_ENUM } from "@debank/common";
+import { getChainById } from "../chain";
+import type { TxWithChainId, DecodeCalldataResult } from "../calldata/types";
+import { generateGetQuote, normalizeEeeeToken } from "../utils";
 import { ParaSwapV6ABI } from "../abi";
 import { DEX_ENUM } from "../consts";
-const NATIVE_TOKEN = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 
 export const SUPPORT_CHAINS = [
   CHAINS_ENUM.ETH,
@@ -30,7 +30,7 @@ export const getQuote = generateGetQuote({
 export const decodeCalldata = (
   tx: TxWithChainId
 ): DecodeCalldataResult | null => {
-  const chain = Object.values(CHAINS).find((item) => item.id === tx.chainId);
+  const chain = getChainById(tx.chainId);
   const nullAddress = "0x0000000000000000000000000000000000000000";
 
   if (!chain) return null;
@@ -43,102 +43,72 @@ export const decodeCalldata = (
     case "swapExactAmountInOnUniswapV2":
     case "swapExactAmountInOnUniswapV3": {
       const [data] = result.args;
-      const [
+      const {
         srcToken,
         destToken,
         fromAmount,
         toAmount,
-        quotedAmount,
-        metadata,
         beneficiary,
-      ] = data;
+      } = data;
       if (!srcToken || !destToken || !fromAmount || !toAmount) return null;
       return {
-        fromToken: isSameAddress(srcToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : srcToken,
+        fromToken: normalizeEeeeToken(srcToken, chain.nativeTokenAddress),
         fromTokenAmount: fromAmount.toString(),
-        toToken: isSameAddress(destToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : destToken,
+        toToken: normalizeEeeeToken(destToken, chain.nativeTokenAddress),
         minReceiveToTokenAmount: toAmount.toString(),
         toTokenReceiver: beneficiary === nullAddress ? tx.from : beneficiary,
       };
     }
     case "swapExactAmountIn": {
-      const [_, data] = result.args;
-      const [
+      const [, data] = result.args;
+      const {
         srcToken,
         destToken,
         fromAmount,
         toAmount,
-        quotedAmount,
-        metadata,
         beneficiary,
-      ] = data;
+      } = data;
       if (!srcToken || !destToken || !fromAmount || !toAmount) return null;
       return {
-        fromToken: isSameAddress(srcToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : srcToken,
+        fromToken: normalizeEeeeToken(srcToken, chain.nativeTokenAddress),
         fromTokenAmount: fromAmount.toString(),
-        toToken: isSameAddress(destToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : destToken,
+        toToken: normalizeEeeeToken(destToken, chain.nativeTokenAddress),
         minReceiveToTokenAmount: toAmount.toString(),
         toTokenReceiver: beneficiary === nullAddress ? tx.from : beneficiary,
       };
     }
     case "swapExactAmountInOnCurveV1": {
       const [data] = result.args;
-      const [
-        curveData,
-        curveAssets,
+      const {
         srcToken,
         destToken,
         fromAmount,
         toAmount,
-        quotedAmount,
-        metadata,
         beneficiary,
-      ] = data;
+      } = data;
       if (!srcToken || !destToken || !fromAmount || !toAmount) return null;
       return {
-        fromToken: isSameAddress(srcToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : srcToken,
+        fromToken: normalizeEeeeToken(srcToken, chain.nativeTokenAddress),
         fromTokenAmount: fromAmount.toString(),
-        toToken: isSameAddress(destToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : destToken,
+        toToken: normalizeEeeeToken(destToken, chain.nativeTokenAddress),
         minReceiveToTokenAmount: toAmount.toString(),
         toTokenReceiver: beneficiary === nullAddress ? tx.from : beneficiary,
       };
     }
     case "swapExactAmountInOnCurveV2": {
       const [data] = result.args;
-      const [
-        curveData,
-        i,
-        j,
-        poolAddress,
+      const {
         srcToken,
         destToken,
         fromAmount,
         toAmount,
-        quotedAmount,
-        metadata,
         beneficiary,
-      ] = data;
+      } = data;
       if (!srcToken || !destToken || !fromAmount || !toAmount) return null;
       return {
-        fromToken: isSameAddress(srcToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : srcToken,
+        fromToken: normalizeEeeeToken(srcToken, chain.nativeTokenAddress),
         fromTokenAmount: fromAmount.toString(),
-        toToken: isSameAddress(destToken, NATIVE_TOKEN)
-          ? chain.nativeTokenAddress
-          : destToken,
+        toToken: normalizeEeeeToken(destToken, chain.nativeTokenAddress),
         minReceiveToTokenAmount: toAmount.toString(),
         toTokenReceiver: beneficiary === nullAddress ? tx.from : beneficiary,
       };
