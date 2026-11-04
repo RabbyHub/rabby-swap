@@ -503,7 +503,7 @@
         "value": "0",
         "chainId": 1
       },
-      "reason": "Second-hop output 0x9b99cca871be05119b2012fd4474731dd653febe is outside the SDK candidate list"
+      "reason": "Intermediate and output assets are outside the SDK candidate list"
     },
     {
       "name": "[1inch] ethUnoswap2 with an output outside SDK candidates",
@@ -520,7 +520,7 @@
         "value": "353082909250759",
         "chainId": 1
       },
-      "reason": "Second-hop output 0xe7c6bf469e97eeb0bfb74c8dbff5bd47d4c1c98a is outside the SDK candidate list"
+      "reason": "Output asset is outside the SDK candidate list"
     },
     {
       "name": "[0xAPIV2] exec targeting BridgeSettler",
@@ -537,7 +537,7 @@
         "value": "33196225881586145",
         "chainId": 1
       },
-      "reason": "Native input uses the 0xEeee marker and nonzero tx.value, which the decoder rejects before decoding the unsupported BridgeSettler execute(bytes[],bytes32)"
+      "reason": "BridgeSettler execute(bytes[],bytes32) is outside Swap decoding"
     },
     {
       "name": "[1inch] unoswap2 Curve -> V3",
@@ -554,7 +554,7 @@
         "value": "0",
         "chainId": 1
       },
-      "reason": "First hop uses Curve protocol 2, which is outside the supported V2/V3 routes"
+      "reason": "Curve protocol is outside the supported V2/V3 routes"
     }
   ]
 }
