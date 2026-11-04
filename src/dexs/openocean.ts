@@ -29,6 +29,7 @@ import type { SwapChainInfo } from "../chain";
 import type { TxWithChainId, DecodeCalldataResult } from "../calldata/types";
 import {
   generateGetQuote,
+  NULL_ADDRESS,
   normalizeToken,
   resolveToTokenReceiver,
 } from "../utils";
@@ -64,13 +65,14 @@ const NATIVE_TOKENS = {
   [CHAINS_ENUM.LINEA]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
   [CHAINS_ENUM.PZE]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
   [CHAINS_ENUM.MANTA]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
-  ["HYPER" as CHAINS_ENUM]: "0x0000000000000000000000000000000000000000",
+  ["HYPER" as CHAINS_ENUM]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
   ["TAC" as CHAINS_ENUM]: "0x0000000000000000000000000000000000000000",
   ["PLASMA" as CHAINS_ENUM]: "0x0000000000000000000000000000000000000000",
-  ["MONAD" as CHAINS_ENUM]: "0x0000000000000000000000000000000000000000",
+  ["MONAD" as CHAINS_ENUM]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
   [CHAINS_ENUM.RSK]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
   ["HOOD" as CHAINS_ENUM]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
   ["SEI" as CHAINS_ENUM]: "0x0000000000000000000000000000000000000000",
+  ["APE" as CHAINS_ENUM]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
 } as Partial<Record<CHAINS_ENUM, string>>;
 
 export const SUPPORT_CHAINS = [
@@ -105,6 +107,7 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.KAVA,
   CHAINS_ENUM.CELO,
   "HOOD" as CHAINS_ENUM,
+  "APE" as CHAINS_ENUM,
   /**
    * 接口返回 swap error
    */
@@ -127,6 +130,14 @@ export const getQuote = generateGetQuote({
   dex: DEX_ENUM.OPENOCEAN,
 });
 
+// These deployments accept both zero and 0xEeee as native.
+const normalizeOpenOceanToken = (token: string, chain: SwapChainInfo) =>
+  normalizeToken(
+    normalizeToken(token, chain.nativeTokenAddress, NATIVE_TOKENS[chain.enum]),
+    chain.nativeTokenAddress,
+    ["MONAD", "HYPER", "APE"].includes(chain.enum) ? NULL_ADDRESS : undefined
+  );
+
 const decodeSwap = (
   args: Result,
   chain: SwapChainInfo,
@@ -144,12 +155,10 @@ const decodeSwap = (
   if (!srcToken || !dstToken || !dstReceiver || !amount || !minReturnAmount)
     return null;
 
-  const NATIVE_TOKEN = NATIVE_TOKENS[chain.enum];
-
   return {
-    fromToken: normalizeToken(srcToken, chain.nativeTokenAddress, NATIVE_TOKEN),
+    fromToken: normalizeOpenOceanToken(srcToken, chain),
     fromTokenAmount: amount.toString(),
-    toToken: normalizeToken(dstToken, chain.nativeTokenAddress, NATIVE_TOKEN),
+    toToken: normalizeOpenOceanToken(dstToken, chain),
     minReceiveToTokenAmount: minReturnAmount.toString(),
     toTokenReceiver: resolveToTokenReceiver(dstReceiver, txFrom),
   };
@@ -172,12 +181,10 @@ const decodeSimpleSwap = (
   if (!srcToken || !dstToken || !dstReceiver || !amount || !minReturnAmount)
     return null;
 
-  const NATIVE_TOKEN = NATIVE_TOKENS[chain.enum];
-
   return {
-    fromToken: normalizeToken(srcToken, chain.nativeTokenAddress, NATIVE_TOKEN),
+    fromToken: normalizeOpenOceanToken(srcToken, chain),
     fromTokenAmount: amount.toString(),
-    toToken: normalizeToken(dstToken, chain.nativeTokenAddress, NATIVE_TOKEN),
+    toToken: normalizeOpenOceanToken(dstToken, chain),
     minReceiveToTokenAmount: minReturnAmount.toString(),
     toTokenReceiver: resolveToTokenReceiver(dstReceiver, txFrom),
   };

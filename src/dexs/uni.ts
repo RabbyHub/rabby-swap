@@ -18,6 +18,9 @@ export const SUPPORT_CHAINS = [
   "MONAD" as CHAINS_ENUM,
   "HOOD" as CHAINS_ENUM,
   "ARC" as CHAINS_ENUM,
+  "INK" as CHAINS_ENUM,
+  CHAINS_ENUM.LINEA,
+  "XLAYER" as CHAINS_ENUM,
 ] as CHAINS_ENUM[];
 
 // Native-input tx.to: UR 2.1.2, zkSync 2.0, or SwapProxy on Celo/Tempo.
@@ -38,6 +41,9 @@ export const UNI_NATIVE_TO_ADDRESSES = {
   ["MONAD" as CHAINS_ENUM]: "0xa6CE4F10d83dBdDAc17E68e1837ca9cE6a1b596e",
   ["HOOD" as CHAINS_ENUM]: "0x204FAca1764B154221e35c0d20aBb3c525710498",
   ["ARC" as CHAINS_ENUM]: "0x8702463e73f74d0b6765aBceb314Ef07aCb92650",
+  ["INK" as CHAINS_ENUM]: "0x661E93cca42AfacB172121EF892830cA3b70F08d",
+  [CHAINS_ENUM.LINEA]: "0xDc264714F68d84CF29BC605589405E78bDBE7C9f",
+  ["XLAYER" as CHAINS_ENUM]: "0x1cd182C94fcF42277B80DBB9060F88024809E61E",
 } as Record<CHAINS_ENUM, string>;
 
 // Keep the pre-upgrade native entry points valid during the backend rollout.

@@ -53,6 +53,10 @@ export const SUPPORT_CHAINS = [
   "HYPER" as CHAINS_ENUM,
   "HOOD" as CHAINS_ENUM,
   "ARC" as CHAINS_ENUM,
+  "INK" as CHAINS_ENUM,
+  CHAINS_ENUM.LINEA,
+  CHAINS_ENUM.MANTLE,
+  "SONIC" as CHAINS_ENUM,
 ];
 
 export const getQuote = generateGetQuote({

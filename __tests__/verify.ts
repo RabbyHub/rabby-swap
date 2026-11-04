@@ -102,6 +102,40 @@ describe("verifyRouterAndSpender", () => {
     nativeTokenAddress: ETH_NATIVE,
   };
 
+  it.each([
+    {
+      chain: "INK" as CHAINS_ENUM,
+      nativeTokenAddress: "ink",
+      dexId: DEX_ENUM.UNI,
+      address: "0x0000000085E102724e78eCd2F45DC9cA239Affad",
+      wrongAddress: "0x02E5be68D46DAc0B524905bfF209cf47EE6dB2a9",
+    },
+    {
+      chain: CHAINS_ENUM.MANTLE,
+      nativeTokenAddress: "mnt",
+      dexId: DEX_ENUM.ZEROXAPIV2,
+      address: "0x0000000000005E88410CcDFaDe4a5EfaE4b49562",
+      wrongAddress: "0x0000000000001fF3684f28c67538d4D072C22734",
+    },
+  ])("requires the chain-specific $dexId deployment on $chain", (entry) => {
+    const params = {
+      ...base,
+      chain: entry.chain,
+      nativeTokenAddress: entry.nativeTokenAddress,
+      dexId: entry.dexId,
+      router: entry.address,
+      spender: entry.address,
+    };
+    expect(verifyRouterAndSpender(params)).toEqual([true, true]);
+    expect(
+      verifyRouterAndSpender({
+        ...params,
+        router: entry.wrongAddress,
+        spender: entry.wrongAddress,
+      })
+    ).toEqual([false, false]);
+  });
+
   it("passes matching whitelist", () => {
     expect(verifyRouterAndSpender(base)).toEqual([true, true]);
   });

@@ -98,9 +98,10 @@ const encodeOpenOceanSwap = (
   dstReceiver: string,
   from = USER,
   srcToken = TOKEN_IN,
-  dstToken = TOKEN_OUT
+  dstToken = TOKEN_OUT,
+  method: "swap" | "simpleSwap" = "swap"
 ) => {
-  const data = openOceanInterface.encodeFunctionData("swap", [
+  const data = openOceanInterface.encodeFunctionData(method, [
     USER,
     {
       srcToken,
@@ -121,7 +122,7 @@ const encodeOpenOceanSwap = (
     from,
     to: USER,
     data,
-    value: srcToken === NATIVE ? "0x3e8" : "0x0",
+    value: srcToken === NATIVE || srcToken === NULL_ADDRESS ? "0x3e8" : "0x0",
     chainId: 1,
   };
 };
@@ -261,6 +262,28 @@ describe("KyberSwap calldata receiver", () => {
     expect(isSwapCalldataReceiverAllowed(res!.toTokenReceiver, USER)).toBe(
       false
     );
+  });
+});
+
+describe.each([
+  { chainId: 143, native: "monad" },
+  { chainId: 999, native: "hyper" },
+  { chainId: 33139, native: "ape" },
+])("OpenOcean native markers on $native", ({ chainId, native }) => {
+  describe.each(["swap", "simpleSwap"] as const)("%s", (method) => {
+    it.each([NATIVE, NULL_ADDRESS])("normalizes native marker %s", (marker) => {
+      const input = decodeCalldata(DEX_ENUM.OPENOCEAN, {
+        ...encodeOpenOceanSwap(USER, USER, marker, TOKEN_IN, method),
+        chainId,
+      });
+      expect(input).toMatchObject({ fromToken: native, toToken: TOKEN_IN });
+
+      const output = decodeCalldata(DEX_ENUM.OPENOCEAN, {
+        ...encodeOpenOceanSwap(USER, USER, TOKEN_IN, marker, method),
+        chainId,
+      });
+      expect(output).toMatchObject({ fromToken: TOKEN_IN, toToken: native });
+    });
   });
 });
 
