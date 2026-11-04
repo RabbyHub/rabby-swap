@@ -11,6 +11,10 @@ export const OneInchABI = [
     ],
     outputs: [{ name: "returnAmount", type: "uint256" }],
   },
+  "function unoswap2(uint256 token,uint256 amount,uint256 minReturn,uint256 dex,uint256 dex2) returns (uint256 returnAmount)",
+  "function unoswap3(uint256 token,uint256 amount,uint256 minReturn,uint256 dex,uint256 dex2,uint256 dex3) returns (uint256 returnAmount)",
+  "function ethUnoswap(uint256 minReturn,uint256 dex) payable returns (uint256 returnAmount)",
+  "function ethUnoswap2(uint256 minReturn,uint256 dex,uint256 dex2) payable returns (uint256 returnAmount)",
   {
     inputs: [
       {
