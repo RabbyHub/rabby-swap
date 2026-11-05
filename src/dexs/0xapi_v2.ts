@@ -4,7 +4,7 @@
  * 1. AllowanceHolder.exec，selector：0x2213bc0b。
  *    参数：(address operator, address token, uint256 amount, address payable target, bytes data)。
  *    场景：用户把支付授权交给 AllowanceHolder，由它代为调用 Settler；支付币和数量取自这里。
- *    支付币用零地址表示原生币。
+ *    当前覆盖的 Swap Settler 路线用零地址表示原生币。
  *    官方接口：https://github.com/0xProject/0x-settler/blob/master/src/allowanceholder/IAllowanceHolder.sol
  *    部署地址：https://etherscan.io/address/0x0000000000001ff3684f28c67538d4d072c22734#code
  *
@@ -17,8 +17,9 @@
  *    官方接口：https://github.com/0xProject/0x-settler/blob/master/src/interfaces/ISettlerTakerSubmitted.sol
  *    slippage 定义：https://github.com/0xProject/0x-settler/blob/master/src/interfaces/ISettlerBase.sol
  *
- * 现有报价都是 exec 包裹 execute。单独的 execute 没有顶层支付数量，不在当前解析范围。
- * 校验限制：operator 与 target 一致；实际原生币支付量需匹配输入。
+ * 当前解析 exec 包裹 execute 的 Swap 路线。单独的 execute 没有顶层支付数量，不在当前解析范围。
+ * 当前仅覆盖 operator 与 target 一致、原生币支付量匹配输入的路线。
+ * AllowanceHolder 也可转发至 BridgeSettler 等目标，需结合内层合约身份判断。
  */
 import { CHAINS_ENUM } from "@debank/common";
 import { Interface } from "@ethersproject/abi";
@@ -150,10 +151,10 @@ const decodeAllowanceHolderExec = (
     return null;
   }
 
-  // 扣款方需与实际执行方一致。
+  // 当前只覆盖由同一 Settler 扣款并执行的路线。
   if (!isSameAddress(operator, target)) return null;
 
-  // exec 会将 msg.value 转给 target；实际支付原生币的数量必须与输入一致。
+  // 当前只覆盖原生币 amount 与 msg.value 一致、ERC20 不附带原生币的路线。
   const expectedValue = isSameAddress(token, NULL_ADDRESS)
     ? amount.toString()
     : "0";

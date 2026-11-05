@@ -1,5 +1,5 @@
 /**
- * 接入 Aggregation Router V6 的 swap，以及可确认池/币种的 V3 unoswap。
+ * 接入 Aggregation Router V6 的 swap，以及可确认池/币种的 V2/V3 unoswap 系列。
  *
  * swap，selector：0x07ed2379。
  * 参数：(address executor, SwapDescription desc, bytes data)。
@@ -8,7 +8,11 @@
  * 场景：按 API 生成的路由数据，由 executor 执行跨流动性来源的聚合兑换。
  * V6 的 swap 不再包含独立的 permit 参数，最低到账量取 minReturnAmount。
  * unoswap，selector 0x83800a8e：(uint256 token,uint256 amount,uint256 minReturn,uint256 dex)。
- * 输出币不在参数中；仅在可独立推导 V3 池地址及方向时返回结果。
+ * unoswap2，selector 0x8770ba91：在 unoswap 参数后增加 uint256 dex2，执行双跳兑换。
+ * unoswap3，selector 0x19367472：再增加 uint256 dex3，执行三跳兑换。
+ * ethUnoswap，selector 0xa76dfc3b：(uint256 minReturn,uint256 dex)，原生币单跳兑换。
+ * ethUnoswap2，selector 0x89af926a：(uint256 minReturn,uint256 dex,uint256 dex2)，原生币双跳兑换。
+ * 原生币输入金额取 tx.value；输出币通过各跳的官方池地址及方向独立推导，末跳可解包原生币。
  *
  * 官方文档：https://business.1inch.com/portal/documentation/apis/swap/classic-swap/introduction
  * Ethereum 官方 Router 的已验证实现源码与 ABI：
@@ -57,7 +61,12 @@ export const decodeCalldata = (
   const contractInterface = new Interface(OneInchABI);
   const result = contractInterface.parseTransaction({ data: tx.data });
 
-  if (result.name === "unoswap") return decodeUnoswap(result.args, tx);
+  if (
+    ["unoswap", "unoswap2", "unoswap3", "ethUnoswap", "ethUnoswap2"].includes(
+      result.name
+    )
+  )
+    return decodeUnoswap(result.args, tx);
 
   if (result.name !== "swap") {
     return null;
