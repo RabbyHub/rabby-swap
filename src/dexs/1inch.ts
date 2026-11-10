@@ -1,5 +1,6 @@
 /**
- * 接入 Aggregation Router V6 的 swap，以及可确认池/币种的 V2/V3 unoswap 系列。
+ * 接入 Aggregation Router V6 的 swap，以及可确认池/币种的 V2/V3/Curve unoswap 系列。
+ * Curve 仅覆盖已核实池的普通 ERC20 exchange，不包含 underlying/native/callback 变体。
  *
  * swap，selector：0x07ed2379。
  * 参数：(address executor, SwapDescription desc, bytes data)。

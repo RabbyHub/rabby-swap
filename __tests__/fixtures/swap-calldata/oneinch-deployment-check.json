@@ -1,0 +1,532 @@
+{
+  "checkedAt": "2026-11-10T03:03:28.318Z",
+  "purpose": "Read-only deployment evidence; encoded route tests are not mined transaction fixtures.",
+  "chains": [
+    {
+      "chain": "ethereum",
+      "chainId": 1,
+      "rpc": "https://ethereum-rpc.publicnode.com",
+      "blockNumber": 26381676,
+      "blockTag": "0x1928d6c",
+      "blockHash": "0x35b724b90aba1f1a1244c871e33708905152e28278850370f1aa345807c60fe3",
+      "checks": [
+        {
+          "id": "uni-v3-usdt-weth/getPool",
+          "method": "eth_call",
+          "to": "0x1f98431c8ad98523631ae4a59f267346ea31f984",
+          "data": "0x1698ee82000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec70000000000000000000000000000000000000000000000000000000000000bb8",
+          "function": "getPool",
+          "result": "0x0000000000000000000000004e68ccd3e89f51c3074ca5072bbac773960dfa36",
+          "decoded": "0x4e68ccd3e89f51c3074ca5072bbac773960dfa36"
+        },
+        {
+          "id": "uni-v3-usdt-weth/factory",
+          "method": "eth_call",
+          "to": "0x4e68ccd3e89f51c3074ca5072bbac773960dfa36",
+          "data": "0xc45a0155",
+          "function": "factory",
+          "result": "0x0000000000000000000000001f98431c8ad98523631ae4a59f267346ea31f984",
+          "decoded": "0x1f98431c8ad98523631ae4a59f267346ea31f984"
+        },
+        {
+          "id": "uni-v3-usdt-weth/token0",
+          "method": "eth_call",
+          "to": "0x4e68ccd3e89f51c3074ca5072bbac773960dfa36",
+          "data": "0x0dfe1681",
+          "function": "token0",
+          "result": "0x000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+          "decoded": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+        },
+        {
+          "id": "uni-v3-usdt-weth/token1",
+          "method": "eth_call",
+          "to": "0x4e68ccd3e89f51c3074ca5072bbac773960dfa36",
+          "data": "0xd21220a7",
+          "function": "token1",
+          "result": "0x000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec7",
+          "decoded": "0xdac17f958d2ee523a2206206994597c13d831ec7"
+        },
+        {
+          "id": "uni-v3-usdt-weth/fee",
+          "method": "eth_call",
+          "to": "0x4e68ccd3e89f51c3074ca5072bbac773960dfa36",
+          "data": "0xddca3f43",
+          "function": "fee",
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000bb8",
+          "decoded": "3000"
+        },
+        {
+          "id": "router/code",
+          "method": "eth_getCode",
+          "address": "0x111111125421ca6dc452d289314280a0f8842a65",
+          "byteLength": 24294,
+          "keccak256": "0xa5a286be4b80006cc547d7e899871aa01a0e0551e2a509233375405f92098c2f"
+        },
+        {
+          "id": "curve/coin0",
+          "method": "eth_call",
+          "to": "0x390f3595bca2df7d23783dfd126427cceb997bf4",
+          "data": "0xc66106570000000000000000000000000000000000000000000000000000000000000000",
+          "function": "coins",
+          "result": "0x000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec7",
+          "decoded": "0xdac17f958d2ee523a2206206994597c13d831ec7"
+        },
+        {
+          "id": "curve/coin1",
+          "method": "eth_call",
+          "to": "0x390f3595bca2df7d23783dfd126427cceb997bf4",
+          "data": "0xc66106570000000000000000000000000000000000000000000000000000000000000001",
+          "function": "coins",
+          "result": "0x000000000000000000000000f939e0a03fb07f59a73314e73794be0e57ac1b4e",
+          "decoded": "0xf939e0a03fb07f59a73314e73794be0e57ac1b4e"
+        },
+        {
+          "id": "curve/code",
+          "method": "eth_getCode",
+          "address": "0x390f3595bca2df7d23783dfd126427cceb997bf4",
+          "byteLength": 45,
+          "keccak256": "0x06a0d9fefe2940f35a5e0b347ff8e2f8085c76ce487b5b234b2e3c831160e34f",
+          "runtime": "0x363d3d373d3d3d363d7367fe41a94e779ccfa22cff02cc2957dc9c0e42865af43d82803e903d91602b57fd5bf3"
+        }
+      ]
+    },
+    {
+      "chain": "bsc",
+      "chainId": 56,
+      "rpc": "https://bsc-rpc.publicnode.com",
+      "blockNumber": 132700577,
+      "blockTag": "0x7e8d9a1",
+      "blockHash": "0x77ccbca9f4abe8da196e4946e9ac2f23f627e5cb4c455049d11f834efe9944bd",
+      "checks": [
+        {
+          "id": "pancake-v1/getPool",
+          "method": "eth_call",
+          "to": "0xbcfccbde45ce874adcb698cc183debcf17952812",
+          "data": "0xe6a4390500000000000000000000000055d398326f99059ff775485246999027b31979550000000000000000000000008ac76a51cc950d9822d68b83fe1ad97b32cd580d",
+          "function": "getPair",
+          "result": "0x00000000000000000000000085f8628bfff75d08f1aa415e5c7e85d96bfd7f57",
+          "decoded": "0x85f8628bfff75d08f1aa415e5c7e85d96bfd7f57"
+        },
+        {
+          "id": "pancake-v1/factory",
+          "method": "eth_call",
+          "to": "0x85f8628bfff75d08f1aa415e5c7e85d96bfd7f57",
+          "data": "0xc45a0155",
+          "function": "factory",
+          "result": "0x000000000000000000000000bcfccbde45ce874adcb698cc183debcf17952812",
+          "decoded": "0xbcfccbde45ce874adcb698cc183debcf17952812"
+        },
+        {
+          "id": "pancake-v1/token0",
+          "method": "eth_call",
+          "to": "0x85f8628bfff75d08f1aa415e5c7e85d96bfd7f57",
+          "data": "0x0dfe1681",
+          "function": "token0",
+          "result": "0x00000000000000000000000055d398326f99059ff775485246999027b3197955",
+          "decoded": "0x55d398326f99059ff775485246999027b3197955"
+        },
+        {
+          "id": "pancake-v1/token1",
+          "method": "eth_call",
+          "to": "0x85f8628bfff75d08f1aa415e5c7e85d96bfd7f57",
+          "data": "0xd21220a7",
+          "function": "token1",
+          "result": "0x0000000000000000000000008ac76a51cc950d9822d68b83fe1ad97b32cd580d",
+          "decoded": "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"
+        },
+        {
+          "id": "pancake-v1/initHash",
+          "method": "eth_call",
+          "to": "0xbcfccbde45ce874adcb698cc183debcf17952812",
+          "data": "0x5855a25a",
+          "function": "INIT_CODE_PAIR_HASH",
+          "result": "0xd0d4c4cd0848c93cb4fd1f498d7013ee6bfb25783ea21593d5834f5d250ece66",
+          "decoded": "0xd0d4c4cd0848c93cb4fd1f498d7013ee6bfb25783ea21593d5834f5d250ece66"
+        },
+        {
+          "id": "pancake-v2/getPool",
+          "method": "eth_call",
+          "to": "0xca143ce32fe78f1f7019d7d551a6402fc5350c73",
+          "data": "0xe6a4390500000000000000000000000055d398326f99059ff775485246999027b31979550000000000000000000000008ac76a51cc950d9822d68b83fe1ad97b32cd580d",
+          "function": "getPair",
+          "result": "0x000000000000000000000000ec6557348085aa57c72514d67070dc863c0a5a8c",
+          "decoded": "0xec6557348085aa57c72514d67070dc863c0a5a8c"
+        },
+        {
+          "id": "pancake-v2/factory",
+          "method": "eth_call",
+          "to": "0xec6557348085aa57c72514d67070dc863c0a5a8c",
+          "data": "0xc45a0155",
+          "function": "factory",
+          "result": "0x000000000000000000000000ca143ce32fe78f1f7019d7d551a6402fc5350c73",
+          "decoded": "0xca143ce32fe78f1f7019d7d551a6402fc5350c73"
+        },
+        {
+          "id": "pancake-v2/token0",
+          "method": "eth_call",
+          "to": "0xec6557348085aa57c72514d67070dc863c0a5a8c",
+          "data": "0x0dfe1681",
+          "function": "token0",
+          "result": "0x00000000000000000000000055d398326f99059ff775485246999027b3197955",
+          "decoded": "0x55d398326f99059ff775485246999027b3197955"
+        },
+        {
+          "id": "pancake-v2/token1",
+          "method": "eth_call",
+          "to": "0xec6557348085aa57c72514d67070dc863c0a5a8c",
+          "data": "0xd21220a7",
+          "function": "token1",
+          "result": "0x0000000000000000000000008ac76a51cc950d9822d68b83fe1ad97b32cd580d",
+          "decoded": "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"
+        },
+        {
+          "id": "pancake-v2/initHash",
+          "method": "eth_call",
+          "to": "0xca143ce32fe78f1f7019d7d551a6402fc5350c73",
+          "data": "0x5855a25a",
+          "function": "INIT_CODE_PAIR_HASH",
+          "result": "0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5",
+          "decoded": "0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5"
+        },
+        {
+          "id": "uni-v2/getPool",
+          "method": "eth_call",
+          "to": "0x8909dc15e40173ff4699343b6eb8132c65e18ec6",
+          "data": "0xe6a4390500000000000000000000000055d398326f99059ff775485246999027b31979550000000000000000000000008ac76a51cc950d9822d68b83fe1ad97b32cd580d",
+          "function": "getPair",
+          "result": "0x0000000000000000000000006ab0ae46c4b450bc1b4ffcaa192b235134d584b2",
+          "decoded": "0x6ab0ae46c4b450bc1b4ffcaa192b235134d584b2"
+        },
+        {
+          "id": "uni-v2/factory",
+          "method": "eth_call",
+          "to": "0x6ab0ae46c4b450bc1b4ffcaa192b235134d584b2",
+          "data": "0xc45a0155",
+          "function": "factory",
+          "result": "0x0000000000000000000000008909dc15e40173ff4699343b6eb8132c65e18ec6",
+          "decoded": "0x8909dc15e40173ff4699343b6eb8132c65e18ec6"
+        },
+        {
+          "id": "uni-v2/token0",
+          "method": "eth_call",
+          "to": "0x6ab0ae46c4b450bc1b4ffcaa192b235134d584b2",
+          "data": "0x0dfe1681",
+          "function": "token0",
+          "result": "0x00000000000000000000000055d398326f99059ff775485246999027b3197955",
+          "decoded": "0x55d398326f99059ff775485246999027b3197955"
+        },
+        {
+          "id": "uni-v2/token1",
+          "method": "eth_call",
+          "to": "0x6ab0ae46c4b450bc1b4ffcaa192b235134d584b2",
+          "data": "0xd21220a7",
+          "function": "token1",
+          "result": "0x0000000000000000000000008ac76a51cc950d9822d68b83fe1ad97b32cd580d",
+          "decoded": "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"
+        },
+        {
+          "id": "uni-v3/getPool",
+          "method": "eth_call",
+          "to": "0xdb1d10011ad0ff90774d0c6bb92e5c5c8b4461f7",
+          "data": "0x1698ee8200000000000000000000000055d398326f99059ff775485246999027b31979550000000000000000000000008ac76a51cc950d9822d68b83fe1ad97b32cd580d00000000000000000000000000000000000000000000000000000000000001f4",
+          "function": "getPool",
+          "result": "0x000000000000000000000000ccdfcd1aac447d5b29980f64b831c532a6a33726",
+          "decoded": "0xccdfcd1aac447d5b29980f64b831c532a6a33726"
+        },
+        {
+          "id": "uni-v3/factory",
+          "method": "eth_call",
+          "to": "0xccdfcd1aac447d5b29980f64b831c532a6a33726",
+          "data": "0xc45a0155",
+          "function": "factory",
+          "result": "0x000000000000000000000000db1d10011ad0ff90774d0c6bb92e5c5c8b4461f7",
+          "decoded": "0xdb1d10011ad0ff90774d0c6bb92e5c5c8b4461f7"
+        },
+        {
+          "id": "uni-v3/token0",
+          "method": "eth_call",
+          "to": "0xccdfcd1aac447d5b29980f64b831c532a6a33726",
+          "data": "0x0dfe1681",
+          "function": "token0",
+          "result": "0x00000000000000000000000055d398326f99059ff775485246999027b3197955",
+          "decoded": "0x55d398326f99059ff775485246999027b3197955"
+        },
+        {
+          "id": "uni-v3/token1",
+          "method": "eth_call",
+          "to": "0xccdfcd1aac447d5b29980f64b831c532a6a33726",
+          "data": "0xd21220a7",
+          "function": "token1",
+          "result": "0x0000000000000000000000008ac76a51cc950d9822d68b83fe1ad97b32cd580d",
+          "decoded": "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"
+        },
+        {
+          "id": "uni-v3/fee",
+          "method": "eth_call",
+          "to": "0xccdfcd1aac447d5b29980f64b831c532a6a33726",
+          "data": "0xddca3f43",
+          "function": "fee",
+          "result": "0x00000000000000000000000000000000000000000000000000000000000001f4",
+          "decoded": "500"
+        },
+        {
+          "id": "router/code",
+          "method": "eth_getCode",
+          "address": "0x111111125421ca6dc452d289314280a0f8842a65",
+          "byteLength": 24294,
+          "keccak256": "0x7b9ea7c1da2784fe89f77fb8dba143f593a5ebf5afe45d0970d57007a98233af"
+        }
+      ]
+    },
+    {
+      "chain": "base",
+      "chainId": 8453,
+      "rpc": "https://base-rpc.publicnode.com",
+      "blockNumber": 55446068,
+      "blockTag": "0x34e0a34",
+      "blockHash": "0x5a8af3b8a264aa970ac26988ab3915d4e73c23ded5a12dfeb86f3920bc21a205",
+      "checks": [
+        {
+          "id": "uni-v2/getPool",
+          "method": "eth_call",
+          "to": "0x8909dc15e40173ff4699343b6eb8132c65e18ec6",
+          "data": "0xe6a439050000000000000000000000004200000000000000000000000000000000000006000000000000000000000000833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+          "function": "getPair",
+          "result": "0x00000000000000000000000088a43bbdf9d098eec7bceda4e2494615dfd9bb9c",
+          "decoded": "0x88a43bbdf9d098eec7bceda4e2494615dfd9bb9c"
+        },
+        {
+          "id": "uni-v2/factory",
+          "method": "eth_call",
+          "to": "0x88a43bbdf9d098eec7bceda4e2494615dfd9bb9c",
+          "data": "0xc45a0155",
+          "function": "factory",
+          "result": "0x0000000000000000000000008909dc15e40173ff4699343b6eb8132c65e18ec6",
+          "decoded": "0x8909dc15e40173ff4699343b6eb8132c65e18ec6"
+        },
+        {
+          "id": "uni-v2/token0",
+          "method": "eth_call",
+          "to": "0x88a43bbdf9d098eec7bceda4e2494615dfd9bb9c",
+          "data": "0x0dfe1681",
+          "function": "token0",
+          "result": "0x0000000000000000000000004200000000000000000000000000000000000006",
+          "decoded": "0x4200000000000000000000000000000000000006"
+        },
+        {
+          "id": "uni-v2/token1",
+          "method": "eth_call",
+          "to": "0x88a43bbdf9d098eec7bceda4e2494615dfd9bb9c",
+          "data": "0xd21220a7",
+          "function": "token1",
+          "result": "0x000000000000000000000000833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+          "decoded": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"
+        },
+        {
+          "id": "uni-v3/getPool",
+          "method": "eth_call",
+          "to": "0x33128a8fc17869897dce68ed026d694621f6fdfd",
+          "data": "0x1698ee820000000000000000000000004200000000000000000000000000000000000006000000000000000000000000833589fcd6edb6e08f4c7c32d4f71b54bda0291300000000000000000000000000000000000000000000000000000000000001f4",
+          "function": "getPool",
+          "result": "0x000000000000000000000000d0b53d9277642d899df5c87a3966a349a798f224",
+          "decoded": "0xd0b53d9277642d899df5c87a3966a349a798f224"
+        },
+        {
+          "id": "uni-v3/factory",
+          "method": "eth_call",
+          "to": "0xd0b53d9277642d899df5c87a3966a349a798f224",
+          "data": "0xc45a0155",
+          "function": "factory",
+          "result": "0x00000000000000000000000033128a8fc17869897dce68ed026d694621f6fdfd",
+          "decoded": "0x33128a8fc17869897dce68ed026d694621f6fdfd"
+        },
+        {
+          "id": "uni-v3/token0",
+          "method": "eth_call",
+          "to": "0xd0b53d9277642d899df5c87a3966a349a798f224",
+          "data": "0x0dfe1681",
+          "function": "token0",
+          "result": "0x0000000000000000000000004200000000000000000000000000000000000006",
+          "decoded": "0x4200000000000000000000000000000000000006"
+        },
+        {
+          "id": "uni-v3/token1",
+          "method": "eth_call",
+          "to": "0xd0b53d9277642d899df5c87a3966a349a798f224",
+          "data": "0xd21220a7",
+          "function": "token1",
+          "result": "0x000000000000000000000000833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+          "decoded": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"
+        },
+        {
+          "id": "uni-v3/fee",
+          "method": "eth_call",
+          "to": "0xd0b53d9277642d899df5c87a3966a349a798f224",
+          "data": "0xddca3f43",
+          "function": "fee",
+          "result": "0x00000000000000000000000000000000000000000000000000000000000001f4",
+          "decoded": "500"
+        },
+        {
+          "id": "router/code",
+          "method": "eth_getCode",
+          "address": "0x111111125421ca6dc452d289314280a0f8842a65",
+          "byteLength": 24151,
+          "keccak256": "0x770b14c4159d028ba8004c2d37bf91cc6111b1270bdf2afa75d4af1b77dbd75f"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "name": "router-eth",
+      "url": "https://sourcify.dev/server/v2/contract/1/0x111111125421cA6dc452d289314280a0f8842A65?fields=abi,sources",
+      "runtimeMatch": "exact_match",
+      "creationMatch": "exact_match",
+      "verifiedAt": "2024-08-08T14:12:21Z",
+      "sources": [
+        {
+          "path": "contracts/networks/AggregationRouterV6.mainnet.sol",
+          "sha256": "bb09563e91793b2a946884fa4499d7c3dde8ce8b55147d8dca29daf3fdb9386d"
+        }
+      ],
+      "verified": {
+        "v3Factory": "0x1f98431c8ad98523631ae4a59f267346ea31f984",
+        "offsets": {
+          "_PROTOCOL_OFFSET": 253,
+          "_CURVE_SWAP_SELECTOR_IDX_OFFSET": 184,
+          "_CURVE_FROM_COINS_SELECTOR_OFFSET": 192,
+          "_CURVE_FROM_COINS_ARG_OFFSET": 200,
+          "_CURVE_TO_COINS_SELECTOR_OFFSET": 208,
+          "_CURVE_TO_COINS_ARG_OFFSET": 216,
+          "_CURVE_FROM_TOKEN_OFFSET": 224,
+          "_CURVE_TO_TOKEN_OFFSET": 232,
+          "_CURVE_SWAP_HAS_ARG_DESTINATION_OFFSET": 244,
+          "_CURVE_SWAP_HAS_ARG_CALLBACK_OFFSET": 249
+        },
+        "selectors": {
+          "unoswap": "0x83800a8e",
+          "unoswap2": "0x8770ba91",
+          "unoswap3": "0x19367472",
+          "ethUnoswap": "0xa76dfc3b",
+          "ethUnoswap2": "0x89af926a"
+        },
+        "curveSwapSelector0": "0x3df02124",
+        "curveSwapSelector2": "0xddc1f59d",
+        "curveCoinsOffset8": "0xc6610657"
+      }
+    },
+    {
+      "name": "router-bsc",
+      "url": "https://sourcify.dev/server/v2/contract/56/0x111111125421cA6dc452d289314280a0f8842A65?fields=abi,sources",
+      "runtimeMatch": "exact_match",
+      "creationMatch": "exact_match",
+      "verifiedAt": "2026-05-13T02:54:54Z",
+      "sources": [
+        {
+          "path": "contracts/networks/AggregationRouterV6.bsc.sol",
+          "sha256": "bb383e757c4568ddfa7fb56cec5354a4e80889575997461831fc648a9824a059"
+        }
+      ],
+      "verified": {
+        "v3Factory": "0xdb1d10011ad0ff90774d0c6bb92e5c5c8b4461f7",
+        "offsets": {
+          "_PROTOCOL_OFFSET": 253,
+          "_CURVE_SWAP_SELECTOR_IDX_OFFSET": 184,
+          "_CURVE_FROM_COINS_SELECTOR_OFFSET": 192,
+          "_CURVE_FROM_COINS_ARG_OFFSET": 200,
+          "_CURVE_TO_COINS_SELECTOR_OFFSET": 208,
+          "_CURVE_TO_COINS_ARG_OFFSET": 216,
+          "_CURVE_FROM_TOKEN_OFFSET": 224,
+          "_CURVE_TO_TOKEN_OFFSET": 232,
+          "_CURVE_SWAP_HAS_ARG_DESTINATION_OFFSET": 244,
+          "_CURVE_SWAP_HAS_ARG_CALLBACK_OFFSET": 249
+        },
+        "selectors": {
+          "unoswap": "0x83800a8e",
+          "unoswap2": "0x8770ba91",
+          "unoswap3": "0x19367472",
+          "ethUnoswap": "0xa76dfc3b",
+          "ethUnoswap2": "0x89af926a"
+        },
+        "curveSwapSelector0": "0x3df02124",
+        "curveSwapSelector2": "0xddc1f59d",
+        "curveCoinsOffset8": "0xc6610657"
+      }
+    },
+    {
+      "name": "router-base",
+      "url": "https://sourcify.dev/server/v2/contract/8453/0x111111125421cA6dc452d289314280a0f8842A65?fields=abi,sources",
+      "runtimeMatch": "exact_match",
+      "creationMatch": "exact_match",
+      "verifiedAt": "2024-08-08T11:06:38Z",
+      "sources": [
+        {
+          "path": "contracts/networks/AggregationRouterV6.base.sol",
+          "sha256": "c4b783a1ff897ccfa39fa9b04a3e75f45f8d337957d7bab2385186b61988f664"
+        }
+      ],
+      "verified": {
+        "v3Factory": "0x33128a8fc17869897dce68ed026d694621f6fdfd",
+        "offsets": {
+          "_PROTOCOL_OFFSET": 253,
+          "_CURVE_SWAP_SELECTOR_IDX_OFFSET": 184,
+          "_CURVE_FROM_COINS_SELECTOR_OFFSET": 192,
+          "_CURVE_FROM_COINS_ARG_OFFSET": 200,
+          "_CURVE_TO_COINS_SELECTOR_OFFSET": 208,
+          "_CURVE_TO_COINS_ARG_OFFSET": 216,
+          "_CURVE_FROM_TOKEN_OFFSET": 224,
+          "_CURVE_TO_TOKEN_OFFSET": 232,
+          "_CURVE_SWAP_HAS_ARG_DESTINATION_OFFSET": 244,
+          "_CURVE_SWAP_HAS_ARG_CALLBACK_OFFSET": 249
+        },
+        "selectors": {
+          "unoswap": "0x83800a8e",
+          "unoswap2": "0x8770ba91",
+          "unoswap3": "0x19367472",
+          "ethUnoswap": "0xa76dfc3b",
+          "ethUnoswap2": "0x89af926a"
+        },
+        "curveSwapSelector0": "0x3df02124",
+        "curveSwapSelector2": "0xddc1f59d",
+        "curveCoinsOffset8": "0xc6610657"
+      }
+    },
+    {
+      "name": "curve-impl",
+      "url": "https://sourcify.dev/server/v2/contract/1/0x67fe41A94e779CcFa22cff02cc2957DC9C0e4286?fields=abi,sources",
+      "runtimeMatch": "match",
+      "creationMatch": "match",
+      "verifiedAt": "2025-01-24T15:39:57Z",
+      "sources": [
+        {
+          "path": "Vyper_contract.vy",
+          "sha256": "a52c3f6faad2ceb70dd482e6c10aaf8fc22d90aab8741be7b25e1ce0f77ce701"
+        }
+      ],
+      "verified": {
+        "selectors": {
+          "coins(uint256)": "0xc6610657",
+          "exchange(int128,int128,uint256,uint256)": "0x3df02124",
+          "exchange(int128,int128,uint256,uint256,address)": "0xddc1f59d"
+        },
+        "initializationGuard": "factory == empty(address)"
+      }
+    },
+    {
+      "name": "uni-addresses",
+      "url": "https://raw.githubusercontent.com/Uniswap/sdks/main/sdks/sdk-core/src/addresses.ts",
+      "sha256": "e58c666c5bf7ee6330cd215561ea1baaa378d2b889ddc953f37a9e36c2a20c0d"
+    },
+    {
+      "name": "uni-v3-hash",
+      "url": "https://raw.githubusercontent.com/Uniswap/sdks/main/sdks/v3-sdk/src/constants.ts",
+      "sha256": "51ea9100cbf6b592d9d23b111d1a85c239f639b3065a3540650b78f89de52ebf"
+    },
+    {
+      "name": "pancake-constants",
+      "url": "https://raw.githubusercontent.com/pancakeswap/pancake-swap-sdk/master/src/constants.ts",
+      "sha256": "1d16cb07eb1e207af4a487830bda4b5342ed160d42739de86c5f531f5dcd2ae6"
+    }
+  ]
+}

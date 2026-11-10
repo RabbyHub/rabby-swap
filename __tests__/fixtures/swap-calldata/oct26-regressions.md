@@ -20,8 +20,9 @@ Negative cases cover mismatched pool assets/direction, unsupported pools/protoco
 native value/unwrap, missing sender, missing output constraints, malformed paths,
 unknown terminal actions and the actual terminal recipient.
 
-`unoswap` remains synchronous: it currently resolves SDK-known assets on canonical
-V3 factories on Ethereum, Optimism, Polygon and Arbitrum, with standard fee tiers.
-Other factories/assets/protocols and native-unwrap variants remain unsupported.
+`unoswap` remains synchronous. The original coverage used SDK-known assets on
+canonical V3 factories on Ethereum, Optimism, Polygon and Arbitrum. See
+[the November 10 deployment check](./oneinch-deployment-check.md) for the current
+BSC/Base, Pancake V1/V2 and verified Curve pool extension and its limitations.
 The 0x zero-slippage branch supports only the verified terminal UNISWAPV3 format;
 unknown terminal actions continue to fail closed.
