@@ -82,6 +82,7 @@ export enum CHAINS_ENUM {
   ROSE = "ROSE",
   GRAVITY = "GRAVITY",
   TAC = "TAC",
+  ELYSIUM = "ELYSIUM",
 }
 
 export interface SwapChain {
@@ -573,5 +574,11 @@ export const CHAINS: Record<CHAINS_ENUM, SwapChain> = {
     id: 239,
     serverId: "tac",
     nativeTokenAddress: "tac",
+  },
+  [CHAINS_ENUM.ELYSIUM]: {
+    enum: CHAINS_ENUM.ELYSIUM,
+    id: 99901,
+    serverId: "elysium",
+    nativeTokenAddress: "elysium",
   },
 };

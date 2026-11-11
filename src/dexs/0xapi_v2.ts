@@ -58,6 +58,7 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.LINEA,
   CHAINS_ENUM.MANTLE,
   "SONIC" as CHAINS_ENUM,
+  "ELYSIUM" as CHAINS_ENUM,
 ];
 
 export const getQuote = generateGetQuote({
