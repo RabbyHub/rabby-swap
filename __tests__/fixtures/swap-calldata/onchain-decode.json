@@ -554,7 +554,7 @@
         "value": "0",
         "chainId": 1
       },
-      "reason": "Curve protocol is outside the supported V2/V3 routes"
+      "reason": "Curve pool is outside the verified pool metadata"
     }
   ]
 }
