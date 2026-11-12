@@ -252,6 +252,34 @@ describe("matchDecodedCalldata", () => {
     expect(matchDecodedCalldata(decoded, quote(), 0.01)).toBe(true);
   });
 
+  it.each<[string, boolean]>([
+    ["900000", true], // A stricter minimum than 940000 * (1 - 10%).
+    ["846000", true],
+    ["803700", true], // Exactly 5% below the expected minimum.
+    ["803699", false],
+    ["0", false],
+    ["-1", false],
+    ["NaN", false],
+    ["Infinity", false],
+  ])("checks the one-sided minimum %s", (minReceive, expected) => {
+    expect(
+      matchDecodedCalldata(
+        { ...decoded, minReceiveToTokenAmount: minReceive },
+        quote({ toTokenAmount: "940000" }),
+        0.1
+      )
+    ).toBe(expected);
+  });
+
+  it.each(["0", "-1", "NaN", "Infinity"])(
+    "rejects an invalid quote amount %s",
+    (toTokenAmount) => {
+      expect(
+        matchDecodedCalldata(decoded, quote({ toTokenAmount }), 0.1)
+      ).toBe(false);
+    }
+  );
+
   it("fails a redirected token or amount", () => {
     expect(
       matchDecodedCalldata(
@@ -281,6 +309,21 @@ describe("matchDecodedCalldata", () => {
 });
 
 describe("verifyCalldata", () => {
+  it.each([DEX_ENUM.ONEINCH, DEX_ENUM.UNI])(
+    "accepts a stricter %s minimum after the quote amount is lowered",
+    (dexId) => {
+      const params = {
+        dexId,
+        data: quote({ toTokenAmount: "940000" }),
+        slippage: 0.1,
+        tx: { ...quote().tx, chainId: 1 },
+        decoded: { ...decoded, minReceiveToTokenAmount: "900000" },
+      };
+      expect(verifyCalldata(params)).toBe(true);
+      expect(calldataMismatchReasons(params)).toEqual([]);
+    }
+  );
+
   it.each([1, 999999999])(
     "rejects decoded mismatches without looking up chain %s",
     (chainId) => {

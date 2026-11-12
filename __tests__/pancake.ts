@@ -103,7 +103,14 @@ describe("[PancakeSwap] PancakeSwap real quote fixtures", () => {
     { name: "input token", mismatch: { fromToken: OTHER } },
     { name: "output token", mismatch: { toToken: OTHER } },
     { name: "input amount", mismatch: { fromTokenAmount: "999999" } },
-    { name: "output amount", mismatch: { toTokenAmount: "1000" } },
+    {
+      name: "output amount above the calldata guarantee",
+      mismatch: {
+        toTokenAmount: new BigNumber(fixtures[0].quote.receive_token_raw_amount)
+          .times(2)
+          .toFixed(0),
+      },
+    },
   ])("rejects a mismatched $name", ({ mismatch }) => {
     const params = sdkParams(fixtures[0]);
     const result = verifySdk({
@@ -114,6 +121,23 @@ describe("[PancakeSwap] PancakeSwap real quote fixtures", () => {
     expect(result.decoded).not.toBeNull();
     expect(result.callDataPass).toBe(false);
     expect(result.isSdkDataPass).toBe(false);
+  });
+
+  it("accepts a lower quote amount with the original minimum guarantee", () => {
+    const params = sdkParams(fixtures[0]);
+    const result = verifySdk({
+      ...params,
+      data: {
+        ...params.data,
+        toTokenAmount: new BigNumber(params.data.toTokenAmount)
+          .times("0.9")
+          .toFixed(0),
+      },
+    });
+
+    expect(result.callDataPass).toBe(true);
+    expect(result.calldataMismatch).toBeUndefined();
+    expect(result.isSdkDataPass).toBe(true);
   });
 
   it("rejects a quote whose encoded recipient is another account", () => {
