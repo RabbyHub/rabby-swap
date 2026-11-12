@@ -7,7 +7,7 @@ import type { QuoteResult } from "../quote";
 import { decodeSwapCalldata } from "./decode";
 import { getComparableNativeInputAmount, isSameAddress } from "../utils";
 
-/** 解码出的 minReceive 相对「报价 × (1-滑点)」允许的相对偏差。 */
+/** 解码出的 minReceive 相对「报价 × (1-滑点)」允许的向下偏差。 */
 export const CALLDATA_MIN_RECEIVE_TOLERANCE = 0.05;
 
 /** 比对失败的稳定原因码。不含地址、金额或 calldata。 */
@@ -23,15 +23,17 @@ export type SwapCalldataMismatch =
   | "min_receive"
   | "non_positive_minimum";
 
-/** 最低到账须为正。允许等于滑点下限的向下取整，或相对偏差不超过 5%。 */
+/** 最低到账须为有限正数。更高的下限通过，偏低时允许向下取整或 5% 容差。 */
 const minReceiveMatches = (
   minReceive: BigNumber,
   minimum: BigNumber
 ) =>
+  minReceive.isFinite() &&
+  minimum.isFinite() &&
   minReceive.gt(0) &&
   minimum.gt(0) &&
-  (minReceive.eq(minimum.integerValue(BigNumber.ROUND_FLOOR)) ||
-    minReceive.minus(minimum).div(minimum).abs().lte(CALLDATA_MIN_RECEIVE_TOLERANCE));
+  (minReceive.gte(minimum.integerValue(BigNumber.ROUND_FLOOR)) ||
+    minimum.minus(minReceive).div(minimum).lte(CALLDATA_MIN_RECEIVE_TOLERANCE));
 
 const mismatchReasons = (
   decoded: DecodeCalldataResult,
