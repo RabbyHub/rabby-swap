@@ -73,6 +73,7 @@ const NATIVE_TOKENS = {
   ["HOOD" as CHAINS_ENUM]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
   ["SEI" as CHAINS_ENUM]: "0x0000000000000000000000000000000000000000",
   ["APE" as CHAINS_ENUM]: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  ["ELYSIUM" as CHAINS_ENUM]: "0x0000000000000000000000000000000000000000",
 } as Partial<Record<CHAINS_ENUM, string>>;
 
 export const SUPPORT_CHAINS = [
@@ -108,6 +109,7 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.CELO,
   "HOOD" as CHAINS_ENUM,
   "APE" as CHAINS_ENUM,
+  "ELYSIUM" as CHAINS_ENUM,
   /**
    * 接口返回 swap error
    */
