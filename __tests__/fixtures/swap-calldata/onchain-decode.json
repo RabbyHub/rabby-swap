@@ -485,6 +485,33 @@
           337
         ]
       }
+    },
+    {
+      "name": "[1inch] unoswap2 Curve -> V3",
+      "dexId": "1inch",
+      "transactionHash": "0xbaa1428a0961ce24ee678ef668473a15a17c5b0782399d9657f0493b46783380",
+      "blockNumber": 26339148,
+      "blockHash": "0xe64fc56713ce99264254649e4c5c0ddfc5365775c9830d5cc1b2d3549db4dc7c",
+      "receiptStatus": "0x1",
+      "explorerUrl": "https://etherscan.io/tx/0xbaa1428a0961ce24ee678ef668473a15a17c5b0782399d9657f0493b46783380",
+      "tx": {
+        "from": "0xdcc2675bbe4d931de00da054c62eb9fcff2175a9",
+        "to": "0x111111125421ca6dc452d289314280a0f8842a65",
+        "data": "0x8770ba91000000000000000000000000856c4efb76c1d1ae02e20ceb03a2a6a08b0b8dc30000000000000000000000000000000000000000000000007e6d1738d995be710000000000000000000000000000000000000000000000006538b36d97089d52481001000108000802000000cc7d5785ad5755b6164e21495e07adb0ff11c2a8200000000000000000000000109830a1aaad605bbf02a9dfa7b0b92ec2fb7daad1f115cb",
+        "value": "0",
+        "chainId": 1
+      },
+      "expected": {
+        "fromToken": "0x856c4efb76c1d1ae02e20ceb03a2a6a08b0b8dc3",
+        "fromTokenAmount": "9109963154176458353",
+        "toToken": "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0",
+        "minReceiveToTokenAmount": "7293776879793249618",
+        "toTokenReceiver": "0xdcc2675bbe4d931de00da054c62eb9fcff2175a9"
+      },
+      "basis": {
+        "output": "Curve OETH/WETH coins checked against official NG registry and RPC; final V3 token0/token1 and fee checked on-chain. Amounts come from encoded unoswap2 arguments.",
+        "receiptRefresh": "Public RPC returned null; historical receipt metadata retained without a fresh receipt claim."
+      }
     }
   ],
   "unsupported": [
@@ -538,23 +565,6 @@
         "chainId": 1
       },
       "reason": "BridgeSettler execute(bytes[],bytes32) is outside Swap decoding"
-    },
-    {
-      "name": "[1inch] unoswap2 Curve -> V3",
-      "dexId": "1inch",
-      "transactionHash": "0xbaa1428a0961ce24ee678ef668473a15a17c5b0782399d9657f0493b46783380",
-      "blockNumber": 26339148,
-      "blockHash": "0xe64fc56713ce99264254649e4c5c0ddfc5365775c9830d5cc1b2d3549db4dc7c",
-      "receiptStatus": "0x1",
-      "explorerUrl": "https://etherscan.io/tx/0xbaa1428a0961ce24ee678ef668473a15a17c5b0782399d9657f0493b46783380",
-      "tx": {
-        "from": "0xdcc2675bbe4d931de00da054c62eb9fcff2175a9",
-        "to": "0x111111125421ca6dc452d289314280a0f8842a65",
-        "data": "0x8770ba91000000000000000000000000856c4efb76c1d1ae02e20ceb03a2a6a08b0b8dc30000000000000000000000000000000000000000000000007e6d1738d995be710000000000000000000000000000000000000000000000006538b36d97089d52481001000108000802000000cc7d5785ad5755b6164e21495e07adb0ff11c2a8200000000000000000000000109830a1aaad605bbf02a9dfa7b0b92ec2fb7daad1f115cb",
-        "value": "0",
-        "chainId": 1
-      },
-      "reason": "Curve pool is outside the verified pool metadata"
     }
   ]
 }

@@ -13,42 +13,18 @@ import {
 } from "../../tokenPools";
 import { getChainById } from "../../chain";
 import { WrapTokenAddressMap } from "../../list";
-import { isSameAddress, NULL_ADDRESS } from "../../utils";
+import { isSameAddress, normalizeEeeeToken, NULL_ADDRESS } from "../../utils";
 import type { DecodeCalldataResult, TxWithChainId } from "../types";
 import { getV2InputPair } from "../uni/universalRouter/v2";
-import { getCurveOutput } from "./curve";
-
-// Official chain-specific deployments and CREATE2 layout:
-// https://github.com/Uniswap/sdks/blob/main/sdks/sdk-core/src/addresses.ts
-// https://github.com/Uniswap/sdks/blob/main/sdks/v3-sdk/src/utils/computePoolAddress.ts
-const defaultV3Factory = "0x1F98431c8aD98523631AE4a59f267346ea31F984";
-const v3Factories: Record<number, string> = {
-  1: defaultV3Factory,
-  10: defaultV3Factory,
-  56: "0xdB1d10011AD0Ff90774D0C6Bb92e5C5c8b4461F7",
-  137: defaultV3Factory,
-  8453: "0x33128a8fC17869897dcE68Ed026d694621f6FDfD",
-  42161: defaultV3Factory,
-};
-const initCodeHash =
-  "0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54";
-const fees = [100, 500, 3000, 10000];
-
-// BSC Pancake V1/V2: INIT_CODE_PAIR_HASH() and getPair() checked on-chain.
-// https://bscscan.com/address/0xbcfccbde45ce874adcb698cc183debcf17952812#readContract
-// https://github.com/pancakeswap/pancake-swap-sdk/blob/master/src/constants.ts
-const extraV2Factories: Record<number, readonly [string, string][]> = {
-  56: [
-    [
-      "0xbcfccbde45ce874adcb698cc183debcf17952812",
-      "0xd0d4c4cd0848c93cb4fd1f498d7013ee6bfb25783ea21593d5834f5d250ece66",
-    ],
-    [
-      "0xca143ce32fe78f1f7019d7d551a6402fc5350c73",
-      "0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5",
-    ],
-  ],
-};
+import { ETH_SENTINEL, getCurveOutput } from "./curve";
+import {
+  CURVE_POOLS,
+  V3_FACTORIES,
+  V3_INIT_CODE_HASH,
+  V3_FEES,
+  EXTRA_V2_FACTORIES,
+  EXTRA_CANDIDATE_TOKENS,
+} from "./config";
 
 const poolAddress = (factory: string, salt: string, codeHash: string) => {
   const hash = soliditySha3Raw(
@@ -68,7 +44,7 @@ const addressOf = (value: Result[number]) =>
 const getPoolOutput = (
   input: string,
   dex: Result[number],
-  candidates: readonly { id: string }[],
+  candidates: readonly string[],
   chainId: number
 ): string | undefined => {
   // Router V6 ProtocolLib stores protocol in bits 253..255 and direction in bit 247.
@@ -78,7 +54,7 @@ const getPoolOutput = (
   if (protocol === 2) return getCurveOutput(input, pool, dex, chainId);
   if (protocol > 1) return undefined;
   const zeroForOne = dex.shr(247).and(1).eq(1);
-  for (const { id: output } of candidates) {
+  for (const output of candidates) {
     if (isSameAddress(input, output)) continue;
     const [token0, token1] = [input.toLowerCase(), output.toLowerCase()].sort();
     if (zeroForOne !== isSameAddress(input, token0)) continue;
@@ -89,13 +65,13 @@ const getPoolOutput = (
         { type: "address", value: token0 },
         { type: "address", value: token1 }
       );
-      for (const [factory, codeHash] of extraV2Factories[chainId] || []) {
+      for (const [factory, codeHash] of EXTRA_V2_FACTORIES[chainId] || []) {
         if (isSameAddress(poolAddress(factory, salt, codeHash), pool))
           return output;
       }
       continue;
     }
-    for (const fee of fees) {
+    for (const fee of V3_FEES) {
       const salt = keccak256(
         defaultAbiCoder.encode(
           ["address", "address", "uint24"],
@@ -104,7 +80,7 @@ const getPoolOutput = (
       );
       if (
         isSameAddress(
-          poolAddress(v3Factories[chainId], salt, initCodeHash),
+          poolAddress(V3_FACTORIES[chainId], salt, V3_INIT_CODE_HASH),
           pool
         )
       )
@@ -124,7 +100,7 @@ export const decodeUnoswap = (
   const amount = nativeInput ? value : new BigNumber(args.amount.toString());
   if (
     !chain ||
-    !v3Factories[tx.chainId] ||
+    !V3_FACTORIES[tx.chainId] ||
     !isAddress(tx.from) ||
     isSameAddress(tx.from, NULL_ADDRESS) ||
     !amount.isInteger() ||
@@ -136,17 +112,31 @@ export const decodeUnoswap = (
   const wrapped =
     WrapTokenAddressMap[chain.enum as keyof typeof WrapTokenAddressMap];
   if (!wrapped) return null;
-  // Skipping the ETH deposit would spend the router's existing WETH balance.
-  if (nativeInput && !args.dex.shr(251).and(1).isZero()) return null;
-  const input = nativeInput ? wrapped : addressOf(args.token);
+  const skipsWrap = nativeInput && !args.dex.shr(251).and(1).isZero();
+  // Only Curve can consume unwrapped msg.value; its coin and ETH flags are checked below.
+  if (skipsWrap && !args.dex.shr(253).eq(2)) return null;
+  const input = nativeInput
+    ? skipsWrap
+      ? ETH_SENTINEL
+      : wrapped
+    : addressOf(args.token);
   if (isSameAddress(input, NULL_ADDRESS)) return null;
   // shortcut: only SDK-known assets on configured V2/V3 factories are resolved;
   // add independently verified factory/asset metadata for new route fixtures.
   const candidates = [
-    ...STABLE_TOKEN_POOL,
-    ...NATIVE_AND_DERIVATIVE_TOKEN_POOL,
-    { chain: chain.serverId, id: wrapped },
-  ].filter((token) => token.chain === chain.serverId && isAddress(token.id));
+    ...new Set(
+      [
+        ...(EXTRA_CANDIDATE_TOKENS[tx.chainId] || []),
+        ...[...STABLE_TOKEN_POOL, ...NATIVE_AND_DERIVATIVE_TOKEN_POOL]
+          .filter((token) => token.chain === chain.serverId)
+          .map((token) => token.id.toLowerCase()),
+        ...Object.values(CURVE_POOLS[tx.chainId] || {}).flatMap(
+          ({ coins }) => coins
+        ),
+        wrapped.toLowerCase(),
+      ].filter((id) => isAddress(id) && !isSameAddress(id, ETH_SENTINEL))
+    ),
+  ];
   const dexes = [args.dex, args.dex2, args.dex3].filter(
     (dex) => dex !== undefined
   );
@@ -158,10 +148,14 @@ export const decodeUnoswap = (
   }
   const unwrap = !dexes[dexes.length - 1].shr(252).and(1).isZero();
   if (unwrap && !isSameAddress(output, wrapped)) return null;
+  const normalizedOutput = normalizeEeeeToken(output, chain.nativeTokenAddress);
   return {
     fromToken: nativeInput ? chain.nativeTokenAddress : input,
     fromTokenAmount: amount.toFixed(0),
-    toToken: unwrap ? chain.nativeTokenAddress : toChecksumAddress(output),
+    toToken:
+      unwrap || isSameAddress(normalizedOutput, chain.nativeTokenAddress)
+        ? chain.nativeTokenAddress
+        : toChecksumAddress(output),
     minReceiveToTokenAmount: args.minReturn.toString(),
     toTokenReceiver: tx.from,
   };

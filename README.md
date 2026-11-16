@@ -1,39 +1,30 @@
-# Calldata tests
+# rabby-swap
 
-Run every DEX's calldata tests (unit cases and recorded quotes):
+English | [简体中文](./README.zh-CN.md)
 
-```sh
-yarn test:swap-calldata
-```
+## Configuration maintenance
 
-Run a single DEX:
+Periodically review these configurations; update as needed for new pools, tokens or contract upgrades:
 
-```sh
-yarn test:swap-calldata:uni
-yarn test:swap-calldata:magpie
-yarn test:swap-calldata:pancake
-yarn test:swap-calldata:sushi
-yarn test:swap-calldata:openocean
-yarn test:swap-calldata:kyberswap
-yarn test:swap-calldata:1inch
-yarn test:swap-calldata:0x
-```
+- [Contract allowlists](./src/list.ts): review router/spender addresses.
+- [1inch configuration](./src/calldata/oneinch/config.ts): factories, candidate tokens and Curve pools.
+- [0x configuration](./src/dexs/0xapi_v2.config.ts): pool tokens and wrapped-token mappings.
+- [Token classification](./src/tokenPools.ts): stablecoin and native/derivative token lists.
 
-DEX-specific commands match the exact `[DEX]` test label, including parameterized
-fixture names. Uni and Magpie also include their router, fee, precision and recipient
-unit cases; PancakeSwap includes its real quotes and `swapExactIn` unit cases.
-The other five DEXes use the complete recorded-quote dataset.
+Verify changes against official sources and on-chain data, then run the affected tests.
+Configuration does not refresh automatically: publish the SDK and update consumers to apply changes.
+Price or TVL changes alone do not require updates.
 
-To investigate a single record or test, use Jest's name filter on the total command:
+## Tests
 
 ```sh
-yarn test:swap-calldata -t '\[OpenOcean\].*#2679 '
-yarn test:swap-calldata -t '\[Uniswap\].*Arc native precision'
+yarn test:swap-calldata                 # All DEXes
+yarn test:swap-calldata:1inch            # 1inch only
+yarn test:swap-calldata:0x               # 0x only
 ```
 
-Unsupported decoders and incorrect results intentionally fail these tests. A null
-decode is never treated as a passing fixture, even if SDK verification skips it.
-These commands run offline; no quote API calls or onchain transactions are made.
+Other DEX suffixes: `uni`, `magpie`, `pancake`, `sushi`, `openocean`, `kyberswap`.
+Tests run offline and do not send transactions.
 
-See [recorded-quote details](./__tests__/fixtures/swap-calldata/other-dex/README.md)
-for dataset provenance and independent expected fields.
+See [regression samples and evidence](./__tests__/fixtures/swap-calldata/swap-parser-regressions.json)
+and [recorded-quote details](./__tests__/fixtures/swap-calldata/other-dex/README.md).
