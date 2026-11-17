@@ -52,7 +52,8 @@ const getPoolOutput = (
   const protocol = dex.shr(253).toNumber();
   const pool = addressOf(dex);
   if (protocol === 2) return getCurveOutput(input, pool, dex, chainId);
-  if (protocol > 1) return undefined;
+  if (protocol > 1 || (protocol === 1 && !V3_FACTORIES[chainId]))
+    return undefined;
   const zeroForOne = dex.shr(247).and(1).eq(1);
   for (const output of candidates) {
     if (isSameAddress(input, output)) continue;
@@ -100,7 +101,6 @@ export const decodeUnoswap = (
   const amount = nativeInput ? value : new BigNumber(args.amount.toString());
   if (
     !chain ||
-    !V3_FACTORIES[tx.chainId] ||
     !isAddress(tx.from) ||
     isSameAddress(tx.from, NULL_ADDRESS) ||
     !amount.isInteger() ||

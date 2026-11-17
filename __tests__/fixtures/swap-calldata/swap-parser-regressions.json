@@ -3941,6 +3941,547 @@
         ]
       },
       "note": "Constructed parser tests are not evidence of successful swap execution. API TVL was used only for selection, not as a trust or safety classification."
+    },
+    "independent": {
+      "date": "2026-11-17",
+      "timezone": "Asia/Shanghai",
+      "baseCommit": "e60ac5a",
+      "reviewedHead": "0a2d680",
+      "scope": "Branch changes relative to main, including the local strictness fixes. Official sources and fresh RPC responses were fetched independently of previous evidence.",
+      "sourceFileSha256": {
+        "src/calldata/oneinch/config.ts": "c7b95c0949b6d739233378931325aa2dcdcb576eb0585777532a842223adc27f",
+        "src/calldata/oneinch/curve.ts": "62920dc0c82387f1d96b888a457bb04d476716899518a46c1bff8b3f57b8842d",
+        "src/calldata/oneinch/unoswap.ts": "b8c4e843d21a6aedb562ac623b6511cf8789317aef48bc7600f219c2c12f1bac",
+        "src/dexs/0xapi_v2.config.ts": "d42f7fc2af97d80b7d5df1dc86b3eeda0e6c50a1b35a6594195313f0a78bb665",
+        "src/dexs/0xapi_v2.ts": "7d3d4cf37bc19cae1cac59e9e077113a120918dca32b30ff8cc4e063572ebe57",
+        "src/verify/calldata.ts": "892c9e303c607cacffc13ee3bb292467a0ac6deda0c99212c1b21ac1f8e8ad7e"
+      },
+      "blocks": {
+        "1": {
+          "number": "0x193567c",
+          "hash": "0xf9e54dc9d5947ecbc2da152b56af8ef60bf175b220b9fcbed14d31357f012d72",
+          "timestamp": "0x6afbfc3b"
+        },
+        "56": {
+          "number": "0x7fdd755",
+          "hash": "0xffd077b4e063fb266f24faf21a4371afac29074c88136a88bf07e903177c59ad",
+          "timestamp": "0x6afbfc43"
+        },
+        "137": {
+          "number": "0x5cf285a",
+          "hash": "0x17e9df3e8033908b110e4ff10c5df5d922341dc5a31cdf381dc2168c46b22713",
+          "timestamp": "0x6afbfc44"
+        },
+        "43114": {
+          "number": "0x5fe29f7",
+          "hash": "0xf74977896a8ae90b4c3220b48bb0857944d2ac713d4fc9b389378b418d13bd71",
+          "timestamp": "0x6afbfc47"
+        },
+        "59144": {
+          "number": "0x1f1e3a2",
+          "hash": "0xdbd7b62fa69d2118fdea7658b46f1e089ada81bbe68811a2f50b4173b19484c1",
+          "timestamp": "0x6afbfc36"
+        },
+        "8453": {
+          "number": "0x37d4c72",
+          "hash": "0x57dbcbc372d7d66dd69c4bf81385b2719cfb1349fbd370414d031ac1bb833070",
+          "timestamp": "0x6afbfc4b"
+        },
+        "10": {
+          "number": "0x9841196",
+          "hash": "0x4514a2d40199b1934d47042d7fb229a5ed21839e6f5d9b40aa3c0ea48ffca8bc",
+          "timestamp": "0x6afbfce5"
+        },
+        "42161": {
+          "number": "0x1f4a6359",
+          "hash": "0x81a602783b13af2b3c68f90b47950c872918c5bda8fb5a2b13249e89539f7eff",
+          "timestamp": "0x6afbfce6"
+        }
+      },
+      "rpc": {
+        "1": "https://ethereum-rpc.publicnode.com",
+        "10": "https://optimism-rpc.publicnode.com",
+        "56": "https://bsc-rpc.publicnode.com",
+        "137": "https://polygon-bor-rpc.publicnode.com",
+        "42161": "https://arbitrum-one-rpc.publicnode.com",
+        "43114": "https://avalanche-c-chain-rpc.publicnode.com",
+        "59144": "https://linea-rpc.publicnode.com",
+        "8453": "https://base-rpc.publicnode.com"
+      },
+      "results": {
+        "curvePools": 84,
+        "curveCoinReads": 173,
+        "curveOfficialListMatches": 84,
+        "curveAbiMatches": 84,
+        "curveVerifiedAbi": 82,
+        "curveOfficialSdkAbiWithOnchainSelectors": 2,
+        "v2FactoryCreate2Matches": 9,
+        "candidateAndQuotePoolRegistrations": 8,
+        "fewWrapperMappings": 3,
+        "independentSampleMatches": 92,
+        "targetedTests": 464
+      },
+      "method": "All configured Curve coins were read at the pinned blocks and matched to current official Curve pool lists. Exchange ABI was checked against verified pool/implementation ABIs, or official SDK ABI plus on-chain selectors for two legacy direct pools. V2 getPair and V3 getPool results were cross-checked with CREATE2. The 92 samples were reconciled using ABI fields and fresh chain metadata without calling the SDK decoder.",
+      "sources": [
+        {
+          "name": "oneinch",
+          "url": "https://sourcify.dev/server/v2/contract/1/0x111111125421ca6dc452d289314280a0f8842a65?fields=abi,sources",
+          "sha256": "b552f7438217e13ca805ad2d17028f08194632570463276c5b581c3807c8a982"
+        },
+        {
+          "name": "few-router",
+          "url": "https://sourcify.dev/server/v2/contract/1/0x39d1d8fcc5e6eeaf567bce4e29b94fec956d3519?fields=abi,sources",
+          "sha256": "2cc14d53707a819a7b2fdf98c9ef86c8ecb9353d5e954258fee7158f034e8591"
+        },
+        {
+          "name": "few-wrapper",
+          "url": "https://sourcify.dev/server/v2/contract/1/0xc4ae7165b8923558528b1067cb4bed45dc249bf6?fields=abi,sources",
+          "sha256": "8ec323f7bd315a9df5c9585c2a44bb916d53bf62bae444244bc5341c811b2783"
+        },
+        {
+          "name": "quickswap",
+          "url": "https://sourcify.dev/server/v2/contract/137/0x5757371414417b8c6caad45baef941abc7d3ab32?fields=abi,sources",
+          "sha256": "28b05e91649360bea2213c5488648c51826617cb71d05d76accbc782bcc9e325"
+        },
+        {
+          "name": "sushi-addresses",
+          "url": "https://raw.githubusercontent.com/sushiswap/sdk/master/packages/core/src/constants/addresses.ts",
+          "sha256": "f30e077b7f6567ead223296cc80ec9b21a303559a591576a550146d31dc4cb6e"
+        },
+        {
+          "name": "sushi-hash",
+          "url": "https://raw.githubusercontent.com/sushiswap/sdk/master/packages/core/src/constants/legacy.ts",
+          "sha256": "1a0924454783801b6b85589fdc5010ff9e4ecb70ff372ccd7db01b17a7c858a4"
+        },
+        {
+          "name": "uni-deployments",
+          "url": "https://developers.uniswap.org/deployments.json",
+          "sha256": "e7f28b9e538fb3b49ebf065b97fa837c04ba2b91b9ad18efa97722fbddb91e13"
+        },
+        {
+          "name": "curve-networks",
+          "url": "https://raw.githubusercontent.com/curvefi/curve-js/master/src/constants/network_constants.ts",
+          "sha256": "d5c40bf43474f38994faa440ba5976d58bd016fc38d09aab4e36cfb4f2398979"
+        },
+        {
+          "name": "0x-ISettlerActions",
+          "url": "https://raw.githubusercontent.com/0xProject/0x-settler/master/src/ISettlerActions.sol",
+          "sha256": "aba9e554f91718f9717f39a344ab3c4b8d449f7af013c52a1b74ca44db905681"
+        },
+        {
+          "name": "0x-SettlerBase",
+          "url": "https://raw.githubusercontent.com/0xProject/0x-settler/master/src/SettlerBase.sol",
+          "sha256": "d7da3962d0a5e7ed0e23ba71daa4b041a6deb2d66889859770aabc5aaf846f08"
+        },
+        {
+          "name": "0x-core-Bebop",
+          "url": "https://raw.githubusercontent.com/0xProject/0x-settler/master/src/core/Bebop.sol",
+          "sha256": "4ef37431165ef3c28aa0c8bae953c062c18541bf64299541926147349d11c36d"
+        },
+        {
+          "name": "0x-core-UniswapV2",
+          "url": "https://raw.githubusercontent.com/0xProject/0x-settler/master/src/core/UniswapV2.sol",
+          "sha256": "76b9c816d7c1e88fb63e284cd793fa511fcd2396d8f74ae2e03b1e9095eab51c"
+        },
+        {
+          "name": "0x-core-Basic",
+          "url": "https://raw.githubusercontent.com/0xProject/0x-settler/master/src/core/Basic.sol",
+          "sha256": "375724571b1c9175a9acb2a3fb0af83db63a86cc6a5e78216eedbce6f1e92b01"
+        },
+        {
+          "name": "curve-sdk-ethereum",
+          "url": "https://raw.githubusercontent.com/curvefi/curve-js/master/src/constants/pools/ethereum.ts",
+          "sha256": "7c0ff7447cd2b77f8683445ea5da505c2c798e0bcd3322a5c9a8794965411bf4"
+        },
+        {
+          "name": "curve-api-ethereum-main",
+          "url": "https://api.curve.finance/v1/getPools/ethereum/main",
+          "sha256": "8d5a6a3be7e9c073a4b48b2414d187dcda1c725c0ad18d745a199850d758704d"
+        },
+        {
+          "name": "curve-api-ethereum-factory",
+          "url": "https://api.curve.finance/v1/getPools/ethereum/factory",
+          "sha256": "ac3eda0db3747cce8461a109f8e1df64e87166c9568139529bf8853eedba530a"
+        },
+        {
+          "name": "curve-api-ethereum-factory-stable-ng",
+          "url": "https://api.curve.finance/v1/getPools/ethereum/factory-stable-ng",
+          "sha256": "7a13f9d81803fd7f420e13637fe07d42bd809680bc7be62be1d76c63221d5d04"
+        },
+        {
+          "name": "curve-sdk-optimism",
+          "url": "https://raw.githubusercontent.com/curvefi/curve-js/master/src/constants/pools/optimism.ts",
+          "sha256": "b15a16421df2aa2456d06f772da38fd10ce6121779ad0b16f4c79966df07d1b2"
+        },
+        {
+          "name": "curve-api-optimism-main",
+          "url": "https://api.curve.finance/v1/getPools/optimism/main",
+          "sha256": "311cbe21f0c5de8c9b0ad817f218af769e789333def416201dc401e652f31c69"
+        },
+        {
+          "name": "curve-api-optimism-factory",
+          "url": "https://api.curve.finance/v1/getPools/optimism/factory",
+          "sha256": "fe0b01224816def3126979759dcfb5edcd8c82a465ec6e05fe31b8be5ee3be45"
+        },
+        {
+          "name": "curve-api-optimism-factory-stable-ng",
+          "url": "https://api.curve.finance/v1/getPools/optimism/factory-stable-ng",
+          "sha256": "97abc07531abb75f51e14a07b80b14ba927ff19150e7611259650d9f99edb789"
+        },
+        {
+          "name": "curve-sdk-polygon",
+          "url": "https://raw.githubusercontent.com/curvefi/curve-js/master/src/constants/pools/polygon.ts",
+          "sha256": "59262dc8c4ae880975ff52f5f80f4033794019970210a0cdcefd33957e720fb7"
+        },
+        {
+          "name": "curve-api-polygon-main",
+          "url": "https://api.curve.finance/v1/getPools/polygon/main",
+          "sha256": "a8bc813ba1ac407a657fa7728fea056cb9baea813da87cfee5b98ed18f08c8cc"
+        },
+        {
+          "name": "curve-api-polygon-factory",
+          "url": "https://api.curve.finance/v1/getPools/polygon/factory",
+          "sha256": "77a5b3465ef3705aa275c9a55a6b535b1391f7e145b275aacf6ed843c33f85fa"
+        },
+        {
+          "name": "curve-api-polygon-factory-stable-ng",
+          "url": "https://api.curve.finance/v1/getPools/polygon/factory-stable-ng",
+          "sha256": "3c0b3c607bd0d89fa3cc24872864cbfb1cfaff2a5a94f9d8aaca283a52194994"
+        },
+        {
+          "name": "curve-sdk-arbitrum",
+          "url": "https://raw.githubusercontent.com/curvefi/curve-js/master/src/constants/pools/arbitrum.ts",
+          "sha256": "2278ce5cb1633312a6057b134b74a75602655671263977e73d9147238348e045"
+        },
+        {
+          "name": "curve-api-arbitrum-main",
+          "url": "https://api.curve.finance/v1/getPools/arbitrum/main",
+          "sha256": "426850c33a4459cdc00aef46566996989dd4a2bd7cf2f5a9c93f053a7173e2e1"
+        },
+        {
+          "name": "curve-api-arbitrum-factory",
+          "url": "https://api.curve.finance/v1/getPools/arbitrum/factory",
+          "sha256": "680c66f53093e6046287533acc337c8338cc3d6fd283f4a0b91f2cad7a8d6687"
+        },
+        {
+          "name": "curve-api-arbitrum-factory-stable-ng",
+          "url": "https://api.curve.finance/v1/getPools/arbitrum/factory-stable-ng",
+          "sha256": "7f21ed23b40dd7a7a11ac338d81b4bf34810628bdded0bc96fc3c68283459016"
+        },
+        {
+          "name": "curve-api-ethereum-factory-crvusd",
+          "url": "https://api.curve.finance/v1/getPools/ethereum/factory-crvusd",
+          "sha256": "82963af46855d0f91291350422d4ba13292388b775a9f78ae2a34b2d5e89d423"
+        }
+      ],
+      "curveAbiOverrides": [
+        {
+          "chainId": 1,
+          "address": "0x390f3595bca2df7d23783dfd126427cceb997bf4",
+          "url": "https://sourcify.dev/server/v2/contract/1/0x67fe41a94e779ccfa22cff02cc2957dc9c0e4286?fields=abi",
+          "implementation": "0x67fe41a94e779ccfa22cff02cc2957dc9c0e4286",
+          "match": "match",
+          "sha256": "6fe7bac6ee106fb5d38ec18bc729879a809e67419c5ffa7f8bbeedc3faebedac",
+          "exchange": "exchange(int128,int128,uint256,uint256,address)"
+        },
+        {
+          "chainId": 1,
+          "address": "0x21e27a5e5513d6e65c4f830167390997aa84843a",
+          "url": "https://sourcify.dev/server/v2/contract/1/0x847ee1227a9900b73aeeb3a47fac92c52fd54ed9?fields=abi",
+          "implementation": "0x847ee1227a9900b73aeeb3a47fac92c52fd54ed9",
+          "match": "match",
+          "sha256": "672c46ec81ba68ae75646c628bce3e39a1e0d9e51c76046cf9f6c520948bd065",
+          "exchange": "exchange(int128,int128,uint256,uint256)",
+          "payable": true
+        },
+        {
+          "chainId": 1,
+          "address": "0x4ca9b3063ec5866a4b82e437059d2c43d1be596f",
+          "url": "https://raw.githubusercontent.com/curvefi/curve-js/master/src/constants/abis/hbtc/swap.json",
+          "match": "official-sdk-abi",
+          "sha256": "2f1f4033301199d00157b3e4b648b094ff4558787f5e8330212a4353e6fd48ce",
+          "exchange": "exchange(int128,int128,uint256,uint256)"
+        },
+        {
+          "chainId": 1,
+          "address": "0xf178c0b5bb7e7abf4e12a4838c7b7c5ba2c623c0",
+          "url": "https://raw.githubusercontent.com/curvefi/curve-js/master/src/constants/abis/link/swap.json",
+          "match": "official-sdk-abi",
+          "sha256": "a61b0fb0d0e41074d50a92c42aecb15667f45371ca99481e909c42c6f06a1201",
+          "exchange": "exchange(int128,int128,uint256,uint256)"
+        },
+        {
+          "chainId": 1,
+          "address": "0xfd5db7463a3ab53fd211b4af195c5bccc1a03890",
+          "url": "https://sourcify.dev/server/v2/contract/1/0x6523ac15ec152cb70a334230f6c5d62c5bd963f1?fields=abi",
+          "implementation": "0x6523ac15ec152cb70a334230f6c5d62c5bd963f1",
+          "match": "match",
+          "sha256": "514400a98521b4a22e1ae7a6d52cadfa9461cda6866b3ff30f00510d12a9f7b0",
+          "exchange": "exchange(int128,int128,uint256,uint256)"
+        },
+        {
+          "chainId": 10,
+          "address": "0x29a3d66b30bc4ad674a4fdaf27578b64f6afbfe7",
+          "url": "https://sourcify.dev/server/v2/contract/10/0xc2b1df84112619d190193e48148000e3990bf627?fields=abi",
+          "implementation": "0xc2b1df84112619d190193e48148000e3990bf627",
+          "match": "match",
+          "sha256": "a5f7e16c3c98d5d2b159b15318cb11759f75a6f8aba0dca8c1f84d41d60a3ef5",
+          "exchange": "exchange(int128,int128,uint256,uint256)"
+        },
+        {
+          "chainId": 42161,
+          "address": "0xc9b8a3fdecb9d5b218d02555a8baf332e5b740d5",
+          "url": "https://sourcify.dev/server/v2/contract/42161/0x54e8a25d0ac0e4945b697c80b8372445fea17a62?fields=abi",
+          "implementation": "0x54e8a25d0ac0e4945b697c80b8372445fea17a62",
+          "match": "match",
+          "sha256": "35d6193002c0aea84dde3cf9261fba69790d44255e76bfe06a7fc52e1656afa3",
+          "exchange": "exchange(int128,int128,uint256,uint256)"
+        }
+      ],
+      "v2Factories": [
+        {
+          "chainId": 1,
+          "factory": "0xc0aee478e3658e2610c5f7a4a2e1777ce9e4f2ac",
+          "pool": "0x397ff1542f962076d0bfe58ea045ffa2d347aca0",
+          "tokens": [
+            "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+          ],
+          "initCodeHash": "0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303",
+          "block": "0x193567c",
+          "match": true
+        },
+        {
+          "chainId": 56,
+          "factory": "0xc35dadb65012ec5796536bd9864ed8773abc74c4",
+          "pool": "0x2905817b020fd35d9d09672946362b62766f0d69",
+          "tokens": [
+            "0x55d398326f99059ff775485246999027b3197955",
+            "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+          ],
+          "initCodeHash": "0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303",
+          "block": "0x7fdd755",
+          "match": true
+        },
+        {
+          "chainId": 56,
+          "factory": "0xbcfccbde45ce874adcb698cc183debcf17952812",
+          "pool": "0x20bcc3b8a0091ddac2d0bc30f68e6cbb97de59cd",
+          "tokens": [
+            "0x55d398326f99059ff775485246999027b3197955",
+            "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+          ],
+          "initCodeHash": "0xd0d4c4cd0848c93cb4fd1f498d7013ee6bfb25783ea21593d5834f5d250ece66",
+          "block": "0x7fdd755",
+          "match": true
+        },
+        {
+          "chainId": 56,
+          "factory": "0xca143ce32fe78f1f7019d7d551a6402fc5350c73",
+          "pool": "0x16b9a82891338f9ba80e2d6970fdda79d1eb0dae",
+          "tokens": [
+            "0x55d398326f99059ff775485246999027b3197955",
+            "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+          ],
+          "initCodeHash": "0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5",
+          "block": "0x7fdd755",
+          "match": true
+        },
+        {
+          "chainId": 137,
+          "factory": "0x5757371414417b8c6caad45baef941abc7d3ab32",
+          "pool": "0x2cf7252e74036d1da831d11089d326296e64a728",
+          "tokens": [
+            "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
+            "0xc2132d05d31c914a87c6611c10748aeb04b58e8f"
+          ],
+          "initCodeHash": "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",
+          "block": "0x5cf285a",
+          "match": true
+        },
+        {
+          "chainId": 137,
+          "factory": "0xc35dadb65012ec5796536bd9864ed8773abc74c4",
+          "pool": "0x4b1f1e2435a9c96f7330faea190ef6a7c8d70001",
+          "tokens": [
+            "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
+            "0xc2132d05d31c914a87c6611c10748aeb04b58e8f"
+          ],
+          "initCodeHash": "0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303",
+          "block": "0x5cf285a",
+          "match": true
+        },
+        {
+          "chainId": 42161,
+          "factory": "0xc35dadb65012ec5796536bd9864ed8773abc74c4",
+          "pool": "0x905dfcd5649217c42684f23958568e533c711aa3",
+          "tokens": [
+            "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
+            "0xff970a61a04b1ca14834a43f5de4533ebddb5cc8"
+          ],
+          "initCodeHash": "0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303",
+          "block": "0x1f4a6359",
+          "match": true
+        },
+        {
+          "chainId": 43114,
+          "factory": "0x9e5A52f57b3038F1B8EeE45F28b3C1967e22799C",
+          "pool": "0xdf1aa61231ea420041cfd9e92b4d6e3e5575dfed",
+          "tokens": [
+            "0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7",
+            "0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e"
+          ],
+          "initCodeHash": "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",
+          "block": "0x5fe29f7",
+          "match": true
+        },
+        {
+          "chainId": 59144,
+          "factory": "0x114A43DF6C5f54EBB8A9d70Cd1951D3dD68004c7",
+          "pool": "0xc38cadb38476cb622d784c280fc03b8b2155a0a6",
+          "tokens": [
+            "0x176211869ca2b568f2a7d4ee941e073a821ee1ff",
+            "0xa219439258ca9da29e9cc4ce5596924745e12b93"
+          ],
+          "initCodeHash": "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",
+          "block": "0x1f1e3a2",
+          "match": true
+        }
+      ],
+      "candidateAndQuotePools": [
+        {
+          "address": "0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b",
+          "protocol": 1,
+          "direction": 0,
+          "chainId": 1,
+          "token0": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+          "token1": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+          "factory": "0x1f98431c8ad98523631ae4a59f267346ea31f984",
+          "fee": 100,
+          "block": "0x193567c",
+          "registered": true,
+          "create2Matches": true
+        },
+        {
+          "address": "0xec7a1a2896d4b9d7014fa7be2aa936c8a76a8072",
+          "protocol": 0,
+          "direction": 0,
+          "chainId": 1,
+          "token0": "0x9b99cca871be05119b2012fd4474731dd653febe",
+          "token1": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+          "factory": "0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f",
+          "block": "0x193567c",
+          "registered": true,
+          "create2Matches": true
+        },
+        {
+          "address": "0x2097892ad844caa3fb2dff0b3013fdb63b917753",
+          "protocol": 1,
+          "direction": 0,
+          "chainId": 1,
+          "token0": "0x1fac00ccee478eced6a120a50ed2ab28ee7fe32b",
+          "token1": "0x9b99cca871be05119b2012fd4474731dd653febe",
+          "factory": "0x1f98431c8ad98523631ae4a59f267346ea31f984",
+          "fee": 10000,
+          "block": "0x193567c",
+          "registered": true,
+          "create2Matches": true
+        },
+        {
+          "address": "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640",
+          "protocol": 1,
+          "direction": 0,
+          "chainId": 1,
+          "token0": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "token1": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+          "factory": "0x1f98431c8ad98523631ae4a59f267346ea31f984",
+          "fee": 500,
+          "block": "0x193567c",
+          "registered": true,
+          "create2Matches": true
+        },
+        {
+          "address": "0x463a60837d50cc8901cd314ae454331260a8fff9",
+          "protocol": 1,
+          "direction": 1,
+          "chainId": 1,
+          "token0": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "token1": "0xe7c6bf469e97eeb0bfb74c8dbff5bd47d4c1c98a",
+          "factory": "0x1f98431c8ad98523631ae4a59f267346ea31f984",
+          "fee": 10000,
+          "block": "0x193567c",
+          "registered": true,
+          "create2Matches": true
+        },
+        {
+          "chainId": 137,
+          "address": "0x59153f27eefe07e5ece4f9304ebba1da6f53ca88",
+          "protocol": 0,
+          "block": "0x5cf2a4f",
+          "token0": "0x8f3cf7ad23cd3cadbd9735aff958023239c6a063",
+          "token1": "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
+          "factory": "0x5757371414417b8c6caad45baef941abc7d3ab32",
+          "registered": true
+        },
+        {
+          "chainId": 1,
+          "address": "0x31d0e24bdb9359a09d810623112e257dabf0e974",
+          "protocol": 1,
+          "block": "0x193567c",
+          "token0": "0x7c135549504245b5eae64fc0e99fa5ebabb8e35d",
+          "token1": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+          "factory": "0x1f98431c8ad98523631ae4a59f267346ea31f984",
+          "fee": 100,
+          "registered": true
+        },
+        {
+          "chainId": 1,
+          "address": "0xbb5b761415a58d944fcb81313b204f895637d20c",
+          "protocol": 1,
+          "block": "0x193567c",
+          "token0": "0x7c135549504245b5eae64fc0e99fa5ebabb8e35d",
+          "token1": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "factory": "0x1f98431c8ad98523631ae4a59f267346ea31f984",
+          "fee": 100,
+          "registered": true
+        }
+      ],
+      "fewWrappers": [
+        {
+          "chainId": 1,
+          "address": "0xa250cc729bb3323e7933022a67b52200fe354767",
+          "token": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+          "block": "0x193567c"
+        },
+        {
+          "chainId": 1,
+          "address": "0xc4ae7165b8923558528b1067cb4bed45dc249bf6",
+          "token": "0xcabd955322dfbf94c084929ac5e9eca3feb5556f",
+          "block": "0x193567c"
+        },
+        {
+          "chainId": 1,
+          "address": "0x8e07d2ffa9bcffefec05d7268d07bacd16c5aa67",
+          "token": "0x2d1f7226bd1f780af6b9a49dcc0ae00e8df4bdee",
+          "block": "0x193567c"
+        }
+      ],
+      "transactionRefresh": [
+        {
+          "hash": "0xd34be297d69f9e2fcde3646cc807a03a4746df3f56bfc1ed08c79a32de3f0223",
+          "transactionMatches": true,
+          "receiptError": "HTTP Error 403: Forbidden"
+        },
+        {
+          "hash": "0xa3509f98b45bab775b5e2afd513171013f6cff888f5be1faea01ba3bd431ccdb",
+          "transactionMatches": true,
+          "receiptError": "HTTP Error 403: Forbidden"
+        }
+      ],
+      "limitations": [
+        "The two historical transaction inputs were fetched and matched, but receipt endpoints returned null or HTTP 403. Existing receipt metadata is retained without claiming fresh receipt verification.",
+        "Captured quotes and constructed tests were not broadcast or simulated; this validates parser semantics and metadata, not current quote executability."
+      ]
     }
   }
 }

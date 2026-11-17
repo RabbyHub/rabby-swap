@@ -20,8 +20,7 @@ export type SwapCalldataMismatch =
   | "from_token"
   | "from_amount"
   | "to_token"
-  | "min_receive"
-  | "non_positive_minimum";
+  | "min_receive";
 
 /** 最低到账须为有限正数。更高的下限通过，偏低时允许向下取整或 5% 容差。 */
 const minReceiveMatches = (
@@ -38,16 +37,12 @@ const minReceiveMatches = (
 const mismatchReasons = (
   decoded: DecodeCalldataResult,
   quote: QuoteResult,
-  slippageRatio: string | number,
-  requirePositiveMinimum = false
+  slippageRatio: string | number
 ): SwapCalldataMismatch[] => {
   const minimum = new BigNumber(quote.toTokenAmount).times(
     new BigNumber(1).minus(slippageRatio)
   );
   const reasons: SwapCalldataMismatch[] = [];
-  if (requirePositiveMinimum && !minimum.gt(0)) {
-    reasons.push("non_positive_minimum");
-  }
   if (!isSameAddress(decoded.fromToken, quote.fromToken)) {
     reasons.push("from_token");
   }
@@ -68,10 +63,10 @@ export const matchDecodedCalldata = (
   decoded: DecodeCalldataResult,
   quote: QuoteResult,
   slippageRatio: string | number,
-  requirePositiveMinimum = false
+  // 保留旧调用签名；最低到账已统一要求为正数。
+  _requirePositiveMinimum?: boolean
 ) => {
-  return mismatchReasons(decoded, quote, slippageRatio, requirePositiveMinimum)
-    .length === 0;
+  return mismatchReasons(decoded, quote, slippageRatio).length === 0;
 };
 
 export type VerifyCalldataParams = {
@@ -128,8 +123,7 @@ export const calldataMismatchReasons = (
     return mismatchReasons(
       { ...decoded, fromTokenAmount: inputAmount },
       { ...p.data, fromTokenAmount: requestedAmount },
-      p.slippage,
-      true
+      p.slippage
     );
   }
   if (shouldSkipCalldataMatch(p.slippage, decoded, p.data, p.tx)) return [];

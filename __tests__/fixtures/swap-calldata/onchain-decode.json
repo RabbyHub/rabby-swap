@@ -512,11 +512,9 @@
         "output": "Curve OETH/WETH coins checked against official NG registry and RPC; final V3 token0/token1 and fee checked on-chain. Amounts come from encoded unoswap2 arguments.",
         "receiptRefresh": "Public RPC returned null; historical receipt metadata retained without a fresh receipt claim."
       }
-    }
-  ],
-  "unsupported": [
+    },
     {
-      "name": "[1inch] unoswap3 with assets outside SDK candidates",
+      "name": "[1inch] unoswap3 USDT -> WETH -> MATTER -> TUNE",
       "dexId": "1inch",
       "transactionHash": "0xd34be297d69f9e2fcde3646cc807a03a4746df3f56bfc1ed08c79a32de3f0223",
       "blockNumber": 26337823,
@@ -530,10 +528,21 @@
         "value": "0",
         "chainId": 1
       },
-      "reason": "Intermediate and output assets are outside the SDK candidate list"
+      "expected": {
+        "fromToken": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+        "fromTokenAmount": "10000000",
+        "toToken": "0x1fac00ccee478eced6a120a50ed2ab28ee7fe32b",
+        "minReceiveToTokenAmount": "23285338923197374966671",
+        "toTokenReceiver": "0x2f6c24fcace697f8f52d14c94a57e9eb1e2666a1"
+      },
+      "verification": {
+        "date": "2026-11-17",
+        "output": "Each pool token0/token1, factory and fee was read independently; getPair/getPool and CREATE2 matched. See swap-parser-regressions.json evidence.independent.",
+        "receiptRefresh": "Transaction input refreshed and matched. Receipt queries returned null/HTTP 403; historical receipt metadata retained without a fresh success claim."
+      }
     },
     {
-      "name": "[1inch] ethUnoswap2 with an output outside SDK candidates",
+      "name": "[1inch] ethUnoswap2 WETH -> USDC -> HSK",
       "dexId": "1inch",
       "transactionHash": "0xa3509f98b45bab775b5e2afd513171013f6cff888f5be1faea01ba3bd431ccdb",
       "blockNumber": 26321752,
@@ -547,8 +556,21 @@
         "value": "353082909250759",
         "chainId": 1
       },
-      "reason": "Output asset is outside the SDK candidate list"
-    },
+      "expected": {
+        "fromToken": "eth",
+        "fromTokenAmount": "353082909250759",
+        "toToken": "0xe7c6bf469e97eeb0bfb74c8dbff5bd47d4c1c98a",
+        "minReceiveToTokenAmount": "8795298402798177200",
+        "toTokenReceiver": "0xdec2b0e211a4a70d7d8863a57359a503bc77df4b"
+      },
+      "verification": {
+        "date": "2026-11-17",
+        "output": "Each pool token0/token1, factory and fee was read independently; getPair/getPool and CREATE2 matched. See swap-parser-regressions.json evidence.independent.",
+        "receiptRefresh": "Transaction input refreshed and matched. Receipt queries returned null/HTTP 403; historical receipt metadata retained without a fresh success claim."
+      }
+    }
+  ],
+  "unsupported": [
     {
       "name": "[0xAPIV2] exec targeting BridgeSettler",
       "dexId": "0xAPIV2",

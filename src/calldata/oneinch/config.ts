@@ -51,6 +51,12 @@ export const EXTRA_V2_FACTORIES: Record<number, readonly [string, string][]> = {
 
 // 补充候选币，仅用于解析，不影响币种分类。
 export const EXTRA_CANDIDATE_TOKENS: Record<number, readonly string[]> = {
+  // 已核实池中的 MATTER、TUNE、HSK，仅作为解析候选。
+  1: [
+    "0x9b99cca871be05119b2012fd4474731dd653febe",
+    "0x1fac00ccee478eced6a120a50ed2ab28ee7fe32b",
+    "0xe7c6bf469e97eeb0bfb74c8dbff5bd47d4c1c98a",
+  ],
   // Polygon WETH，非 WPOL。
   137: ["0x7ceb23fd6bc0add59e62ac25578270cff1b9f619"],
 };

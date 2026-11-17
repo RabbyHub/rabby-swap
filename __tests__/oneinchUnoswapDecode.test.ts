@@ -116,6 +116,35 @@ const dexFor = (sample: (typeof pools)[number]) =>
     .or(sample.input < sample.output ? direction : 0);
 
 describe("[1inch] chain-specific unoswap decoding only", () => {
+  it.each([
+    // Factory.getPair checked at the blocks recorded in evidence.independent.
+    [
+      43114,
+      "0xdf1aa61231ea420041cfd9e92b4d6e3e5575dfed",
+      "0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
+      "0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7",
+    ],
+    [
+      59144,
+      "0xc38cadb38476cb622d784c280fc03b8b2155a0a6",
+      "0x176211869ca2b568f2a7d4ee941e073a821ee1ff",
+      "0xa219439258ca9da29e9cc4ce5596924745e12b93",
+    ],
+  ] as const)(
+    "decodes V2 without V3 configuration on chain %s",
+    (chainId, pool, input, output) => {
+      const dex = BigNumber.from(pool)
+        .or(BigNumber.from(997000000).shl(160))
+        .or(input < output ? direction : 0);
+      const data = (value: BigNumber) =>
+        abi.encodeFunctionData("unoswap", [input, amount, minimum, value]);
+      expect(normalize(decode(data(dex), chainId))).toEqual(expected(input, output));
+      expect(decode(data(dex.add(1)), chainId)).toBeNull();
+      expect(decode(data(dex.xor(direction)), chainId)).toBeNull();
+      expect(decode(data(dex.or(BigNumber.from(1).shl(253))), chainId)).toBeNull();
+    }
+  );
+
   it("decodes the exact reported BSC Pancake V1 quote", () => {
     expect(normalize(decode(reportedData))).toEqual(expected(usdt, usdc));
   });

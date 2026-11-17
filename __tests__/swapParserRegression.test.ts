@@ -263,14 +263,17 @@ describe("blocked swap paths", () => {
         }
       });
     } else {
-      it.each([0, 1000001])("rejects invalid ppm %s", (ppm) => {
-        expect(
-          decodeCalldata(
-            DEX_ENUM.ZEROXAPIV2,
-            mutate(kind === "BASIC" ? 1 : 2, ppm)
-          )
-        ).toBeNull();
-      });
+      it.each(kind === "UNISWAPV2" ? [1000001] : [0, 1000001])(
+        "rejects invalid ppm %s",
+        (ppm) => {
+          expect(
+            decodeCalldata(
+              DEX_ENUM.ZEROXAPIV2,
+              mutate(kind === "BASIC" ? 1 : 2, ppm)
+            )
+          ).toBeNull();
+        }
+      );
       it("rejects an unknown target and wrong chain", () => {
         expect(
           decodeCalldata(
@@ -324,6 +327,12 @@ describe("blocked swap paths", () => {
       });
     }
     if (kind === "UNISWAPV2") {
+      it("decodes a prepaid terminal pool with zero ppm", () => {
+        expect(
+          normalize(decodeCalldata(DEX_ENUM.ZEROXAPIV2, mutate(2, 0)))
+        ).toEqual(sample.expected);
+      });
+
       it("rejects wrong pool direction and sell token", () => {
         expect(
           decodeCalldata(DEX_ENUM.ZEROXAPIV2, mutate(4, last.args.swapInfo ^ 1))

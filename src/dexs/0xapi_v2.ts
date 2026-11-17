@@ -79,7 +79,9 @@ const decodeTerminalSwap = (
   }
   let { recipient, amountOutMin } = swap.args;
   const { ppm } = swap.args;
-  if (ppm && (ppm.isZero() || ppm.gt(1000000))) return null;
+  // V2 的 ppm=0 表示上一跳已直接向池子付款。
+  if (ppm && (ppm.gt(1000000) || (ppm.isZero() && swap.name !== "UNISWAPV2")))
+    return null;
   let output: string;
   switch (swap.name) {
     case "UNISWAPV3": {
