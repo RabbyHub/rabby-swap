@@ -1,3 +1,5 @@
+// 共用币种分类和解析候选；新增币种须核实类别。
+// 仅为解析补币时，使用对应解析器的配置。
 export interface TokenPoolLookupToken {
   chain: string;
   id: string;

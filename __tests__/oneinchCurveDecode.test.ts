@@ -54,6 +54,11 @@ const expected = {
   minReceiveToTokenAmount: "198921",
   toTokenReceiver: sender,
 };
+// User-supplied stETH -> ETH quote. Pool 0x21e27a5e… is Curve stETH-ng:
+// coins(0) is the ETH sentinel, coins(1) is stETH, and bit 242 pays native ETH.
+const steth = "0xae7ab96520de3a18e5e111b5eaab095312d7fe84";
+const stethToEth =
+  "0x83800a8e000000000000000000000000ae7ab96520de3a18e5e111b5eaab095312d7fe840000000000000000000000000000000000000000000000001bc16d674ec800000000000000000000000000000000000000000000000000001b75c097d3b6cbb048040001000801080000000021e27a5e5513d6e65c4f830167390997aa84843a2a6f45f2";
 
 // Ethereum getPool(WETH, USDT, 3000), also recorded in oneinch-deployment-check.json.
 // These mixed routes are constructed parser tests, not historical transactions.
@@ -72,6 +77,25 @@ const reverseCurve = [
 describe("[1inch] Curve decoding only", () => {
   it("decodes the exact reported crvUSD/USDT quote", () => {
     expect(decoded()).toEqual(expected);
+  });
+
+  it("decodes the reported stETH to ETH quote as native ETH", () => {
+    expect(decoded({ ...tx, data: stethToEth })).toEqual({
+      fromToken: steth,
+      fromTokenAmount: "2000000000000000000",
+      toToken: "eth",
+      minReceiveToTokenAmount: "1978699369623767984",
+      toTokenReceiver: sender,
+    });
+  });
+
+  it("rejects the stETH pool when native ETH payment is not set", () => {
+    const quoted = abi.parseTransaction({ data: stethToEth }).args.dex;
+    expect(
+      decoded(
+        encode(quoted.xor(BigNumber.from(1).shl(242)), steth)
+      )
+    ).toBeNull();
   });
 
   it.each([false, true])(

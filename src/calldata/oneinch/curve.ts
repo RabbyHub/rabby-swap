@@ -1,17 +1,11 @@
 import type { Result } from "@ethersproject/abi";
 import { isSameAddress } from "../../utils";
+import { CURVE_POOLS } from "./config";
 
-// coins(uint256) checked on Ethereum; the pool uses an immutable minimal proxy.
-// https://www.curve.finance/dex/ethereum/pools/0x390f3595bCa2Df7d23783dFd126427CCeb997BF4
-// https://etherscan.io/address/0x67fe41A94e779CcFa22cff02cc2957DC9C0e4286#code
-const pools: Record<number, Record<string, readonly string[]>> = {
-  1: {
-    "0x390f3595bca2df7d23783dfd126427cceb997bf4": [
-      "0xdac17f958d2ee523a2206206994597c13d831ec7",
-      "0xf939e0a03fb07f59a73314e73794be0e57ac1b4e",
-    ],
-  },
-};
+/** Curve 原生 ETH 标记，实际使用由 bit 242 控制。 */
+export const ETH_SENTINEL = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+/** AggregationRouterV6 `_CURVE_SWAP_USE_ETH_OFFSET`。 */
+const CURVE_USE_ETH_FLAGS = 0x4;
 
 export const getCurveOutput = (
   input: string,
@@ -19,7 +13,8 @@ export const getCurveOutput = (
   dex: Result[number],
   chainId: number
 ): string | undefined => {
-  const coins = pools[chainId]?.[pool.toLowerCase()];
+  const metadata = CURVE_POOLS[chainId]?.[pool.toLowerCase()];
+  const coins = metadata?.coins;
   if (!coins) return undefined;
   // Router V6 _curfe uses byte offsets for getters, but indexes for swaps.
   // https://etherscan.io/address/0x111111125421ca6dc452d289314280a0f8842a65#code
@@ -28,24 +23,28 @@ export const getCurveOutput = (
   const fromIndex = byte(224);
   const toIndex = byte(232);
   const hasReceiver = selector === 2;
-  // shortcut: only verified plain ERC20 pools are supported; add pool metadata
-  // and matching ABI/flag handling before accepting underlying/native variants.
+  const output = coins[toIndex];
+  const flags = dex.shr(240).and(0x3ff);
+  const usesNativeEth =
+    isSameAddress(input, ETH_SENTINEL) ||
+    (!!output && isSameAddress(output, ETH_SENTINEL));
+  // shortcut: support verified plain pools; verify other conversion flags before adding them.
   if (
     (selector !== 0 && selector !== 2) ||
+    (hasReceiver && !metadata?.hasReceiver) ||
     byte(192) !== 8 || // coins(uint256), selector 0xc6610657
     byte(208) !== 8 ||
     byte(200) !== fromIndex ||
     byte(216) !== toIndex ||
     fromIndex === toIndex ||
     !coins[fromIndex] ||
-    !coins[toIndex] ||
+    !output ||
     !isSameAddress(input, coins[fromIndex]) ||
     // Bits 240..249 control native conversion, extra arguments and callbacks.
-    !dex
-      .shr(240)
-      .and(0x3ff)
-      .eq(hasReceiver ? 0x10 : 0)
+    !(usesNativeEth
+      ? selector === 0 && flags.eq(CURVE_USE_ETH_FLAGS)
+      : flags.eq(hasReceiver ? 0x10 : 0))
   )
     return undefined;
-  return coins[toIndex];
+  return output;
 };

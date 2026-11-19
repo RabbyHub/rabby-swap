@@ -309,6 +309,18 @@ describe("matchDecodedCalldata", () => {
 });
 
 describe("verifyCalldata", () => {
+  it("reports a non-positive quote minimum once", () => {
+    expect(
+      calldataMismatchReasons({
+        dexId: DEX_ENUM.UNI,
+        data: quote({ toTokenAmount: "0" }),
+        slippage: 0.01,
+        tx: { ...quote().tx, chainId: 1 },
+        decoded,
+      })
+    ).toEqual(["min_receive"]);
+  });
+
   it.each([DEX_ENUM.ONEINCH, DEX_ENUM.UNI])(
     "accepts a stricter %s minimum after the quote amount is lowered",
     (dexId) => {

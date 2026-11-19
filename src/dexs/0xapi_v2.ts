@@ -1,25 +1,10 @@
 /**
- * 当前接入 0x API v2 的两层调用，selector 分开解析：
- *
- * 1. AllowanceHolder.exec，selector：0x2213bc0b。
- *    参数：(address operator, address token, uint256 amount, address payable target, bytes data)。
- *    场景：用户把支付授权交给 AllowanceHolder，由它代为调用 Settler；支付币和数量取自这里。
- *    当前覆盖的 Swap Settler 路线用零地址表示原生币。
- *    官方接口：https://github.com/0xProject/0x-settler/blob/master/src/allowanceholder/IAllowanceHolder.sol
- *    部署地址：https://etherscan.io/address/0x0000000000001ff3684f28c67538d4d072c22734#code
- *
- * 2. Settler.execute，selector：0x1fff991f。
- *    参数：(AllowedSlippage slippage, bytes[] actions, bytes32 zidAndAffiliate)。
- *    AllowedSlippage = (address recipient, address buyToken, uint256 minAmountOut)。
- *    场景：Settler 执行聚合动作；输出约束通常取自 slippage。
- *    slippage 为空时，仅支持从末尾 UNISWAPV3（0x8d68a156）读取输出约束。
- *    输出币用 0xEeee… 表示原生币。
- *    官方接口：https://github.com/0xProject/0x-settler/blob/master/src/interfaces/ISettlerTakerSubmitted.sol
- *    slippage 定义：https://github.com/0xProject/0x-settler/blob/master/src/interfaces/ISettlerBase.sol
- *
- * 当前解析 exec 包裹 execute 的 Swap 路线。单独的 execute 没有顶层支付数量，不在当前解析范围。
- * 当前仅覆盖 operator 与 target 一致、原生币支付量匹配输入的路线。
- * AllowanceHolder 也可转发至 BridgeSettler 等目标，需结合内层合约身份判断。
+ * 解析 AllowanceHolder.exec → Settler.execute，不支持独立 execute。
+ * 支付币和数量取自 exec；输出约束取自 slippage，空值时读取支持的末尾 action。
+ * 原生币标记：输入为零地址，输出为 0xEeee…。
+ * 仅支持 operator == target 且附带原生币数量匹配的路线；内层合约身份仍需校验。
+ * 接口：https://github.com/0xProject/0x-settler/blob/master/src/allowanceholder/IAllowanceHolder.sol
+ * https://github.com/0xProject/0x-settler/blob/master/src/interfaces/ISettlerTakerSubmitted.sol
  */
 import { CHAINS_ENUM } from "@debank/common";
 import { Interface } from "@ethersproject/abi";
@@ -37,6 +22,7 @@ import {
 import { isAddress } from "web3-utils";
 import { ZeroXABIV2 } from "../abi";
 import { DEX_ENUM } from "../consts";
+import { FEW_ROUTER_CONFIG, ZEROX_V2_POOLS } from "./0xapi_v2.config";
 
 export const SUPPORT_CHAINS = [
   CHAINS_ENUM.ETH,
@@ -69,9 +55,19 @@ export const getQuote = generateGetQuote({
 
 const terminalSwapInterface = new Interface([
   "function UNISWAPV3(address recipient,uint256 ppm,bytes path,uint256 amountOutMin)",
+  "function UNISWAPV2(address recipient,address sellToken,uint256 ppm,address pool,uint24 swapInfo,uint256 amountOutMin)",
+  "function BEBOP(address recipient,address sellToken,(uint256 expiry,address maker_address,uint256 maker_nonce,address maker_token,uint256 taker_amount,uint256 maker_amount,uint256 event_id_and_flags) order,(bytes signatureBytes,uint256 flags) makerSignature,uint256 amountOutMin)",
+  "function BASIC(address sellToken,uint256 ppm,address pool,uint256 offset,bytes data)",
+]);
+const fewRouterInterface = new Interface([
+  "function swapExactTokensForTokens(uint256 amountIn,uint256 amountOutMin,address[] path,address to,uint256 deadline)",
 ]);
 
-const decodeTerminalSwap = (actions: string[], nativeTokenAddress: string) => {
+const decodeTerminalSwap = (
+  actions: string[],
+  nativeTokenAddress: string,
+  chainId: number
+) => {
   if (!actions.length) return null;
   let swap;
   try {
@@ -81,17 +77,79 @@ const decodeTerminalSwap = (actions: string[], nativeTokenAddress: string) => {
   } catch {
     return null;
   }
-  const { recipient, ppm, path, amountOutMin } = swap.args;
-  // The terminal action itself enforces this minimum and pays recipient.
-  // Path = input(20) + n * [forkId(1), poolId(3), sqrtLimit(20), output(20)].
-  // https://github.com/0xProject/0x-settler/blob/master/src/core/UniswapV3Fork.sol
-  const length = (path.length - 2) / 2;
-  const output = `0x${path.slice(-40)}`;
+  let { recipient, amountOutMin } = swap.args;
+  const { ppm } = swap.args;
+  // V2 的 ppm=0 表示上一跳已直接向池子付款。
+  if (ppm && (ppm.gt(1000000) || (ppm.isZero() && swap.name !== "UNISWAPV2")))
+    return null;
+  let output: string;
+  switch (swap.name) {
+    case "UNISWAPV3": {
+      // Path = input(20) + n * [forkId(1), poolId(3), sqrtLimit(20), output(20)].
+      const { path } = swap.args;
+      const length = (path.length - 2) / 2;
+      if (length < 64 || (length - 20) % 44 !== 0) return null;
+      output = `0x${path.slice(-40)}`;
+      break;
+    }
+    case "BEBOP": {
+      // sellToBebop enforces amountOutMin even for partial fills, then pays recipient.
+      // https://github.com/0xProject/0x-settler/blob/master/src/core/Bebop.sol
+      const { order } = swap.args;
+      // shortcut: ERC20 orders only; native payout flags need separate asset normalization.
+      if (
+        !order.event_id_and_flags.shr(248).isZero() ||
+        order.taker_amount.isZero()
+      )
+        return null;
+      output = order.maker_token;
+      break;
+    }
+    case "UNISWAPV2": {
+      const { pool, sellToken, swapInfo } = swap.args;
+      const tokens = ZEROX_V2_POOLS[chainId]?.[pool.toLowerCase()];
+      if (!tokens || (swapInfo & 0xfc) !== 0 || swapInfo >> 8 >= 10000)
+        return null;
+      const inputIndex = swapInfo & 1 ? 0 : 1;
+      if (!isSameAddress(sellToken, tokens[inputIndex])) return null;
+      output = tokens[1 - inputIndex];
+      break;
+    }
+    case "BASIC": {
+      const { pool, offset, sellToken, data } = swap.args;
+      // BASIC overwrites a calldata word; only the amountIn word may change here.
+      if (
+        chainId !== FEW_ROUTER_CONFIG.chainId ||
+        !isSameAddress(pool, FEW_ROUTER_CONFIG.address) ||
+        !offset.eq(4)
+      )
+        return null;
+      let inner;
+      try {
+        inner = fewRouterInterface.parseTransaction({ data });
+      } catch {
+        return null;
+      }
+      const { path, to } = inner.args;
+      if (
+        path.length < 2 ||
+        !isSameAddress(
+          FEW_ROUTER_CONFIG.tokens[path[0].toLowerCase()] || "",
+          sellToken
+        )
+      )
+        return null;
+      // Few Router unwrapTo pays the underlying token 1:1, not the path's wrapper.
+      output = FEW_ROUTER_CONFIG.tokens[path[path.length - 1].toLowerCase()];
+      if (!output) return null;
+      recipient = to;
+      amountOutMin = inner.args.amountOutMin;
+      break;
+    }
+    default:
+      return null;
+  }
   if (
-    length < 64 ||
-    (length - 20) % 44 !== 0 ||
-    ppm.isZero() ||
-    ppm.gt(1000000) ||
     amountOutMin.isZero() ||
     !isAddress(recipient) ||
     isSameAddress(recipient, NULL_ADDRESS) ||
@@ -109,7 +167,8 @@ const decodeTerminalSwap = (actions: string[], nativeTokenAddress: string) => {
 const decodeSettlerExecute = (
   data: string,
   nativeTokenAddress: string,
-  contractInterface: Interface
+  contractInterface: Interface,
+  chainId: number
 ): Pick<
   DecodeCalldataResult,
   "toToken" | "minReceiveToTokenAmount" | "toTokenReceiver"
@@ -128,9 +187,7 @@ const decodeSettlerExecute = (
   // Settler skips the final transfer/check when both fields are zero.
   // https://github.com/0xProject/0x-settler/blob/master/src/SettlerBase.sol#L88-L111
   if (isSameAddress(buyToken, NULL_ADDRESS) && minAmountOut.isZero()) {
-    // shortcut: recognize only a terminal UNISWAPV3 payout; reject other actions
-    // until their output guarantees are independently implemented and tested.
-    return decodeTerminalSwap(result.args.actions, nativeTokenAddress);
+    return decodeTerminalSwap(result.args.actions, nativeTokenAddress, chainId);
   }
   if (
     isSameAddress(recipient, NULL_ADDRESS) ||
@@ -156,10 +213,10 @@ const decodeAllowanceHolderExec = (
     return null;
   }
 
-  // 当前只覆盖由同一 Settler 扣款并执行的路线。
+  // 扣款与执行须由同一 Settler 完成。
   if (!isSameAddress(operator, target)) return null;
 
-  // 当前只覆盖原生币 amount 与 msg.value 一致、ERC20 不附带原生币的路线。
+  // 原生币 amount 须匹配 value；ERC20 的 value 须为零。
   const expectedValue = isSameAddress(token, NULL_ADDRESS)
     ? amount.toString()
     : "0";
@@ -168,7 +225,8 @@ const decodeAllowanceHolderExec = (
   const output = decodeSettlerExecute(
     data,
     nativeTokenAddress,
-    contractInterface
+    contractInterface,
+    tx.chainId
   );
   if (!output) return null;
 
