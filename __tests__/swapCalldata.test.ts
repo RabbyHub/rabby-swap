@@ -1,4 +1,4 @@
-import { CHAINS, CHAINS_ENUM } from "@debank/common";
+import { CHAINS, CHAINS_ENUM } from "../src/chains";
 import { defaultAbiCoder, Interface } from "@ethersproject/abi";
 import Decimal from "bignumber.js";
 import { encodePacked } from "web3-utils";

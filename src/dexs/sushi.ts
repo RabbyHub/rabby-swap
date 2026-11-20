@@ -18,7 +18,7 @@
  *
  * 已验证源码：https://etherscan.io/address/0xac4c6e212a361c968f1725b4d055b47e63f80b75#code
  */
-import { CHAINS_ENUM } from "@debank/common";
+import { CHAINS_ENUM, KnownChainEnum } from "../chains";
 import { getChainById } from "../chain";
 import type { TxWithChainId, DecodeCalldataResult } from "../calldata/types";
 import { generateGetQuote, isSameAddress, normalizeEeeeToken } from "../utils";
@@ -29,7 +29,7 @@ import BigNumber from "bignumber.js";
 import { SushiABI } from "../abi";
 const NATIVE_TOKEN = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 
-export const SUPPORT_CHAINS = [
+export const SUPPORT_CHAINS: KnownChainEnum[] = [
   CHAINS_ENUM.ETH,
   CHAINS_ENUM.OP,
   CHAINS_ENUM.CRO,
@@ -54,18 +54,18 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.LINEA,
   CHAINS_ENUM.BLAST,
   CHAINS_ENUM.SCRL,
-  "MONAD" as CHAINS_ENUM,
-  "SONIC" as CHAINS_ENUM,
-  "XLAYER" as CHAINS_ENUM,
-  "HYPER" as CHAINS_ENUM,
-  "MEGAETH" as CHAINS_ENUM,
-  "PLASMA" as CHAINS_ENUM,
-  "APE" as CHAINS_ENUM,
-  "HEMI" as CHAINS_ENUM,
-  "BERA" as CHAINS_ENUM,
-  "TAIKO" as CHAINS_ENUM,
-  "KATANA" as CHAINS_ENUM,
-  "HOOD" as CHAINS_ENUM,
+  CHAINS_ENUM.MONAD,
+  CHAINS_ENUM.SONIC,
+  CHAINS_ENUM.XLAYER,
+  CHAINS_ENUM.HYPER,
+  CHAINS_ENUM.MEGAETH,
+  CHAINS_ENUM.PLASMA,
+  CHAINS_ENUM.APE,
+  CHAINS_ENUM.HEMI,
+  CHAINS_ENUM.BERA,
+  CHAINS_ENUM.TAIKO,
+  CHAINS_ENUM.KATANA,
+  CHAINS_ENUM.HOOD,
 ];
 
 export const getQuote = generateGetQuote({

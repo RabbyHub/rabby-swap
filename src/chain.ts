@@ -1,17 +1,16 @@
-import { CHAINS } from "@debank/common";
-import type { Chain } from "@debank/common";
-import { CHAINS as FALLBACK_CHAINS } from "./chains";
+import { CHAINS } from "./chains";
+import type { SwapChain } from "./chains";
 
 export type SwapChainInfo = Pick<
-  Chain,
+  SwapChain,
   "enum" | "id" | "serverId" | "nativeTokenAddress"
 >;
 
+const CHAIN_LIST: SwapChainInfo[] = Object.values(CHAINS);
+
 const findChain = (
-  match: (chain: { enum: string; id: number; serverId: string }) => boolean
-): SwapChainInfo | undefined =>
-  (Object.values(CHAINS).find(match) ??
-    Object.values(FALLBACK_CHAINS).find(match)) as SwapChainInfo | undefined;
+  match: (chain: SwapChainInfo) => boolean
+): SwapChainInfo | undefined => CHAIN_LIST.find(match);
 
 export const getChainById = (chainId: number) =>
   findChain((chain) => chain.id === chainId);

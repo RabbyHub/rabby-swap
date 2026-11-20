@@ -1,4 +1,5 @@
-import { CHAINS_ENUM } from "@debank/common";
+import { CHAINS_ENUM } from "../chains";
+import type { ChainEnum } from "../chains";
 import { ARC_ERC20_USDC, DEX_ENUM } from "../consts";
 import {
   UNI_LEGACY_NATIVE_TO_ADDRESSES,
@@ -16,19 +17,19 @@ const isNativeToken = (tokenId: string, nativeTokenAddress: string) =>
 
 const isUniNativeInput = (
   dexId: DEX_ENUM,
-  chain: CHAINS_ENUM,
+  chain: ChainEnum,
   payTokenId: string,
   nativeTokenAddress: string
 ) =>
   dexId === DEX_ENUM.UNI &&
   (isNativeToken(payTokenId, nativeTokenAddress) ||
-    (chain === ("ARC" as CHAINS_ENUM) &&
+    (chain === CHAINS_ENUM.ARC &&
       isSameAddress(payTokenId, ARC_ERC20_USDC)));
 
 /** Uni 的 native 输入（含 Arc ERC20 USDC）按链选择执行入口，其余走 proxy。 */
 export const getRouter = (
   dexId: DEX_ENUM,
-  chain: CHAINS_ENUM,
+  chain: ChainEnum,
   payTokenId: string,
   nativeTokenAddress: string
 ) => {
@@ -37,21 +38,21 @@ export const getRouter = (
   }
   const list = DEX_ROUTER_WHITELIST[dexId as RouterDexId];
   if (!list) return undefined;
-  return list[chain as keyof typeof list];
+  return list[chain];
 };
 
 /** wrap 无 spender；其余读白名单。 */
-export const getSpender = (dexId: DEX_ENUM, chain: CHAINS_ENUM) => {
+export const getSpender = (dexId: DEX_ENUM, chain: ChainEnum) => {
   if (dexId === DEX_ENUM.WRAPTOKEN) {
     return "";
   }
   const list = DEX_SPENDER_WHITELIST[dexId as SpenderDexId];
   if (!list) return undefined;
-  return list[chain as keyof typeof list];
+  return list[chain];
 };
 
 export type VerifyRouterAndSpenderParams = {
-  chain: CHAINS_ENUM;
+  chain: ChainEnum;
   dexId: DEX_ENUM;
   router?: string;
   spender?: string;

@@ -38,7 +38,7 @@ These are ordinary tests, **not** `it.failing`, skipped cases or snapshots of `n
 Unsupported inputs and incorrect fields should turn the suite red until fixed.
 Historical pass/failure labels in test names describe the old export, not current behavior.
 Some old failures depend on the application's chain catalogue; this SDK suite uses its
-own installed `@debank/common`, so current counts may differ from the old export.
+own chain table (`src/chains.ts`), so current counts may differ from the old export.
 Router/spender whitelist checks are intentionally outside these calldata assertions.
 
 Run everything with the existing command:

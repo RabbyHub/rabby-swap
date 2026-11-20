@@ -7,7 +7,7 @@ import {
   getQuote,
   verifySdk,
 } from "../src/index";
-import { CHAINS_ENUM } from "@debank/common";
+import { CHAINS_ENUM } from "../src/chains";
 import { decodeCalldata } from "../src/quote";
 
 describe("correctly export dex", () => {
@@ -44,11 +44,11 @@ describe("correctly export dex", () => {
       // CELO is already exposed as an ERC-20 at its native-token address.
       CHAINS_ENUM.CELO,
       // USDT0 is both native and ERC-20 on Stable, so no wrapping is needed.
-      "STABLE" as CHAINS_ENUM,
+      CHAINS_ENUM.STABLE,
       // Tempo has no native token.
-      "TEMPO" as CHAINS_ENUM,
+      CHAINS_ENUM.TEMPO,
       // Arc USDC shares its native balance with an ERC-20 interface; no wrapping is needed.
-      "ARC" as CHAINS_ENUM,
+      CHAINS_ENUM.ARC,
     ];
     const unsupportedChains = allSwapChains.filter(
       (chain) => !WrapTokenAddressMap[chain as keyof typeof WrapTokenAddressMap]

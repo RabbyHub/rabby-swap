@@ -1,5 +1,6 @@
 import { OpenApiService } from "@rabby-wallet/rabby-api";
-import { CHAINS_ENUM } from "@debank/common";
+import { CHAINS_ENUM } from "./chains";
+import type { ChainEnum, KnownChainEnum } from "./chains";
 import BigNumber from "bignumber.js";
 import { QuoteParams, QuoteResult } from "./quote";
 import type { DecodeCalldataResult } from "./calldata/types";
@@ -51,8 +52,6 @@ export const resolveToTokenReceiver = (
   txFrom: string
 ) => (isSameAddress(encodedReceiver, NULL_ADDRESS) ? txFrom : encodedReceiver);
 
-const ARC = "ARC" as CHAINS_ENUM;
-
 /**
  * Arc 原生 USDC 为 18 位，ERC20 接口为 6 位；往返转换会截断末尾 12 位。
  * 仅在金额比较时换算请求值，保留 calldata 解码值、报价和交易金额。
@@ -88,7 +87,7 @@ export const resolveSwapTxValue = ({
   amount,
 }: {
   dex: DEX_ENUM;
-  chain: CHAINS_ENUM;
+  chain: ChainEnum;
   fromToken: string;
   payTokenId: string;
   nativeTokenAddress: string;
@@ -96,7 +95,7 @@ export const resolveSwapTxValue = ({
 }) => {
   if (
     dex === DEX_ENUM.UNI &&
-    chain === ARC &&
+    chain === CHAINS_ENUM.ARC &&
     isSameAddress(fromToken, ARC_ERC20_USDC)
   ) {
     return new BigNumber(amount).times(ARC_NATIVE_SCALE).toFixed(0);
@@ -110,7 +109,7 @@ export const generateGetQuote =
     id,
     dex,
   }: {
-    SUPPORT_CHAINS: CHAINS_ENUM[];
+    SUPPORT_CHAINS: KnownChainEnum[];
     id:
       | "matcha"
       | "matcha_v2"
@@ -181,10 +180,8 @@ export const generateGetQuote =
       toTokenDecimals: data.receive_token.decimals,
       spender:
         dex === DEX_ENUM.PARASWAP ||
-        (dex === DEX_ENUM.UNI && options.chain === ARC)
-          ? DEX_SPENDER_WHITELIST[dex][
-              options.chain as keyof (typeof DEX_SPENDER_WHITELIST)[typeof dex]
-            ]
+        (dex === DEX_ENUM.UNI && options.chain === CHAINS_ENUM.ARC)
+          ? DEX_SPENDER_WHITELIST[dex][options.chain]
           : data.dex_swap_to,
 
       gasUsed: (data as any).gas_used,

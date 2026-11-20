@@ -1,12 +1,12 @@
 import { Interface } from "@ethersproject/abi";
-import { CHAINS_ENUM } from "@debank/common";
+import { CHAINS_ENUM, KnownChainEnum } from "../chains";
 import { getChainById } from "../chain";
 import type { TxWithChainId, DecodeCalldataResult } from "../calldata/types";
 import { generateGetQuote, normalizeEeeeToken } from "../utils";
 import { ParaSwapV6ABI } from "../abi";
 import { DEX_ENUM } from "../consts";
 
-export const SUPPORT_CHAINS = [
+export const SUPPORT_CHAINS: KnownChainEnum[] = [
   CHAINS_ENUM.ETH,
   CHAINS_ENUM.POLYGON,
   CHAINS_ENUM.BSC,
@@ -16,8 +16,8 @@ export const SUPPORT_CHAINS = [
   // CHAINS_ENUM.FTM,
   CHAINS_ENUM.BASE,
   CHAINS_ENUM.GNOSIS,
-  "UNI" as CHAINS_ENUM,
-  "SONIC" as CHAINS_ENUM,
+  CHAINS_ENUM.UNI,
+  CHAINS_ENUM.SONIC,
   // CHAINS_ENUM.PZE,
 ];
 

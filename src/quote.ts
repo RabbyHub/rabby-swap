@@ -1,4 +1,4 @@
-import { CHAINS_ENUM } from "@debank/common";
+import type { ChainEnum } from "./chains";
 import { OpenApiService } from "@rabby-wallet/rabby-api";
 import { DEX_ENUM } from "./consts";
 import type {
@@ -65,7 +65,7 @@ export interface QuoteParams {
   feeAddress?: string;
   gasPrice?: number;
   insufficient: boolean;
-  chain: CHAINS_ENUM;
+  chain: ChainEnum;
   fee?: boolean;
   chainServerId: string;
   nativeTokenAddress: string;

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { CHAINS_ENUM } from "@debank/common";
+import type { ChainEnum } from "../chains";
 import { DEX_ENUM } from "../consts";
 import type { DecodeCalldataResult, TxWithChainId } from "../calldata/types";
 import type { QuoteResult } from "../quote";
@@ -13,7 +13,7 @@ import { isSwapWrapToken } from "./wrap";
 import { getChainById } from "../chain";
 
 export type VerifySdkParams = {
-  chain: CHAINS_ENUM;
+  chain: ChainEnum;
   dexId: DEX_ENUM;
   /** UI 滑点，单位百分数，如 1 表示 1%。 */
   slippage: string | number;

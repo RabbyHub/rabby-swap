@@ -1,12 +1,12 @@
 import { Interface } from "@ethersproject/abi";
-import { CHAINS_ENUM } from "@debank/common";
+import { CHAINS_ENUM, KnownChainEnum } from "../chains";
 import { getChainById } from "../chain";
 import type { TxWithChainId, DecodeCalldataResult } from "../calldata/types";
 import { generateGetQuote, normalizeEeeeToken } from "../utils";
 import { ParaSwapABI } from "../abi";
 import { DEX_ENUM } from "../consts";
 
-export const SUPPORT_CHAINS = [
+export const SUPPORT_CHAINS: KnownChainEnum[] = [
   CHAINS_ENUM.ETH,
   CHAINS_ENUM.POLYGON,
   CHAINS_ENUM.BSC,

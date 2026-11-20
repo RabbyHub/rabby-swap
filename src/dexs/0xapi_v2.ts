@@ -6,7 +6,7 @@
  * 接口：https://github.com/0xProject/0x-settler/blob/master/src/allowanceholder/IAllowanceHolder.sol
  * https://github.com/0xProject/0x-settler/blob/master/src/interfaces/ISettlerTakerSubmitted.sol
  */
-import { CHAINS_ENUM } from "@debank/common";
+import { CHAINS_ENUM, KnownChainEnum } from "../chains";
 import { Interface } from "@ethersproject/abi";
 import type { Result } from "@ethersproject/abi";
 import BigNumber from "bignumber.js";
@@ -24,7 +24,7 @@ import { ZeroXABIV2 } from "../abi";
 import { DEX_ENUM } from "../consts";
 import { FEW_ROUTER_CONFIG, ZEROX_V2_POOLS } from "./0xapi_v2.config";
 
-export const SUPPORT_CHAINS = [
+export const SUPPORT_CHAINS: KnownChainEnum[] = [
   CHAINS_ENUM.ETH,
   CHAINS_ENUM.POLYGON,
   CHAINS_ENUM.ARBITRUM,
@@ -32,19 +32,19 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.OP,
   CHAINS_ENUM.BSC,
   CHAINS_ENUM.AVAX,
-  "BERA" as CHAINS_ENUM,
-  "UNI" as CHAINS_ENUM,
+  CHAINS_ENUM.BERA,
+  CHAINS_ENUM.UNI,
   CHAINS_ENUM.SCRL,
-  "PLASMA" as CHAINS_ENUM,
-  "MONAD" as CHAINS_ENUM,
-  "HYPER" as CHAINS_ENUM,
-  "HOOD" as CHAINS_ENUM,
-  "ARC" as CHAINS_ENUM,
-  "INK" as CHAINS_ENUM,
+  CHAINS_ENUM.PLASMA,
+  CHAINS_ENUM.MONAD,
+  CHAINS_ENUM.HYPER,
+  CHAINS_ENUM.HOOD,
+  CHAINS_ENUM.ARC,
+  CHAINS_ENUM.INK,
   CHAINS_ENUM.LINEA,
   CHAINS_ENUM.MANTLE,
-  "SONIC" as CHAINS_ENUM,
-  "ELYSIUM" as CHAINS_ENUM,
+  CHAINS_ENUM.SONIC,
+  CHAINS_ENUM.ELYSIUM,
 ];
 
 export const getQuote = generateGetQuote({

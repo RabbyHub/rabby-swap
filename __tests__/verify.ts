@@ -1,4 +1,4 @@
-import { CHAINS, CHAINS_ENUM } from "@debank/common";
+import { CHAINS, CHAINS_ENUM } from "../src/chains";
 import {
   DEX_ENUM,
   DEX_ROUTER_WHITELIST,
@@ -104,7 +104,7 @@ describe("verifyRouterAndSpender", () => {
 
   it.each([
     {
-      chain: "INK" as CHAINS_ENUM,
+      chain: CHAINS_ENUM.INK,
       nativeTokenAddress: "ink",
       dexId: DEX_ENUM.UNI,
       address: "0x0000000085E102724e78eCd2F45DC9cA239Affad",
