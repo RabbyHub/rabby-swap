@@ -1,7 +1,7 @@
 import { decodeCalldata } from "../src/quote";
 import type { DecodeCalldataResult } from "../src/calldata/types";
 import { DEX_ENUM } from "../src/consts";
-import { CHAINS_ENUM, CHAINS } from "@debank/common";
+import { CHAINS_ENUM, CHAINS } from "../src/chains";
 
 // describe("1inch calldata decode", () => {
 //   it("swap from ERC20 to ERC20", () => {

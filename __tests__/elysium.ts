@@ -1,4 +1,4 @@
-import { CHAINS_ENUM } from "@debank/common";
+import { CHAINS_ENUM } from "../src/chains";
 import { Interface } from "@ethersproject/abi";
 import type { OpenApiService } from "@rabby-wallet/rabby-api";
 import {
@@ -14,7 +14,7 @@ import { getChainByEnum, getChainById, getChainByServerId } from "../src/chain";
 import { OpenOceanABI, ZeroXABIV2 } from "../src/abi";
 import { NULL_ADDRESS } from "../src/utils";
 
-const ELYSIUM = "ELYSIUM" as CHAINS_ENUM;
+const ELYSIUM = CHAINS_ENUM.ELYSIUM;
 const NATIVE = "elysium";
 const WHYPE = "0xba876237b0f021a6c6d852d6c26e107997cc5e81";
 const USDC = "0xb47c4c8f73f009cc0c0d3f92b388d13e293f0b65";

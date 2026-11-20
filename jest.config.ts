@@ -4,7 +4,7 @@ export default {
     '/node_modules/',
     '<rootDir>/__tests__/otherDexFixtures.ts',
   ],
-  transformIgnorePatterns: ['<rootDir>/node_modules/(?!@debank|@rabby-wallet)'],
+  transformIgnorePatterns: ['<rootDir>/node_modules/(?!@rabby-wallet)'],
   resetMocks: false,
   transform: {
     '^.+\\.js$': 'babel-jest',

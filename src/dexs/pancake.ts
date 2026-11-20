@@ -1,4 +1,4 @@
-import { CHAINS_ENUM } from "@debank/common";
+import { CHAINS_ENUM, KnownChainEnum } from "../chains";
 import { getChainById } from "../chain";
 import { Interface } from "@ethersproject/abi";
 import BigNumber from "bignumber.js";
@@ -11,11 +11,11 @@ import {
 import { PancakeSwapABI } from "../abi";
 import { DEX_ENUM } from "../consts";
 
-export const SUPPORT_CHAINS = [
+export const SUPPORT_CHAINS: KnownChainEnum[] = [
   CHAINS_ENUM.ETH,
   CHAINS_ENUM.BSC,
   CHAINS_ENUM.BASE,
-  "HOOD" as CHAINS_ENUM,
+  CHAINS_ENUM.HOOD,
 ];
 
 export const getQuote = generateGetQuote({

@@ -1,4 +1,4 @@
-import { CHAINS_ENUM } from "@debank/common";
+import { CHAINS_ENUM } from "../src/chains";
 import {
   ARC_ERC20_USDC,
   DEX_ENUM,
@@ -10,7 +10,7 @@ import {
 } from "../src";
 import { resolveSwapTxValue } from "../src/utils";
 
-const ARC = "ARC";
+const ARC = CHAINS_ENUM.ARC;
 const routerWhitelist = DEX_ROUTER_WHITELIST as Record<
   string,
   Record<string, string>
@@ -61,7 +61,7 @@ describe("Arc Uni router validation", () => {
     ["CRCL", CRCL, UNI_SPENDER, UNI_ROUTER],
   ])("accepts only the correct entry point for %s", (_, payTokenId, router, wrongRouter) => {
     const params = {
-      chain: ARC as CHAINS_ENUM,
+      chain: ARC,
       dexId: DEX_ENUM.UNI,
       payTokenId,
       receiveTokenId: ARCHITECTS,
@@ -78,7 +78,7 @@ describe("Arc Uni router validation", () => {
   it("rejects Universal Router as the spender for CRCL", () => {
     expect(
       verifyRouterAndSpender({
-        chain: ARC as CHAINS_ENUM,
+        chain: ARC,
         dexId: DEX_ENUM.UNI,
         payTokenId: CRCL,
         receiveTokenId: ARCHITECTS,
@@ -95,7 +95,7 @@ describe("Arc Uni 0x3600 USDC native value", () => {
     expect(
       resolveSwapTxValue({
         dex: DEX_ENUM.UNI,
-        chain: ARC as CHAINS_ENUM,
+        chain: ARC,
         fromToken: ARC_ERC20_USDC,
         payTokenId,
         nativeTokenAddress: ARC_NATIVE,
@@ -108,7 +108,7 @@ describe("Arc Uni 0x3600 USDC native value", () => {
     expect(
       resolveSwapTxValue({
         dex: DEX_ENUM.UNI,
-        chain: ARC as CHAINS_ENUM,
+        chain: ARC,
         fromToken: CRCL,
         payTokenId: CRCL,
         nativeTokenAddress: ARC_NATIVE,
@@ -121,7 +121,7 @@ describe("Arc Uni 0x3600 USDC native value", () => {
     expect(
       resolveSwapTxValue({
         dex: DEX_ENUM.UNI,
-        chain: ARC as CHAINS_ENUM,
+        chain: ARC,
         fromToken: ARC_NATIVE,
         payTokenId: ARC_NATIVE,
         nativeTokenAddress: ARC_NATIVE,
@@ -134,7 +134,7 @@ describe("Arc Uni 0x3600 USDC native value", () => {
     expect(
       resolveSwapTxValue({
         dex: DEX_ENUM.KYBERSWAP,
-        chain: ARC as CHAINS_ENUM,
+        chain: ARC,
         fromToken: ARC_ERC20_USDC,
         payTokenId: ARC_ERC20_USDC,
         nativeTokenAddress: ARC_NATIVE,

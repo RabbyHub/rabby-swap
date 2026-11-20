@@ -1,4 +1,4 @@
-import { CHAINS_ENUM } from "@debank/common";
+import type { ChainEnum } from "../chains";
 import { WrapTokenAddressMap } from "../list";
 import { isSameAddress } from "../utils";
 
@@ -9,11 +9,11 @@ import { isSameAddress } from "../utils";
 export const isSwapWrapToken = (
   payTokenId: string,
   receiveTokenId: string,
-  chain: CHAINS_ENUM,
+  chain: ChainEnum,
   nativeTokenAddress: string
 ) => {
   const wrapTokens = [
-    WrapTokenAddressMap[chain as keyof typeof WrapTokenAddressMap],
+    WrapTokenAddressMap[chain],
     nativeTokenAddress,
   ];
   return (

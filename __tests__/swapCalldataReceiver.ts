@@ -1,4 +1,4 @@
-import { CHAINS, CHAINS_ENUM } from "@debank/common";
+import { CHAINS, CHAINS_ENUM } from "../src/chains";
 import { Interface } from "@ethersproject/abi";
 import { DEX_ENUM } from "../src/consts";
 import { KyberswapABI, OpenOceanABI } from "../src/abi";

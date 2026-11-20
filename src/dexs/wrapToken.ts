@@ -14,8 +14,7 @@ export const getQuote = async (options: QuoteParams): Promise<QuoteResult> => {
   if (!chainServerId || !nativeTokenAddress) {
     throw new Error(`lack chainServerId or nativeTokenAddress is not support`);
   }
-  const wrapTokenAddress =
-    WrapTokenAddressMap[options.chain as keyof typeof WrapTokenAddressMap];
+  const wrapTokenAddress = WrapTokenAddressMap[options.chain];
   if (!wrapTokenAddress) {
     throw new Error(`${options.chain} does not support native token wrapping`);
   }

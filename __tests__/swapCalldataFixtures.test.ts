@@ -1,4 +1,4 @@
-import type { CHAINS_ENUM } from "@debank/common";
+import type { ChainEnum } from "../src/chains";
 import { defaultAbiCoder, Interface } from "@ethersproject/abi";
 import BigNumber from "bignumber.js";
 import { DEX_ENUM, decodeCalldata, verifyCalldata, verifySdk } from "../src";
@@ -157,7 +157,7 @@ describe("Recorded Uni and Magpie calldata", () => {
 
 const verificationSamples = samples.filter((sample) => sample.quote);
 const paramsFor = (sample: Fixture): VerifySdkParams => ({
-  chain: sample.chain as CHAINS_ENUM,
+  chain: sample.chain as ChainEnum,
   chainId: sample.tx.chainId,
   dexId: sample.dexId,
   slippage: sample.slippage ?? "1",

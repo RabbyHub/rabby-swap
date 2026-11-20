@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
 import { join } from "path";
 import { gunzipSync } from "zlib";
-import type { CHAINS_ENUM } from "@debank/common";
+import type { ChainEnum } from "../src/chains";
 import type { DEX_ENUM, DecodeCalldataResult, VerifySdkParams } from "../src";
 import type { QuoteResult } from "../src/quote";
 
@@ -11,7 +11,7 @@ type RecordedSample = {
   record: {
     id: number;
     dex: DEX_ENUM;
-    chain: CHAINS_ENUM;
+    chain: ChainEnum;
     chainId: number;
     slippage: string;
     quote: QuoteResult;

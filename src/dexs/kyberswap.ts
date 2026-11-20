@@ -1,4 +1,4 @@
-import { CHAINS_ENUM } from "@debank/common";
+import { CHAINS_ENUM, KnownChainEnum } from "../chains";
 import { getChainById } from "../chain";
 import { Interface } from "@ethersproject/abi";
 
@@ -13,7 +13,7 @@ import { DEX_ENUM } from "../consts";
 
 // eth op arb bsc avax ftm cro matic aurora linea btt oas
 
-export const SUPPORT_CHAINS = [
+export const SUPPORT_CHAINS: KnownChainEnum[] = [
   CHAINS_ENUM.ETH,
   CHAINS_ENUM.OP,
   CHAINS_ENUM.ARBITRUM,
@@ -25,17 +25,17 @@ export const SUPPORT_CHAINS = [
   CHAINS_ENUM.LINEA,
   // CHAINS_ENUM.BTT,
   CHAINS_ENUM.BASE,
-  "SONIC" as CHAINS_ENUM,
+  CHAINS_ENUM.SONIC,
   CHAINS_ENUM.MANTLE,
-  "BERA" as CHAINS_ENUM,
+  CHAINS_ENUM.BERA,
   // CHAINS_ENUM.ERA,
   CHAINS_ENUM.SCRL,
-  "RONIN" as CHAINS_ENUM,
-  "HYPER" as CHAINS_ENUM,
-  "UNI" as CHAINS_ENUM,
-  "PLASMA" as CHAINS_ENUM,
-  "HOOD" as CHAINS_ENUM,
-  "ARC" as CHAINS_ENUM,
+  CHAINS_ENUM.RONIN,
+  CHAINS_ENUM.HYPER,
+  CHAINS_ENUM.UNI,
+  CHAINS_ENUM.PLASMA,
+  CHAINS_ENUM.HOOD,
+  CHAINS_ENUM.ARC,
   // No prev2 support
   // CHAINS_ENUM.ROSE,
 ];

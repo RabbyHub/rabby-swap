@@ -1,5 +1,4 @@
 import { Interface } from "@ethersproject/abi";
-import { CHAINS_ENUM } from "@debank/common";
 import BigNumber from "bignumber.js";
 import { PancakeSwapABI } from "../src/abi";
 import { DEX_ENUM } from "../src/consts";
@@ -52,7 +51,7 @@ const toQuote = (fixture: Fixture): QuoteResult => ({
 });
 
 const sdkParams = (fixture: Fixture) => ({
-  chain: fixture.quote.pay_token.chain.toUpperCase() as CHAINS_ENUM,
+  chain: fixture.quote.pay_token.chain.toUpperCase(),
   dexId: DEX_ENUM.PANCAKESWAP,
   slippage: 1,
   data: toQuote(fixture),
